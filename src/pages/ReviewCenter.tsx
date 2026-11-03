@@ -30,8 +30,9 @@ export default function ReviewCenter() {
   return (
     <div className="space-y-5">
       <PageHeader
+        eyebrow="Revisão"
         title="Central de Revisão"
-        subtitle="Fila de trabalho da responsável pela revisão. A aprovação humana é obrigatória antes da liberação do documento do cliente."
+        subtitle="Fila da responsável. Aprovação humana obrigatória antes do cliente."
       />
 
       <div className="grid grid-cols-3 gap-3">

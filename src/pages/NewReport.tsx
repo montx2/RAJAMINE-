@@ -77,8 +77,9 @@ export default function NewReport() {
         <ArrowLeft size={15} aria-hidden /> Voltar para relatórios
       </button>
       <PageHeader
+        eyebrow="Relatórios"
         title="Novo relatório de campo"
-        subtitle="Gera um link individual de preenchimento com prazo padrão de 48 h. O caminhão é opcional: a operação pode ser centrada no equipamento do cliente."
+        subtitle="Gera link individual com prazo de 48 h. Caminhão opcional."
       />
 
       <div className="card p-5 sm:p-6 space-y-5">

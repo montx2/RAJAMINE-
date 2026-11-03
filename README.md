@@ -6,6 +6,8 @@ Protótipo de alta fidelidade para a **Rajamine Inteligência em Mineração LTD
 > Do link de preenchimento ao arquivo final: coleta móvel, padronização de textos, leitura de equipamentos por foto (OCR real no navegador), revisão humana obrigatória e geração de PDFs profissionais — com trilha de auditoria completa.
 >
 > **Atualizado com referências reais da empresa (set/2026):** planilha de instalações/manutenções/retiradas, relatório de visita técnica, atividade externa e consolidado semanal. Identidade visual grafite + amarelo Rajamine.
+>
+> **Design v3 — Liquid Glass Clean:** superfícies de vidro com lastro acessível, animações sutis (120–360ms, ease-out, reduced-motion), navegação agrupada e progressive disclosure — essencial primeiro, detalhes sob demanda. Ver [docs/02-design-system.md](docs/02-design-system.md).
 
 ---
 

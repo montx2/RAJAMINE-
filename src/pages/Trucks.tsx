@@ -40,8 +40,9 @@ export default function Trucks() {
   return (
     <div>
       <PageHeader
+        eyebrow="Frota"
         title="Caminhões"
-        subtitle="Frota atendida, equipamentos instalados por veículo e relatórios relacionados."
+        subtitle="Veículos, equipamentos instalados e relatórios vinculados."
         actions={user.role === 'admin' && <Button variant="accent" icon={<Plus size={16} />} onClick={() => setOpen(true)}>Cadastrar caminhão</Button>}
       />
 

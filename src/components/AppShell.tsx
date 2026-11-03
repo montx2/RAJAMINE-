@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { NavLink, Outlet, useNavigate, Link } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, FileText, ClipboardCheck, Cpu, Truck, Users, Archive,
   Bell, ShieldCheck, LogOut, Menu, X, ChevronRight, PenLine, Table2, CalendarRange,
@@ -9,27 +9,28 @@ import { ROLE_LABEL } from '../data/types';
 import type { Role } from '../data/types';
 import { cn } from '../lib/cn';
 import { timeAgo } from '../lib/format';
-import { Avatar, Badge } from './ui';
+import { Avatar } from './ui';
 import { Logo } from './Logo';
 
-interface NavItem { to: string; label: string; icon: typeof LayoutDashboard; roles: Role[] }
+interface NavItem { to: string; label: string; short: string; icon: typeof LayoutDashboard; roles: Role[]; group: string }
 
 const NAV: NavItem[] = [
-  { to: '/', label: 'Dashboard', icon: LayoutDashboard, roles: ['admin', 'revisora'] },
-  { to: '/relatorios', label: 'Relatórios', icon: FileText, roles: ['admin', 'revisora', 'colaborador'] },
-  { to: '/revisao', label: 'Central de Revisão', icon: ClipboardCheck, roles: ['admin', 'revisora'] },
-  { to: '/operacoes', label: 'Operações de campo', icon: Table2, roles: ['admin', 'revisora', 'colaborador'] },
-  { to: '/semanal', label: 'Consolidado semanal', icon: CalendarRange, roles: ['admin', 'revisora'] },
-  { to: '/equipamentos', label: 'Equipamentos & IDs', icon: Cpu, roles: ['admin', 'revisora'] },
-  { to: '/caminhoes', label: 'Caminhões / Frota', icon: Truck, roles: ['admin', 'revisora'] },
-  { to: '/cadastros', label: 'Colaboradores & Clientes', icon: Users, roles: ['admin'] },
-  { to: '/documentos', label: 'Arquivo de Documentos', icon: Archive, roles: ['admin', 'revisora'] },
-  { to: '/conformidade', label: 'Segurança & LGPD', icon: ShieldCheck, roles: ['admin', 'revisora', 'colaborador'] },
+  { to: '/', label: 'Dashboard', short: 'Início', icon: LayoutDashboard, roles: ['admin', 'revisora'], group: 'Principal' },
+  { to: '/relatorios', label: 'Relatórios', short: 'Relatórios', icon: FileText, roles: ['admin', 'revisora', 'colaborador'], group: 'Principal' },
+  { to: '/revisao', label: 'Central de Revisão', short: 'Revisão', icon: ClipboardCheck, roles: ['admin', 'revisora'], group: 'Principal' },
+  { to: '/operacoes', label: 'Operações de campo', short: 'Operações', icon: Table2, roles: ['admin', 'revisora', 'colaborador'], group: 'Campo' },
+  { to: '/semanal', label: 'Consolidado semanal', short: 'Semanal', icon: CalendarRange, roles: ['admin', 'revisora'], group: 'Campo' },
+  { to: '/equipamentos', label: 'Equipamentos & IDs', short: 'Equipamentos', icon: Cpu, roles: ['admin', 'revisora'], group: 'Campo' },
+  { to: '/caminhoes', label: 'Caminhões / Frota', short: 'Frota', icon: Truck, roles: ['admin', 'revisora'], group: 'Campo' },
+  { to: '/cadastros', label: 'Colaboradores & Clientes', short: 'Cadastros', icon: Users, roles: ['admin'], group: 'Gestão' },
+  { to: '/documentos', label: 'Arquivo de Documentos', short: 'Documentos', icon: Archive, roles: ['admin', 'revisora'], group: 'Gestão' },
+  { to: '/conformidade', label: 'Segurança & LGPD', short: 'LGPD', icon: ShieldCheck, roles: ['admin', 'revisora', 'colaborador'], group: 'Gestão' },
 ];
 
 export default function AppShell() {
   const user = useCurrentUser();
   const navigate = useNavigate();
+  const location = useLocation();
   const logout = useStore((s) => s.logout);
   const notifications = useStore((s) => s.notifications);
   const reports = useStore((s) => s.reports);
@@ -52,27 +53,43 @@ export default function AppShell() {
 
   if (!user) return null;
   const items = NAV.filter((n) => n.roles.includes(user.role));
+  const groups = ['Principal', 'Campo', 'Gestão'].map((g) => ({ name: g, items: items.filter((i) => i.group === g) })).filter((g) => g.items.length);
 
   const sidebar = (
     <div className="flex flex-col h-full">
       <div className="px-5 pt-6 pb-5">
         <Logo />
       </div>
-      <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto" aria-label="Navegação principal">
-        {items.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            end={item.to === '/'}
-            onClick={() => setMobileOpen(false)}
-            className={({ isActive }) => cn(
-              'flex items-center gap-3 rounded-lg px-3 py-2.5 text-[13.5px] font-semibold transition-colors duration-150',
-              isActive ? 'bg-white/10 text-white shadow-[inset_2px_0_0_0_#FFC400]' : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/5',
-            )}
-          >
-            <item.icon size={17} aria-hidden />
-            {item.label}
-          </NavLink>
+      <nav className="flex-1 px-3 space-y-5 overflow-y-auto" aria-label="Navegação principal">
+        {groups.map((g) => (
+          <div key={g.name}>
+            <div className="px-3 mb-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-500">{g.name}</div>
+            <div className="space-y-0.5">
+              {g.items.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.to === '/'}
+                  onClick={() => setMobileOpen(false)}
+                  className={({ isActive }) => cn(
+                    'group flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-semibold transition-[background-color,color,transform] duration-150 ease-out',
+                    isActive
+                      ? 'bg-white/10 text-white shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)]'
+                      : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/5',
+                  )}
+                >
+                  {({ isActive }) => (
+                    <>
+                      <span className={cn('flex items-center justify-center w-7 h-7 rounded-lg transition-colors', isActive ? 'bg-brand text-primary' : 'bg-white/5 text-zinc-400 group-hover:text-zinc-100')}>
+                        <item.icon size={15} aria-hidden />
+                      </span>
+                      <span className="truncate">{item.label}</span>
+                    </>
+                  )}
+                </NavLink>
+              ))}
+            </div>
+          </div>
         ))}
       </nav>
       <div className="p-4 border-t border-white/10">
@@ -80,37 +97,34 @@ export default function AppShell() {
           <Avatar nome={user.nome} />
           <div className="min-w-0 flex-1">
             <div className="text-[13px] font-bold text-white truncate">{user.nome}</div>
-            <div className="text-[11.5px] text-slate-400">{ROLE_LABEL[user.role]}</div>
+            <div className="text-[11px] text-zinc-400">{ROLE_LABEL[user.role]}</div>
           </div>
           <button
             onClick={() => { logout(); navigate('/login'); }}
-            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 cursor-pointer"
+            className="press p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 cursor-pointer"
             aria-label="Sair"
             title="Sair"
           >
             <LogOut size={16} />
           </button>
         </div>
-        <p className="mt-3 text-[10.5px] leading-snug text-slate-500">
-          Protótipo · referências da empresa + exemplos sintéticos · envios simulados
-        </p>
       </div>
     </div>
   );
 
   return (
     <div className="min-h-screen flex">
-      {/* Sidebar desktop */}
-      <aside className="hidden lg:flex w-[248px] shrink-0 bg-primary flex-col fixed inset-y-0 z-30">
+      {/* Sidebar desktop — vidro escuro */}
+      <aside className="hidden lg:flex w-[248px] shrink-0 glass-dark flex-col fixed inset-y-0 z-30 border-r border-white/10">
         {sidebar}
       </aside>
 
       {/* Sidebar mobile */}
       {mobileOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
-          <div className="absolute inset-0 bg-primary/60" onClick={() => setMobileOpen(false)} aria-hidden />
-          <aside className="absolute inset-y-0 left-0 w-[270px] bg-primary animate-fade-up">
-            <button onClick={() => setMobileOpen(false)} className="absolute top-4 right-3 p-2 text-slate-400 hover:text-white cursor-pointer" aria-label="Fechar menu">
+          <div className="absolute inset-0 bg-primary/50 animate-fade-in" style={{ backdropFilter: 'blur(4px)' }} onClick={() => setMobileOpen(false)} aria-hidden />
+          <aside className="absolute inset-y-0 left-0 w-[272px] glass-dark animate-slide-in-right border-r border-white/10">
+            <button onClick={() => setMobileOpen(false)} className="absolute top-4 right-3 p-2 text-zinc-400 hover:text-white cursor-pointer z-10" aria-label="Fechar menu">
               <X size={18} />
             </button>
             {sidebar}
@@ -119,27 +133,27 @@ export default function AppShell() {
       )}
 
       <div className="flex-1 lg:ml-[248px] flex flex-col min-w-0">
-        {/* Topbar */}
-        <header className="sticky top-0 z-20 bg-surface/90 backdrop-blur border-b border-border">
-          <div className="flex items-center gap-3 px-4 sm:px-6 h-[60px]">
-            <button className="lg:hidden p-2 -ml-2 rounded-lg text-secondary hover:bg-muted cursor-pointer" onClick={() => setMobileOpen(true)} aria-label="Abrir menu">
+        {/* Topbar — vidro claro, mínima */}
+        <header className="sticky top-0 z-20 glass border-b border-primary/8">
+          <div className="flex items-center gap-3 px-4 sm:px-6 h-[58px]">
+            <button className="lg:hidden press p-2 -ml-2 rounded-xl text-secondary hover:bg-primary/5 cursor-pointer" onClick={() => setMobileOpen(true)} aria-label="Abrir menu">
               <Menu size={20} />
             </button>
             <div className="lg:hidden"><Logo compact /></div>
-            <div className="hidden lg:block text-[13px] text-subtle">
-              Sistema de Gestão e Padronização de Relatórios de Campo
+            <div className="hidden lg:flex items-center gap-2 text-[12.5px] text-subtle">
+              <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse-dot" aria-hidden />
+              Ambiente de demonstração
             </div>
             <div className="flex-1" />
-            <Badge tone="amber" className="hidden sm:inline-flex">Demonstração com referências reais</Badge>
             <div className="relative">
               <button
                 onClick={() => setNotifOpen((v) => !v)}
-                className="relative p-2.5 rounded-lg text-secondary hover:bg-muted cursor-pointer"
+                className="press relative p-2.5 rounded-xl text-secondary hover:bg-primary/5 cursor-pointer"
                 aria-label={`Notificações${unread ? ` (${unread} não lidas)` : ''}`}
               >
-                <Bell size={19} />
+                <Bell size={18} />
                 {unread > 0 && (
-                  <span className="absolute top-1 right-1 min-w-[17px] h-[17px] px-1 rounded-full bg-destructive text-white text-[10px] font-bold flex items-center justify-center">
+                  <span className="absolute top-1 right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-destructive text-white text-[10px] font-bold flex items-center justify-center">
                     {unread}
                   </span>
                 )}
@@ -147,16 +161,16 @@ export default function AppShell() {
               {notifOpen && (
                 <>
                   <div className="fixed inset-0 z-30" onClick={() => setNotifOpen(false)} aria-hidden />
-                  <div className="absolute right-0 mt-2 w-[min(380px,calc(100vw-2rem))] card shadow-pop z-40 overflow-hidden">
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-                      <span className="text-[13.5px] font-bold text-primary">Notificações</span>
+                  <div className="absolute right-0 mt-2 w-[min(380px,calc(100vw-2rem))] glass-strong rounded-2xl z-40 overflow-hidden animate-scale-in">
+                    <div className="flex items-center justify-between px-4 py-3 border-b border-primary/8">
+                      <span className="text-[13px] font-bold text-primary">Notificações</span>
                       <button onClick={markAllRead} className="text-[12px] link">Marcar todas como lidas</button>
                     </div>
                     <div className="max-h-[380px] overflow-y-auto">
                       {myNotifs.slice(0, 12).map((n) => (
                         <button
                           key={n.id}
-                          className={cn('w-full text-left px-4 py-3 border-b border-border/60 hover:bg-muted/50 cursor-pointer', !n.lida && 'bg-accent-soft/30')}
+                          className={cn('w-full text-left px-4 py-3 border-b border-primary/5 hover:bg-primary/[0.03] cursor-pointer transition-colors', !n.lida && 'bg-accent-soft/30')}
                           onClick={() => {
                             markRead(n.id);
                             setNotifOpen(false);
@@ -167,7 +181,7 @@ export default function AppShell() {
                             {!n.lida && <span className="w-2 h-2 rounded-full bg-accent mt-1.5 shrink-0 animate-pulse-dot" aria-hidden />}
                             <div className={cn('min-w-0', n.lida && 'pl-[18px]')}>
                               <div className="text-[13px] font-semibold text-foreground">{n.titulo}</div>
-                              <div className="text-[12.5px] text-subtle line-clamp-2 mt-0.5">{n.mensagem}</div>
+                              <div className="text-[12px] text-subtle line-clamp-2 mt-0.5">{n.mensagem}</div>
                               <div className="text-[11px] text-subtle/80 mt-1">{timeAgo(n.criadaEm)}</div>
                             </div>
                           </div>
@@ -179,28 +193,28 @@ export default function AppShell() {
                 </>
               )}
             </div>
-            <Link to="/conformidade" className="hidden sm:flex items-center gap-1.5 text-[12.5px] font-semibold text-subtle hover:text-accent cursor-pointer">
+            <Link to="/conformidade" className="hidden sm:flex press items-center gap-1.5 rounded-xl px-3 py-2 text-[12px] font-semibold text-subtle hover:text-accent hover:bg-primary/5 cursor-pointer">
               <ShieldCheck size={15} /> LGPD
             </Link>
           </div>
         </header>
 
-        <main className="flex-1 px-4 sm:px-6 py-6 max-w-[1280px] w-full mx-auto pb-24 lg:pb-8">
+        <main key={location.pathname} className="page-enter flex-1 px-4 sm:px-6 py-6 max-w-[1200px] w-full mx-auto pb-24 lg:pb-10">
           <Outlet />
         </main>
       </div>
 
-      {/* Navegação inferior mobile */}
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-surface border-t border-border flex" aria-label="Navegação rápida">
+      {/* Navegação inferior mobile — vidro */}
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-30 glass border-t border-primary/8 flex" aria-label="Navegação rápida">
         {items.slice(0, 4).map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
             end={item.to === '/'}
-            className={({ isActive }) => cn('flex-1 flex flex-col items-center gap-1 py-2.5 text-[10px] font-semibold', isActive ? 'text-accent' : 'text-subtle')}
+            className={({ isActive }) => cn('flex-1 flex flex-col items-center gap-1 py-2.5 text-[10px] font-semibold transition-colors', isActive ? 'text-accent' : 'text-subtle')}
           >
             <item.icon size={19} aria-hidden />
-            {item.label.split(' ')[0]}
+            {item.short}
           </NavLink>
         ))}
         <button onClick={() => setMobileOpen(true)} className="flex-1 flex flex-col items-center gap-1 py-2.5 text-[10px] font-semibold text-subtle cursor-pointer">
@@ -212,14 +226,15 @@ export default function AppShell() {
   );
 }
 
-export function PageHeader({ title, subtitle, actions }: { title: string; subtitle?: string; actions?: React.ReactNode }) {
+export function PageHeader({ title, subtitle, actions, eyebrow }: { title: string; subtitle?: string; actions?: React.ReactNode; eyebrow?: string }) {
   return (
-    <div className="flex flex-wrap items-start justify-between gap-3 mb-6">
-      <div>
-        <h1 className="text-[22px] font-extrabold tracking-tight text-primary">{title}</h1>
-        {subtitle && <p className="text-[13.5px] text-subtle mt-0.5 max-w-2xl">{subtitle}</p>}
+    <div className="flex flex-wrap items-end justify-between gap-3 mb-6">
+      <div className="min-w-0">
+        {eyebrow && <div className="eyebrow mb-1">{eyebrow}</div>}
+        <h1 className="text-[24px] font-extrabold tracking-tight text-primary text-balance">{title}</h1>
+        {subtitle && <p className="text-[13px] text-subtle mt-1 max-w-2xl">{subtitle}</p>}
       </div>
-      {actions && <div className="flex items-center gap-2">{actions}</div>}
+      {actions && <div className="flex items-center gap-2 shrink-0">{actions}</div>}
     </div>
   );
 }

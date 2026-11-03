@@ -69,8 +69,9 @@ export default function Documents() {
   return (
     <div>
       <PageHeader
+        eyebrow="Arquivo"
         title="Arquivo de Documentos"
-        subtitle="Documentos gerados, envios registrados (simulação) e fotografias — organizados por relatório, cliente e período."
+        subtitle="PDFs gerados, envios simulados e fotos por relatório."
       />
 
       <Tabs

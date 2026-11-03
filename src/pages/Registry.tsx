@@ -39,8 +39,9 @@ export default function Registry() {
   return (
     <div>
       <PageHeader
+        eyebrow="Cadastros"
         title="Colaboradores & Clientes"
-        subtitle="Cadastros base do fluxo. Princípio da necessidade (LGPD art. 6º, III): coletamos apenas o essencial para a operação."
+        subtitle="Apenas o essencial para a operação (minimização de dados)."
       />
 
       <Tabs

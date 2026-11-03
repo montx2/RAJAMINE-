@@ -69,8 +69,9 @@ export default function Compliance() {
   return (
     <div className="space-y-5">
       <PageHeader
+        eyebrow="Governança"
         title="Segurança & Conformidade (LGPD)"
-        subtitle="O que este protótipo implementa, o que depende da versão de produção e o que exige validação jurídica da empresa."
+        subtitle="Implementado, pendências de produção e pontos que exigem validação jurídica."
       />
 
       <Banner tone="warn" icon={<AlertTriangle size={17} />}>

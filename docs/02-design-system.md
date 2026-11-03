@@ -81,3 +81,48 @@ Após receber os documentos reais da empresa, a paleta inicial (navy/azul) foi s
 | `--color-background` | `#FAFAF9` | Fundo geral |
 
 O wordmark `RajaMine` (Raja em preto/branco, Mine em amarelo) foi aproximado tipograficamente para o protótipo; não é o vetor oficial. Os PDFs usam título preto + faixa amarela + wordmark no canto, como nos documentos reais. A base de acessibilidade do UI UX Pro Max (foco visível, reduced-motion, labels, contraste) foi mantida.
+
+## 7. Reformulação v3 — “Liquid Glass Clean” (pedido do usuário)
+
+O usuário pediu: menos informação, mais clean, animações e superfícies transparentes tipo vidro. A reformulação aplicou pesquisa de design + UI UX Pro Max (estilo *Glassmorphism* condicional + *Minimalism & Swiss*).
+
+### Regras pesquisadas e aplicadas
+
+| Regra | Fonte | Aplicação no FieldOps |
+|---|---|---|
+| Vidro nunca pode depender só do blur para contraste; usar lastro semi-opaco e testar pior fundo | Axess Lab — *Glassmorphism Meets Accessibility*; Clay — *Why Everything Is Going Glassmorphism* | `.glass` usa `rgba(255,255,255,0.72)` + `@supports` fallback sólido `0.94`; texto `#18181B`/`#52525B` mantém AA |
+| Blur moderado (8–16px), vidro só onde comunica hierarquia (nav, overlays, cards), CTAs sólidos | Inverness Design Studio; Glassmorphism 2.0 | Sidebar/topbar/modais/toasts em vidro; botões primary/accent sólidos; blur 16px cards, 20px modal, 6px overlay |
+| WCAG 2.2 AA: texto 4.5:1, componentes 3:1, foco visível, reduced-motion | Axess Lab; UUPM checklist | `--color-subtle` escurecido para `#52525B`; foco 3px âmbar; `prefers-reduced-motion` zera animações |
+| Motion: 100–150ms micro, 200–300ms transições, ease-out entradas / ease-in saídas, só transform/opacity | Superfiles — *12 Motion Design Rules*; Appy Pie — *Mobile App Animation Guide* | Tokens `--dur-fast/base/slow/page` = 120/200/280/360ms; `--ease-out/in/in-out/spring`; `.press`, `.lift`, `.stagger`, `page-enter` |
+| Progressive disclosure: essencial primeiro, detalhes sob demanda, no máximo 2 níveis | NN/g — *Progressive Disclosure*; UX Pickle | Dashboard: 4 KPIs + fila + atalhos; gráficos em `Disclosure` fechado. Relatórios: busca + chips de status; filtros avançados sob botão |
+| Densidade e hierarquia: reduzir colunas, agrupar navegação, eyebrow + título curto | UUPM Minimalism & Swiss; SaaS UX best practices | Sidebar agrupada (Principal/Campo/Gestão); tabela de relatórios com 5 colunas; subtítulos curtos |
+
+### Tokens principais (src/styles.css)
+
+```css
+--glass-bg: rgb(255 255 255 / 0.72);
+--glass-bg-strong: rgb(255 255 255 / 0.86);
+--glass-dark-bg: rgb(24 24 27 / 0.82);
+--blur-glass: 16px; --blur-overlay: 6px;
+--dur-fast: 120ms; --dur-base: 200ms; --dur-slow: 280ms; --dur-page: 360ms;
+--ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+--ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+```
+
+### O que ficou mais clean
+
+- **Dashboard**: 4 KPIs clicáveis (antes 5), fila de prazos (4 itens), atalhos, referências em card compacto, produtividade em 3 barras, atividade recente (5 itens). Gráficos de período/status só aparecem ao abrir “Análises detalhadas”.
+- **Relatórios**: busca sempre visível + chips de status; cliente/colaborador/caminhão/datas escondidos em “Filtros”. Tabela reduzida para Relatório (código + cliente + data), Responsável, Status, Prazo, Ação. Caminhão/trajeto continuam no detalhe e na busca.
+- **Navegação**: sidebar de vidro escuro agrupada por Principal/Campo/Gestão; topbar mínima com status “demonstração”, notificações e LGPD; rodapé mobile em vidro.
+- **Login**: painel institucional com 3 diferenciais (antes 4), cards de perfil em vidro com stagger de entrada.
+- **Componentes**: botões com micro-press (scale 0.97), cards com hover-lift, tabs em pill de vidro, modal com overlay blur + scale-in, toasts slide-in, banners translúcidos, skeleton shimmer.
+
+### Acessibilidade e performance
+
+- `@supports (backdrop-filter)` com fallback sólido para navegadores sem suporte.
+- Apenas `transform`/`opacity` animados; nada de loop decorativo no fundo (gradiente ambiente estático).
+- `prefers-reduced-motion` respeitado globalmente.
+- Gráficos pesados (Recharts) só montam quando o usuário abre a seção de análises.
+- Contraste testado conceitualmente contra o pior fundo (gradiente âmbar/grafite claro): texto principal `#18181B` sobre vidro `0.72` permanece > 7:1; subtítulo `#52525B` > 4.5:1.
+
+> A saída bruta do UI UX Pro Max para esta revisão está em `design-system-output.md` (seção “Revisão v3 — glass clean”).

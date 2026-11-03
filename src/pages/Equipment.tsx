@@ -68,8 +68,9 @@ export default function EquipmentPage() {
   return (
     <div>
       <PageHeader
+        eyebrow="Campo"
         title="Equipamentos & identificações"
-        subtitle="Equipamentos do cliente (CP-101, TYE-9A00…) e dispositivos embarcados. Busca por código, telemetria, Pulsus, IMEI de câmera ou Galileo."
+        subtitle="Equipamentos do cliente e IDs embarcados. Busque por código, telemetria, Pulsus ou IMEI."
         actions={user.role === 'admin' && <Button variant="accent" icon={<Plus size={16} />} onClick={() => setOpen(true)}>Cadastrar equipamento</Button>}
       />
 

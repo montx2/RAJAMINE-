@@ -67,8 +67,9 @@ export default function Weekly() {
   return (
     <div>
       <PageHeader
+        eyebrow="Campo"
         title="Consolidado semanal de viagens"
-        subtitle="Agrupa relatórios aprovados por cliente e período, no formato do Relatório Semanal — Viagens real da Rajamine."
+        subtitle="Relatórios aprovados agrupados por cliente e período, no formato real da Rajamine."
       />
 
       {reference && (

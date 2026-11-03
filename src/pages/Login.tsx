@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { ShieldCheck, ScanLine, Sparkles, ClipboardCheck, ArrowRight, ExternalLink } from 'lucide-react';
+import { ShieldCheck, ScanLine, ClipboardCheck, ArrowRight, ExternalLink } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { Avatar, Badge } from '../components/ui';
 import { Logo, LogoMark, Wordmark } from '../components/Logo';
@@ -20,48 +20,46 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-[1.1fr_1fr]">
-      {/* Painel institucional */}
-      <div className="hidden lg:flex flex-col justify-between bg-primary p-10 xl:p-14 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.04]" aria-hidden
-          style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '28px 28px' }} />
+    <div className="min-h-screen grid lg:grid-cols-[1.05fr_1fr]">
+      {/* Painel institucional — vidro escuro sobre ambiente */}
+      <div className="hidden lg:flex flex-col justify-between glass-dark p-10 xl:p-14 relative overflow-hidden border-r border-white/10">
+        <div className="absolute -top-24 -left-24 w-[420px] h-[420px] rounded-full bg-brand/15 blur-3xl" aria-hidden />
+        <div className="absolute bottom-0 right-0 w-[360px] h-[360px] rounded-full bg-accent/20 blur-3xl" aria-hidden />
         <Logo />
-        <div className="relative max-w-lg">
-          <Badge tone="amber" className="mb-5 bg-brand/10 text-brand">Protótipo · competição SENAI · referências reais</Badge>
-          <h1 className="text-[34px] xl:text-[40px] font-extrabold tracking-tight text-white leading-[1.15]">
-            Relatórios de campo,<br />do jeito que a operação merece.
+        <div className="relative max-w-md">
+          <Badge tone="amber" className="mb-5 bg-brand/10 text-brand border-brand/20">Protótipo SENAI · referências reais</Badge>
+          <h1 className="text-[34px] xl:text-[40px] font-extrabold tracking-tight text-white leading-[1.12] text-balance">
+            Relatórios de campo,<br />claros do início ao fim.
           </h1>
-          <p className="mt-4 text-[15px] text-slate-400 leading-relaxed">
-            Coleta móvel, padronização inteligente de textos, leitura de equipamentos por foto
-            e revisão humana obrigatória — em um fluxo único, auditável e seguro.
+          <p className="mt-4 text-[14.5px] text-zinc-400 leading-relaxed">
+            Coleta móvel, padronização assistida, OCR local e revisão humana obrigatória — em um fluxo único e auditável.
           </p>
-          <div className="mt-8 space-y-4">
+          <div className="mt-8 grid gap-3">
             {[
-              { icon: Sparkles, t: 'Padronização assistida', d: '1ª → 3ª pessoa com comparação visual e original preservado' },
-              { icon: ScanLine, t: 'OCR de equipamentos', d: 'Leitura local das etiquetas com confirmação humana' },
-              { icon: ClipboardCheck, t: 'Revisão e aprovação', d: 'Nenhum documento sai sem validação da responsável' },
-              { icon: ShieldCheck, t: 'Segurança e LGPD', d: 'Perfis de acesso, trilha de auditoria e minimização de dados' },
+              { icon: ScanLine, t: 'OCR local de equipamentos', d: 'Etiquetas e IMEI lidos no navegador, com confirmação humana.' },
+              { icon: ClipboardCheck, t: 'Revisão antes do cliente', d: 'Nenhum documento é liberado sem aprovação da responsável.' },
+              { icon: ShieldCheck, t: 'Auditoria e LGPD', d: 'Perfis, trilha de alterações e minimização de dados.' },
             ].map((f) => (
-              <div key={f.t} className="flex items-start gap-3.5">
-                <span className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-brand shrink-0">
-                  <f.icon size={17} aria-hidden />
+              <div key={f.t} className="flex items-start gap-3 rounded-2xl bg-white/5 border border-white/10 px-4 py-3">
+                <span className="w-8 h-8 rounded-xl bg-brand/15 flex items-center justify-center text-brand shrink-0">
+                  <f.icon size={16} aria-hidden />
                 </span>
                 <div>
-                  <div className="text-[14px] font-bold text-white">{f.t}</div>
-                  <div className="text-[12.5px] text-slate-400">{f.d}</div>
+                  <div className="text-[13.5px] font-bold text-white">{f.t}</div>
+                  <div className="text-[12px] text-zinc-400">{f.d}</div>
                 </div>
               </div>
             ))}
           </div>
         </div>
-        <p className="relative text-[11.5px] text-slate-500">
-          Rajamine Inteligência em Mineração LTDA · Referências da empresa + exemplos sintéticos · Nenhuma mensagem real é disparada
+        <p className="relative text-[11px] text-zinc-500">
+          Rajamine Inteligência em Mineração LTDA · Base mista (referências + exemplos sintéticos) · Envios simulados
         </p>
       </div>
 
       {/* Seleção de perfil */}
       <div className="flex items-center justify-center p-6 sm:p-10">
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-md animate-fade-up">
           <div className="lg:hidden mb-8 flex items-center gap-3">
             <LogoMark size={38} />
             <div>
@@ -69,50 +67,49 @@ export default function Login() {
               <div className="text-[10px] font-semibold tracking-[0.18em] text-accent">FIELDOPS</div>
             </div>
           </div>
-          <h2 className="text-[22px] font-extrabold tracking-tight text-primary">Acessar demonstração</h2>
-          <p className="mt-1.5 text-[13.5px] text-subtle">
-            Escolha um perfil para explorar o sistema. <strong>Acesso demonstrativo</strong> — a autenticação real
-            (SSO/MFA, senhas com hash, sessões seguras) está documentada para a versão de produção.
-          </p>
 
-          <div className="mt-6 space-y-3">
-            {profiles.map((u) => (
+          <div className="card p-6 sm:p-7">
+            <h2 className="text-[22px] font-extrabold tracking-tight text-primary">Acessar demonstração</h2>
+            <p className="mt-1.5 text-[13px] text-subtle">
+              Escolha um perfil para explorar. Acesso demonstrativo — autenticação real está documentada para produção.
+            </p>
+
+            <div className="mt-6 space-y-2.5 stagger">
+              {profiles.map((u, i) => (
+                <button
+                  key={u.id}
+                  onClick={() => enter(u.id, u.role)}
+                  style={{ '--i': i } as React.CSSProperties}
+                  className="press w-full rounded-2xl border border-primary/8 bg-white/55 p-3.5 flex items-center gap-3.5 hover:border-accent/30 hover:bg-white/80 hover:shadow-[0_10px_30px_-16px_rgb(24_24_27/0.25)] transition-[background-color,border-color,box-shadow,transform] duration-150 cursor-pointer text-left group"
+                >
+                  <Avatar nome={u.nome} size="lg" />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[14.5px] font-bold text-primary">{u.nome}</div>
+                    <div className="text-[12px] text-subtle truncate">{u.cargo}</div>
+                    <Badge tone={u.role === 'admin' ? 'violet' : u.role === 'revisora' ? 'blue' : 'teal'} className="mt-1.5">
+                      {ROLE_LABEL[u.role]}
+                    </Badge>
+                  </div>
+                  <ArrowRight size={17} className="text-subtle group-hover:text-accent group-hover:translate-x-0.5 transition-transform" aria-hidden />
+                </button>
+              ))}
+            </div>
+
+            {pendingLink && (
               <button
-                key={u.id}
-                onClick={() => enter(u.id, u.role)}
-                className="w-full card p-4 flex items-center gap-4 hover:border-accent/50 hover:shadow-pop transition-all duration-150 cursor-pointer text-left group"
+                onClick={() => navigate(`/preencher/${pendingLink.token}`)}
+                className="press mt-4 w-full rounded-2xl border border-dashed border-accent/35 bg-accent-soft/40 px-4 py-3 text-left hover:bg-accent-soft/70 transition-colors cursor-pointer"
               >
-                <Avatar nome={u.nome} size="lg" />
-                <div className="flex-1 min-w-0">
-                  <div className="text-[15px] font-bold text-primary">{u.nome}</div>
-                  <div className="text-[12.5px] text-subtle">{u.cargo}</div>
-                  <Badge tone={u.role === 'admin' ? 'violet' : u.role === 'revisora' ? 'blue' : 'teal'} className="mt-1.5">
-                    {ROLE_LABEL[u.role]}
-                  </Badge>
+                <div className="flex items-center gap-2 text-[13px] font-bold text-accent">
+                  <ExternalLink size={14} aria-hidden /> Abrir link individual do colaborador
                 </div>
-                <ArrowRight size={18} className="text-subtle group-hover:text-accent group-hover:translate-x-0.5 transition-transform" aria-hidden />
+                <p className="text-[11.5px] text-subtle mt-0.5">Simula o link enviado por e-mail/WhatsApp — preenche sem login.</p>
               </button>
-            ))}
+            )}
           </div>
 
-          {pendingLink && (
-            <button
-              onClick={() => navigate(`/preencher/${pendingLink.token}`)}
-              className="mt-5 w-full rounded-xl border border-dashed border-accent/40 bg-accent-soft/40 px-4 py-3.5 text-left hover:bg-accent-soft/70 transition-colors cursor-pointer"
-            >
-              <div className="flex items-center gap-2 text-[13.5px] font-bold text-accent">
-                <ExternalLink size={15} aria-hidden />
-                Abrir link individual do colaborador
-              </div>
-              <p className="text-[12px] text-subtle mt-0.5">
-                Simula o link enviado por e-mail/WhatsApp — preenche o {pendingLink.codigo} sem login.
-              </p>
-            </button>
-          )}
-
-          <p className="mt-6 text-[11.5px] text-subtle leading-relaxed">
-            Ao continuar, você usa um ambiente de demonstração com referências reais fornecidas pela empresa e exemplos sintéticos, conforme a LGPD (Lei 13.709/2018).
-            Envios, notificações e lembretes são simulados e registrados na trilha de auditoria.
+          <p className="mt-4 text-[11px] text-subtle leading-relaxed px-1">
+            Ambiente de demonstração com referências reais da empresa e exemplos sintéticos. Envios e notificações são simulados e auditados.
           </p>
         </div>
       </div>

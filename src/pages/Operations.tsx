@@ -39,8 +39,9 @@ export default function Operations() {
   return (
     <div>
       <PageHeader
+        eyebrow="Referência real"
         title="Operações de campo"
-        subtitle="Transcrição estruturada da planilha real “Instalações/Manutenções/Retiradas — Equipamentos” (MFS, 22/09/2026). Os IDs preservam zeros à esquerda."
+        subtitle="Planilha MFS 22/09/2026 transcrita. Zeros à esquerda preservados."
         actions={<Button variant="outline" icon={<Download size={15} />} onClick={exportCsv}>Exportar CSV</Button>}
       />
 
