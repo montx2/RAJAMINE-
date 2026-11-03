@@ -27,8 +27,8 @@ export default function PhotosOcrPanel({ report, actorName, canUpload, canValida
   const [busy, setBusy] = useState<Record<string, OcrProgress | null>>({});
   const [demoPick, setDemoPick] = useState(DEMO_PHOTOS[0].src);
   const [synthOpen, setSynthOpen] = useState(false);
-  const [synthCode, setSynthCode] = useState('EQ-2988');
-  const [synthSerial, setSynthSerial] = useState('33078');
+  const [synthCode, setSynthCode] = useState('CP-101');
+  const [synthSerial, setSynthSerial] = useState('0987');
   const [dragOver, setDragOver] = useState(false);
 
   const handleFiles = async (files: FileList | File[]) => {
@@ -59,7 +59,7 @@ export default function PhotosOcrPanel({ report, actorName, canUpload, canValida
 
   const addSynthetic = async () => {
     const code = synthCode.toUpperCase().trim();
-    if (!/^EQ-\d{3,6}$/.test(code)) { toast('Use o padrão EQ-0000.', 'error'); return; }
+    if (!/^(EQ-\d{3,6}|[A-Z]{2,4}-[A-Z0-9]{2,6})$/i.test(code)) { toast('Use um código real, ex.: CP-101, TYE-9A00 ou EQ-2041.', 'error'); return; }
     const dataUrl = await generateSyntheticPhoto(code, synthSerial || '00000');
     const blob = await (await fetch(dataUrl)).blob();
     const id = uid('ph');
@@ -114,7 +114,7 @@ export default function PhotosOcrPanel({ report, actorName, canUpload, canValida
     <div className="space-y-4">
       <Banner tone="info" icon={<ShieldCheck size={17} />}>
         <strong>OCR real, processado localmente.</strong> As imagens são analisadas no próprio navegador (Tesseract WASM) — nenhuma foto é enviada a servidores.
-        Resultados são <strong>sugestões</strong>: a associação ao caminhão só acontece após confirmação humana.
+        Resultados são <strong>sugestões</strong>: a associação ao equipamento/caminhão só acontece após confirmação humana.
       </Banner>
 
       {canUpload && (
@@ -174,7 +174,7 @@ export default function PhotosOcrPanel({ report, actorName, canUpload, canValida
                     <Loader2 size={22} className="animate-spin" aria-hidden />
                     <span className="text-[12.5px] font-semibold">{b.status === 'recognizing text' ? 'Reconhecendo texto…' : 'Preparando OCR…'}</span>
                     <div className="w-40 h-1.5 rounded-full bg-white/20 overflow-hidden">
-                      <div className="h-full bg-sky-400 rounded-full transition-all" style={{ width: `${Math.round((b.progress ?? 0) * 100)}%` }} />
+                      <div className="h-full bg-brand rounded-full transition-all" style={{ width: `${Math.round((b.progress ?? 0) * 100)}%` }} />
                     </div>
                   </div>
                 )}
@@ -213,7 +213,7 @@ export default function PhotosOcrPanel({ report, actorName, canUpload, canValida
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="label" htmlFor="synth-code">Código na etiqueta</label>
-            <Input id="synth-code" value={synthCode} onChange={(e) => setSynthCode(e.target.value)} placeholder="EQ-2988" />
+            <Input id="synth-code" value={synthCode} onChange={(e) => setSynthCode(e.target.value)} placeholder="CP-101 / EQ-2988" />
           </div>
           <div>
             <label className="label" htmlFor="synth-serial">Nº de série</label>
@@ -221,7 +221,7 @@ export default function PhotosOcrPanel({ report, actorName, canUpload, canValida
           </div>
         </div>
         <div className="mt-3 flex flex-wrap gap-1.5">
-          {equipment.slice(0, 5).map((e) => (
+          {[...equipment].sort((a, b) => (a.origemDados === 'referencia_empresa' ? -1 : 1) - (b.origemDados === 'referencia_empresa' ? -1 : 1)).slice(0, 6).map((e) => (
             <button key={e.id} className="rounded-full border border-border px-2.5 py-1 text-[12px] mono hover:border-accent hover:text-accent cursor-pointer"
               onClick={() => { setSynthCode(e.codigo); setSynthSerial(e.serial); }}>
               {e.codigo}

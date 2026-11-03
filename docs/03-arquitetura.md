@@ -106,3 +106,29 @@ notifications(id, tipo, titulo, mensagem, criada_em, lida, report_id FK, para)
 - **Homologação**: build estático + API com banco de teste anonimizado; ZAP baseline no CI.
 - **Produção**: domínio próprio, TLS, backups, monitoramento; **nunca** dados demo.
 - Credenciais apenas em variáveis de ambiente/cofre — o repositório não contém segredos (`.env` ignorado).
+
+## 7. Extensões de schema pelas referências reais
+
+```sql
+-- Identificadores de dispositivos embarcados (em equipment e activities)
+telemetria      VARCHAR(8),   -- preservar zeros à esquerda: '0987'
+pulsus          VARCHAR(8),
+camera_fadiga   VARCHAR(20),  -- IMEI 15 dígitos
+galileo         VARCHAR(20),
+
+activities(id, report_id FK, data, cliente_id FK NULL, colaborador_id FK NULL,
+           equipamento_codigo, tipo, componentes JSONB,
+           telemetria, pulsus, camera_fadiga, galileo,
+           observacao, situacao_telemetria, fotos, descricao)
+
+operation_rows(id, data, empresa, tecnico, equipamento, atividade, observacao,
+               telemetria, pulsus, camera_fadiga, galileo,
+               situacao_telemetria, fotos, origem_dados)
+
+-- reports ganha:
+tipo, setor, cidade_bairro, periodo_inicio, periodo_fim, objetivo,
+avaliacao_tecnica, sensacao_cliente, pontos_positivos, melhorias,
+origem_dados, fonte_referencia
+```
+
+Regras: `telemetria`/`pulsus` são texto (não inteiro) para preservar zeros; IMEI validado com 15 dígitos quando informado; atividades fora do período do relatório geram alerta, não bloqueio automático; consolidado semanal só inclui relatórios com `aprovado_em` preenchido.

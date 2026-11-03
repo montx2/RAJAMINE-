@@ -1,10 +1,21 @@
+/* Wordmark inspirado na identidade real da Rajamine (preto/grafite + amarelo).
+   Não é o arquivo vetorial oficial; é uma aproximação tipográfica para o protótipo. */
 export function LogoMark({ size = 32 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" fill="none" aria-hidden>
-      <rect width="64" height="64" rx="14" fill="#0F172A" />
-      <path d="M32 12 L50 22.5 V43.5 L32 54 L14 43.5 V22.5 Z" stroke="#38BDF8" strokeWidth="3.2" strokeLinejoin="round" />
-      <path d="M22 38 L30 26 L35 33 L38 29 L44 38 Z" fill="#F8FAFC" />
+      <rect width="64" height="64" rx="14" fill="#18181B" />
+      <path d="M14 44 L24 20 L34 34 L40 26 L50 44 Z" fill="#FFC400" />
+      <path d="M12 48 H52" stroke="#FFC400" strokeWidth="3" strokeLinecap="round" />
     </svg>
+  );
+}
+
+export function Wordmark({ className = '', light = true }: { className?: string; light?: boolean }) {
+  return (
+    <span className={`font-extrabold italic tracking-tight leading-none ${className}`} aria-label="Rajamine">
+      <span className={light ? 'text-white' : 'text-primary'}>Raja</span>
+      <span className="text-brand">Mine</span>
+    </span>
   );
 }
 
@@ -14,8 +25,8 @@ export function Logo({ compact }: { compact?: boolean }) {
       <LogoMark size={34} />
       {!compact && (
         <div className="leading-none">
-          <div className="text-[15px] font-extrabold tracking-tight text-white">RAJAMINE</div>
-          <div className="text-[10px] font-semibold tracking-[0.18em] text-sky-300/90 mt-1">FIELDOPS</div>
+          <Wordmark className="text-[19px]" />
+          <div className="text-[9.5px] font-semibold tracking-[0.22em] text-zinc-400 mt-1">FIELDOPS</div>
         </div>
       )}
     </div>

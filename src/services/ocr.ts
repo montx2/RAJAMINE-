@@ -116,6 +116,17 @@ export function extractCandidates(text: string, baseConfidence: number): OcrCand
       push(m[0], `EQ-${value}`, baseConfidence - 15 - (altered ? 8 : 0), 'codigo');
     }
   }
+  // Códigos reais de equipamentos de cliente: CP-101, TYE-9A00, RUU-1G56, ESC-49…
+  for (const m of text.matchAll(/\b([A-Z]{2,4})[\s\-–]([A-Z0-9]{2,6})\b/gi)) {
+    const prefix = m[1].toUpperCase();
+    if (['SN', 'ID', 'NO', 'IMEI', 'EQ'].includes(prefix)) continue;
+    const suffix = m[2].toUpperCase();
+    push(m[0], `${prefix}-${suffix}`, baseConfidence - 2, 'codigo');
+  }
+  // IMEI / IDs longos de câmera e Galileo (15 dígitos)
+  for (const m of text.matchAll(/\b(\d{15})\b/g)) {
+    push(m[0], m[1], baseConfidence - 4, 'imei');
+  }
   // Seriais "SN 12345" / "S/N 12345"
   for (const m of text.matchAll(/\bS\/?N[\s:.\-]?([0-9OoQIl|SBZG]{3,8})\b/gi)) {
     const { value, altered } = normalizeDigits(m[1]);
@@ -285,9 +296,13 @@ export function matchCandidates(candidatos: OcrCandidate[], equipamentos: Equipm
     const eq = equipamentos.find((e) => {
       if (e.codigo.toUpperCase() === norm) return true;
       if (candidate.tipo === 'serial' && e.serial === candidate.normalizado) return true;
-      if (candidate.tipo === 'numero') {
+      if (candidate.tipo === 'imei') {
+        return e.cameraFadiga === candidate.normalizado || e.galileo === candidate.normalizado || e.serial === candidate.normalizado;
+      }
+      if (candidate.tipo === 'numero' || candidate.tipo === 'telemetria' || candidate.tipo === 'pulsus') {
         const suffix = e.codigo.split('-')[1];
-        return suffix === candidate.normalizado || e.serial === candidate.normalizado;
+        return suffix === candidate.normalizado || e.serial === candidate.normalizado
+          || e.telemetria === candidate.normalizado || e.pulsus === candidate.normalizado;
       }
       return false;
     }) ?? null;

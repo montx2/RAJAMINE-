@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { NavLink, Outlet, useNavigate, Link } from 'react-router-dom';
 import {
   LayoutDashboard, FileText, ClipboardCheck, Cpu, Truck, Users, Archive,
-  Bell, ShieldCheck, LogOut, Menu, X, ChevronRight, PenLine,
+  Bell, ShieldCheck, LogOut, Menu, X, ChevronRight, PenLine, Table2, CalendarRange,
 } from 'lucide-react';
 import { useStore, useCurrentUser } from '../store/useStore';
 import { ROLE_LABEL } from '../data/types';
@@ -18,8 +18,10 @@ const NAV: NavItem[] = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, roles: ['admin', 'revisora'] },
   { to: '/relatorios', label: 'Relatórios', icon: FileText, roles: ['admin', 'revisora', 'colaborador'] },
   { to: '/revisao', label: 'Central de Revisão', icon: ClipboardCheck, roles: ['admin', 'revisora'] },
-  { to: '/equipamentos', label: 'Equipamentos', icon: Cpu, roles: ['admin', 'revisora'] },
-  { to: '/caminhoes', label: 'Caminhões', icon: Truck, roles: ['admin', 'revisora'] },
+  { to: '/operacoes', label: 'Operações de campo', icon: Table2, roles: ['admin', 'revisora', 'colaborador'] },
+  { to: '/semanal', label: 'Consolidado semanal', icon: CalendarRange, roles: ['admin', 'revisora'] },
+  { to: '/equipamentos', label: 'Equipamentos & IDs', icon: Cpu, roles: ['admin', 'revisora'] },
+  { to: '/caminhoes', label: 'Caminhões / Frota', icon: Truck, roles: ['admin', 'revisora'] },
   { to: '/cadastros', label: 'Colaboradores & Clientes', icon: Users, roles: ['admin'] },
   { to: '/documentos', label: 'Arquivo de Documentos', icon: Archive, roles: ['admin', 'revisora'] },
   { to: '/conformidade', label: 'Segurança & LGPD', icon: ShieldCheck, roles: ['admin', 'revisora', 'colaborador'] },
@@ -65,7 +67,7 @@ export default function AppShell() {
             onClick={() => setMobileOpen(false)}
             className={({ isActive }) => cn(
               'flex items-center gap-3 rounded-lg px-3 py-2.5 text-[13.5px] font-semibold transition-colors duration-150',
-              isActive ? 'bg-white/10 text-white shadow-[inset_2px_0_0_0_#38BDF8]' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5',
+              isActive ? 'bg-white/10 text-white shadow-[inset_2px_0_0_0_#FFC400]' : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/5',
             )}
           >
             <item.icon size={17} aria-hidden />
@@ -90,7 +92,7 @@ export default function AppShell() {
           </button>
         </div>
         <p className="mt-3 text-[10.5px] leading-snug text-slate-500">
-          Protótipo demonstrativo · dados fictícios · envios simulados
+          Protótipo · referências da empresa + exemplos sintéticos · envios simulados
         </p>
       </div>
     </div>
@@ -128,7 +130,7 @@ export default function AppShell() {
               Sistema de Gestão e Padronização de Relatórios de Campo
             </div>
             <div className="flex-1" />
-            <Badge tone="amber" className="hidden sm:inline-flex">Ambiente de demonstração</Badge>
+            <Badge tone="amber" className="hidden sm:inline-flex">Demonstração com referências reais</Badge>
             <div className="relative">
               <button
                 onClick={() => setNotifOpen((v) => !v)}

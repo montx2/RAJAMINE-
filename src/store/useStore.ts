@@ -12,7 +12,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { clear } from 'idb-keyval';
 import type {
   User, Client, Truck, Equipment, Report, Notification, Session, Photo, Detection,
-  TextVersion, EquipmentType, ReportStatus,
+  TextVersion, EquipmentType, ReportStatus, ActivityEntry, ReportKind, DeviceIds,
 } from '../data/types';
 import { seedUsers, seedClients, seedTrucks, seedEquipment, seedReports, seedNotifications } from '../data/seed';
 import { uid } from '../lib/id';
@@ -24,6 +24,32 @@ interface FillFields {
   kmInicio?: number;
   kmFim?: number;
   descricao?: string;
+  tipo?: ReportKind;
+  setor?: string;
+  cidadeBairro?: string;
+  objetivo?: string;
+  periodoInicio?: string;
+  periodoFim?: string;
+  avaliacaoTecnica?: string;
+  sensacaoCliente?: string;
+  pontosPositivos?: string;
+  melhorias?: string;
+  atividades?: ActivityEntry[];
+}
+
+export interface CreateReportArgs {
+  colaboradorId: string;
+  clienteId: string;
+  caminhaoId?: string;
+  dataViagem: string;
+  origem?: string;
+  destino?: string;
+  tipo?: ReportKind;
+  objetivo?: string;
+  setor?: string;
+  cidadeBairro?: string;
+  periodoInicio?: string;
+  periodoFim?: string;
 }
 
 interface State {
@@ -40,7 +66,7 @@ interface State {
   logout: () => void;
   resetDemo: () => Promise<void>;
 
-  createReport: (args: { colaboradorId: string; clienteId: string; caminhaoId: string; dataViagem: string; origem: string; destino: string }, ator: string) => string;
+  createReport: (args: CreateReportArgs, ator: string) => string;
   saveFillDraft: (id: string, fields: FillFields, ator: string) => void;
   submitToReview: (id: string, ator: string) => { ok: boolean; erros: string[] };
   requestCorrection: (id: string, texto: string, ator: string) => void;
@@ -58,7 +84,7 @@ interface State {
 
   addClient: (c: Omit<Client, 'id'>, ator: string) => void;
   addTruck: (t: Omit<Truck, 'id'>, ator: string) => { ok: boolean; erro?: string };
-  addEquipment: (e: { codigo: string; tipo: EquipmentType; serial: string; truckId?: string | null }, ator: string) => { ok: boolean; erro?: string };
+  addEquipment: (e: DeviceIds & { codigo: string; tipo: EquipmentType; serial: string; truckId?: string | null; clienteId?: string | null }, ator: string) => { ok: boolean; erro?: string };
   addCollaborator: (u: { nome: string; email: string; cargo: string }, ator: string) => void;
 
   markNotificationRead: (nid: string) => void;
@@ -116,10 +142,18 @@ export const useStore = create<State>()(
             id, codigo, token: uid('tk') + uid(),
             colaboradorId: args.colaboradorId,
             clienteId: args.clienteId,
-            caminhaoId: args.caminhaoId,
+            caminhaoId: args.caminhaoId ?? '',
             dataViagem: args.dataViagem,
-            origem: args.origem,
-            destino: args.destino,
+            origem: args.origem ?? '',
+            destino: args.destino ?? '',
+            tipo: args.tipo ?? 'visita_tecnica',
+            objetivo: args.objetivo ?? '',
+            setor: args.setor ?? '',
+            cidadeBairro: args.cidadeBairro ?? '',
+            periodoInicio: args.periodoInicio ?? args.dataViagem,
+            periodoFim: args.periodoFim ?? args.dataViagem,
+            atividades: [],
+            origemDados: 'sintetico',
             descricaoOriginal: '',
             descricaoAtual: '',
             versoesTexto: [],
@@ -148,6 +182,17 @@ export const useStore = create<State>()(
               kmInicio: fields.kmInicio ?? r.kmInicio,
               kmFim: fields.kmFim ?? r.kmFim,
               descricaoAtual: fields.descricao ?? r.descricaoAtual,
+              tipo: fields.tipo ?? r.tipo,
+              setor: fields.setor ?? r.setor,
+              cidadeBairro: fields.cidadeBairro ?? r.cidadeBairro,
+              objetivo: fields.objetivo ?? r.objetivo,
+              periodoInicio: fields.periodoInicio ?? r.periodoInicio,
+              periodoFim: fields.periodoFim ?? r.periodoFim,
+              avaliacaoTecnica: fields.avaliacaoTecnica ?? r.avaliacaoTecnica,
+              sensacaoCliente: fields.sensacaoCliente ?? r.sensacaoCliente,
+              pontosPositivos: fields.pontosPositivos ?? r.pontosPositivos,
+              melhorias: fields.melhorias ?? r.melhorias,
+              atividades: fields.atividades ?? r.atividades,
               status: r.status === 'pendente' ? 'rascunho' : r.status,
             };
             return next;
@@ -159,11 +204,13 @@ export const useStore = create<State>()(
           const r = get().reports.find((x) => x.id === id);
           if (!r) return { ok: false, erros: ['Relatório não encontrado.'] };
           const erros: string[] = [];
-          if (!r.dataViagem) erros.push('Informe a data da viagem.');
-          if (!r.origem.trim()) erros.push('Informe a origem.');
-          if (!r.destino.trim()) erros.push('Informe o destino.');
+          if (!r.dataViagem) erros.push('Informe a data da viagem / período.');
+          const isViagem = (r.tipo ?? 'viagem') === 'viagem';
+          if (isViagem && !r.origem.trim()) erros.push('Informe a origem.');
+          if (isViagem && !r.destino.trim()) erros.push('Informe o destino.');
+          if (!isViagem && !r.objetivo?.trim() && !(r.atividades?.length)) erros.push('Informe o objetivo da visita ou registre ao menos uma atividade por equipamento.');
           const texto = r.descricaoAtual.trim();
-          if (texto.length < 20) erros.push('Descreva as atividades realizadas (mínimo de 20 caracteres).');
+          if (texto.length < 20 && !(r.atividades?.length)) erros.push('Descreva as atividades realizadas ou registre atividades estruturadas por equipamento.');
           if (r.kmInicio != null && r.kmFim != null && r.kmFim <= r.kmInicio) erros.push('KM final deve ser maior que o KM inicial.');
           if (erros.length) return { ok: false, erros };
 
@@ -285,19 +332,23 @@ export const useStore = create<State>()(
           if (!eq) {
             // Cadastra o equipamento confirmado (registro explícito, com autor)
             const novo: Equipment = {
-              id: uid('eq'), codigo, tipo: args.tipo ?? 'Telemetria veicular',
+              id: uid('eq'), codigo,
+              tipo: args.tipo ?? (/^[A-Z]{2,4}-[A-Z0-9]{2,6}$/i.test(codigo) ? 'Equipamento de cliente' : 'Telemetria veicular'),
               serial: args.serial ?? det.candidatos.find((c) => c.tipo === 'serial')?.normalizado ?? '—',
-              status: 'instalado', truckId: r.caminhaoId, instaladoEm: new Date().toISOString(),
+              status: 'instalado', truckId: r.caminhaoId || null, clienteId: r.clienteId || null,
+              instaladoEm: new Date().toISOString(), origemDados: 'sintetico',
             };
             set((s) => ({ equipment: [...s.equipment, novo] }));
             eq = novo;
           } else {
             set((s) => ({
-              equipment: s.equipment.map((e) => e.id === eq!.id ? { ...e, truckId: r.caminhaoId, status: 'instalado' as const, instaladoEm: new Date().toISOString() } : e),
+              equipment: s.equipment.map((e) => e.id === eq!.id ? { ...e, truckId: r.caminhaoId || e.truckId, clienteId: r.clienteId || e.clienteId, status: 'instalado' as const, instaladoEm: new Date().toISOString() } : e),
             }));
           }
 
           const truck = get().trucks.find((t) => t.id === r.caminhaoId);
+          const client = get().clients.find((c) => c.id === r.clienteId);
+          const destino = truck ? `caminhão ${truck.frota} (${truck.placa})` : client ? `cliente ${client.nome}` : 'relatório';
           patchReport(id, (rep) => ({
             ...rep,
             deteccoes: rep.deteccoes.map((d) => d.id === detId ? {
@@ -306,7 +357,7 @@ export const useStore = create<State>()(
               codigoConfirmado: codigo, equipmentId: eq!.id, confirmadoPor: ator, confirmadoEm: new Date().toISOString(),
             } : d),
             equipamentosIds: rep.equipamentosIds.includes(eq!.id) ? rep.equipamentosIds : [...rep.equipamentosIds, eq!.id],
-            historico: [...rep.historico, audit(ator, action === 'corrigir' ? 'Identificação corrigida e confirmada' : 'Equipamento confirmado', `${codigo} associado ao caminhão ${truck?.frota ?? ''} (${truck?.placa ?? ''})`)],
+            historico: [...rep.historico, audit(ator, action === 'corrigir' ? 'Identificação corrigida e confirmada' : 'Equipamento confirmado', `${codigo} associado ao ${destino}`)],
           }));
           return { ok: true };
         },
@@ -380,7 +431,13 @@ export const useStore = create<State>()(
             return { ok: false, erro: 'Já existe um equipamento com este código.' };
           }
           set((s) => ({
-            equipment: [...s.equipment, { id: uid('eq'), codigo: e.codigo.toUpperCase(), tipo: e.tipo, serial: e.serial, status: e.truckId ? 'instalado' : 'estoque', truckId: e.truckId ?? null, instaladoEm: e.truckId ? new Date().toISOString() : undefined }],
+            equipment: [...s.equipment, {
+              id: uid('eq'), codigo: e.codigo.toUpperCase(), tipo: e.tipo, serial: e.serial,
+              status: e.truckId ? 'instalado' : 'estoque', truckId: e.truckId ?? null,
+              clienteId: e.clienteId ?? null, instaladoEm: e.truckId ? new Date().toISOString() : undefined,
+              telemetria: e.telemetria, pulsus: e.pulsus, cameraFadiga: e.cameraFadiga, galileo: e.galileo,
+              origemDados: 'sintetico',
+            }],
             notifications: [notif('sistema', 'Equipamento cadastrado', `${e.codigo} adicionado por ${ator}.`, 'admin'), ...s.notifications],
           }));
           return { ok: true };
@@ -402,9 +459,9 @@ export const useStore = create<State>()(
       };
     },
     {
-      name: 'rajamine-fieldops-v1',
+      name: 'rajamine-fieldops-v2',
       storage: createJSONStorage(() => localStorage),
-      version: 1,
+      version: 2,
     },
   ),
 );

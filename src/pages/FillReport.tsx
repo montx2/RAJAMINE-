@@ -2,22 +2,29 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
   MapPin, PenLine, Camera, Send, Check, ChevronLeft, ChevronRight,
-  CheckCircle2, AlertTriangle, Clock, ShieldCheck,
+  CheckCircle2, AlertTriangle, Clock, ShieldCheck, Plus, Trash2,
 } from 'lucide-react';
 import { useStore } from '../store/useStore';
-import { Button, Field, Input, Textarea, Badge, Banner, toast, StatusBadge } from '../components/ui';
-import { LogoMark } from '../components/Logo';
+import { Button, Field, Input, Select, Textarea, Badge, Banner, toast, StatusBadge } from '../components/ui';
+import { LogoMark, Wordmark } from '../components/Logo';
 import PadronizacaoPanel from '../components/PadronizacaoPanel';
 import PhotosOcrPanel from '../components/PhotosOcrPanel';
 import { fmtDate, fmtDateTime, deadlineLabel, todayISO } from '../lib/format';
 import { cn } from '../lib/cn';
+import { uid } from '../lib/id';
+import { validateActivities } from '../lib/operations';
+import { ACTIVITY_KIND_LABEL, REPORT_KIND_LABEL, type ActivityEntry, type ActivityKind, type ReportKind } from '../data/types';
 
 const STEPS = [
-  { id: 0, label: 'Viagem', icon: MapPin },
+  { id: 0, label: 'Visita', icon: MapPin },
   { id: 1, label: 'Atividades', icon: PenLine },
   { id: 2, label: 'Fotos & equipamentos', icon: Camera },
   { id: 3, label: 'Revisar & enviar', icon: Send },
 ];
+
+const emptyActivity = (data: string): ActivityEntry => ({
+  id: uid('act'), data, equipamentoCodigo: '', tipo: 'manutencao', componentes: [], fotos: 'nao_informado',
+});
 
 export default function FillReport() {
   const { token } = useParams();
@@ -40,9 +47,19 @@ export default function FillReport() {
     kmInicio: report?.kmInicio != null ? String(report.kmInicio) : '',
     kmFim: report?.kmFim != null ? String(report.kmFim) : '',
     descricao: report?.descricaoAtual ?? '',
+    tipo: (report?.tipo ?? 'visita_tecnica') as ReportKind,
+    setor: report?.setor ?? 'Manutenção',
+    cidadeBairro: report?.cidadeBairro ?? '',
+    objetivo: report?.objetivo ?? '',
+    periodoInicio: report?.periodoInicio ?? report?.dataViagem ?? todayISO(),
+    periodoFim: report?.periodoFim ?? report?.dataViagem ?? todayISO(),
+    avaliacaoTecnica: report?.avaliacaoTecnica ?? '',
+    sensacaoCliente: report?.sensacaoCliente ?? '',
+    pontosPositivos: report?.pontosPositivos ?? '',
+    melhorias: report?.melhorias ?? '',
   });
+  const [atividades, setAtividades] = useState<ActivityEntry[]>(report?.atividades ?? []);
 
-  // Sincroniza quando o relatório muda no store (ex.: versões de texto aplicadas)
   useEffect(() => {
     if (report) setForm((f) => ({ ...f, descricao: report.descricaoAtual || f.descricao }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -50,30 +67,33 @@ export default function FillReport() {
 
   const fillable = report && ['pendente', 'rascunho', 'correcao'].includes(report.status);
   const dl = report ? deadlineLabel(report.prazoEm) : null;
+  const isViagem = form.tipo === 'viagem';
+  const consistency = useMemo(() => validateActivities(atividades, { inicio: form.periodoInicio, fim: form.periodoFim }), [atividades, form.periodoInicio, form.periodoFim]);
 
   const persist = () => {
     if (!report || !colab) return;
     saveFillDraft(report.id, {
-      dataViagem: form.dataViagem,
-      origem: form.origem,
-      destino: form.destino,
+      dataViagem: form.dataViagem, origem: form.origem, destino: form.destino,
       kmInicio: form.kmInicio ? Number(form.kmInicio) : undefined,
       kmFim: form.kmFim ? Number(form.kmFim) : undefined,
-      descricao: form.descricao,
+      descricao: form.descricao, tipo: form.tipo, setor: form.setor, cidadeBairro: form.cidadeBairro,
+      objetivo: form.objetivo, periodoInicio: form.periodoInicio, periodoFim: form.periodoFim,
+      avaliacaoTecnica: form.avaliacaoTecnica, sensacaoCliente: form.sensacaoCliente,
+      pontosPositivos: form.pontosPositivos, melhorias: form.melhorias, atividades,
     }, colab.nome);
   };
 
   const next = () => {
     if (step === 0) {
       const errs: string[] = [];
-      if (!form.dataViagem) errs.push('Informe a data da viagem.');
-      if (form.origem.trim().length < 3) errs.push('Informe a origem.');
-      if (form.destino.trim().length < 3) errs.push('Informe o destino.');
+      if (!form.dataViagem) errs.push('Informe a data da viagem / visita.');
+      if (isViagem && form.origem.trim().length < 3) errs.push('Informe a origem.');
+      if (isViagem && form.destino.trim().length < 3) errs.push('Informe o destino.');
       if (form.kmInicio && form.kmFim && Number(form.kmFim) <= Number(form.kmInicio)) errs.push('KM final deve ser maior que o inicial.');
       if (errs.length) { setErrors(errs); return; }
     }
-    if (step === 1 && form.descricao.trim().length < 20) {
-      setErrors(['Descreva as atividades com pelo menos 20 caracteres.']);
+    if (step === 1 && form.descricao.trim().length < 20 && atividades.length === 0) {
+      setErrors(['Descreva as atividades com pelo menos 20 caracteres ou registre ao menos uma atividade por equipamento.']);
       return;
     }
     setErrors([]);
@@ -96,6 +116,10 @@ export default function FillReport() {
   const client = clients.find((c) => c.id === report?.clienteId);
   const truck = trucks.find((t) => t.id === report?.caminhaoId);
   const lastCorrection = useMemo(() => report?.notasRevisao.filter((n) => n.tipo === 'correcao').at(-1), [report]);
+
+  const updateActivity = (id: string, patch: Partial<ActivityEntry>) => {
+    setAtividades((list) => list.map((a) => (a.id === id ? { ...a, ...patch } : a)));
+  };
 
   if (!report) {
     return (
@@ -125,10 +149,10 @@ export default function FillReport() {
           </p>
           <div className="mt-4 flex justify-center"><StatusBadge status={report.status} /></div>
           <div className="mt-6 rounded-xl bg-muted/60 p-4 text-left max-w-md mx-auto text-[13px] text-secondary space-y-1.5">
-            <div><strong>Cliente:</strong> {client?.nome}</div>
-            <div><strong>Caminhão:</strong> {truck?.frota} · {truck?.placa}</div>
+            <div><strong>Cliente:</strong> {client?.nome ?? 'Consolidado semanal'}</div>
+            {truck && <div><strong>Caminhão:</strong> {truck.frota} · {truck.placa}</div>}
+            <div><strong>Atividades por equipamento:</strong> {atividades.length}</div>
             <div><strong>Fotos:</strong> {report.fotos.length} anexada(s)</div>
-            <div><strong>Equipamentos confirmados:</strong> {report.equipamentosIds.length}</div>
           </div>
           <Link to="/login" className="link text-[13.5px] mt-6 inline-block">Acessar o sistema (demonstração)</Link>
         </div>
@@ -138,16 +162,16 @@ export default function FillReport() {
 
   return (
     <Shell>
-      {/* Cabeçalho do relatório */}
       <div className="card p-4 sm:p-5 mb-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
               <span className="mono font-extrabold text-[17px] text-primary">{report.codigo}</span>
               <StatusBadge status={report.status} />
+              {report.origemDados === 'referencia_empresa' && <Badge tone="amber">referência da empresa</Badge>}
             </div>
             <p className="text-[12.5px] text-subtle mt-1">
-              {colab?.nome} · {client?.nome} · <span className="mono">{truck?.frota} ({truck?.placa})</span>
+              {colab?.nome} · {client?.nome ?? 'Consolidado'} {truck ? <>· <span className="mono">{truck.frota} ({truck.placa})</span></> : null}
             </p>
           </div>
           {dl && (
@@ -163,7 +187,6 @@ export default function FillReport() {
         )}
       </div>
 
-      {/* Stepper */}
       <ol className="flex items-center gap-1 mb-5" aria-label="Etapas do preenchimento">
         {STEPS.map((s, i) => (
           <li key={s.id} className="flex-1">
@@ -188,103 +211,132 @@ export default function FillReport() {
       {errors.length > 0 && (
         <div className="mb-4 rounded-xl border border-red-200 bg-destructive-soft/60 p-4" role="alert" tabIndex={-1}>
           <h2 className="text-[13.5px] font-bold text-red-900 mb-1.5">Há pendências para resolver:</h2>
-          <ul className="list-disc pl-5 space-y-0.5 text-[13px] text-red-800">
-            {errors.map((e, i) => <li key={i}>{e}</li>)}
-          </ul>
+          <ul className="list-disc pl-5 space-y-0.5 text-[13px] text-red-800">{errors.map((e, i) => <li key={i}>{e}</li>)}</ul>
         </div>
       )}
 
-      {/* Passo 1: Viagem */}
       {step === 0 && (
         <div className="card p-5 space-y-4 animate-fade-up">
-          <h2 className="section-title">Dados da viagem</h2>
+          <h2 className="section-title">Dados da visita / atividade</h2>
           <div className="grid sm:grid-cols-2 gap-4">
-            <Field label="Data da viagem" required htmlFor="fv-data">
+            <Field label="Tipo de relatório" htmlFor="fv-tipo">
+              <Select id="fv-tipo" value={form.tipo} onChange={(e) => setForm((f) => ({ ...f, tipo: e.target.value as ReportKind }))}>
+                {(Object.keys(REPORT_KIND_LABEL) as ReportKind[]).map((k) => <option key={k} value={k}>{REPORT_KIND_LABEL[k]}</option>)}
+              </Select>
+            </Field>
+            <Field label="Data" required htmlFor="fv-data">
               <Input id="fv-data" type="date" max={todayISO()} value={form.dataViagem} onChange={(e) => setForm((f) => ({ ...f, dataViagem: e.target.value }))} />
             </Field>
-            <div />
-            <Field label="Origem" required htmlFor="fv-origem">
-              <Input id="fv-origem" value={form.origem} onChange={(e) => setForm((f) => ({ ...f, origem: e.target.value }))} placeholder="Base / cidade de partida" />
-            </Field>
-            <Field label="Destino" required htmlFor="fv-destino">
-              <Input id="fv-destino" value={form.destino} onChange={(e) => setForm((f) => ({ ...f, destino: e.target.value }))} placeholder="Mina / planta de destino" />
-            </Field>
-            <Field label="KM inicial (hodômetro)" htmlFor="fv-kmi" hint="Opcional, mas recomendado">
-              <Input id="fv-kmi" type="number" inputMode="numeric" value={form.kmInicio} onChange={(e) => setForm((f) => ({ ...f, kmInicio: e.target.value }))} placeholder="ex.: 84310" />
-            </Field>
-            <Field label="KM final (hodômetro)" htmlFor="fv-kmf">
-              <Input id="fv-kmf" type="number" inputMode="numeric" value={form.kmFim} onChange={(e) => setForm((f) => ({ ...f, kmFim: e.target.value }))} placeholder="ex.: 84682" />
-            </Field>
+            <Field label="Setor" htmlFor="fv-setor"><Input id="fv-setor" value={form.setor} onChange={(e) => setForm((f) => ({ ...f, setor: e.target.value }))} /></Field>
+            <Field label="Cidade / Bairros" htmlFor="fv-cidade"><Input id="fv-cidade" value={form.cidadeBairro} onChange={(e) => setForm((f) => ({ ...f, cidadeBairro: e.target.value }))} placeholder="Mariana - MG" /></Field>
+            <Field label="Período — início" htmlFor="fv-pi"><Input id="fv-pi" type="date" value={form.periodoInicio} onChange={(e) => setForm((f) => ({ ...f, periodoInicio: e.target.value }))} /></Field>
+            <Field label="Período — fim" htmlFor="fv-pf"><Input id="fv-pf" type="date" value={form.periodoFim} onChange={(e) => setForm((f) => ({ ...f, periodoFim: e.target.value }))} /></Field>
+            {isViagem && (
+              <>
+                <Field label="Origem" required htmlFor="fv-origem"><Input id="fv-origem" value={form.origem} onChange={(e) => setForm((f) => ({ ...f, origem: e.target.value }))} /></Field>
+                <Field label="Destino" required htmlFor="fv-destino"><Input id="fv-destino" value={form.destino} onChange={(e) => setForm((f) => ({ ...f, destino: e.target.value }))} /></Field>
+                <Field label="KM inicial" htmlFor="fv-kmi"><Input id="fv-kmi" type="number" inputMode="numeric" value={form.kmInicio} onChange={(e) => setForm((f) => ({ ...f, kmInicio: e.target.value }))} /></Field>
+                <Field label="KM final" htmlFor="fv-kmf"><Input id="fv-kmf" type="number" inputMode="numeric" value={form.kmFim} onChange={(e) => setForm((f) => ({ ...f, kmFim: e.target.value }))} /></Field>
+              </>
+            )}
           </div>
+          <Field label="Objetivo da visita" htmlFor="fv-objetivo">
+            <Textarea id="fv-objetivo" value={form.objetivo} onChange={(e) => setForm((f) => ({ ...f, objetivo: e.target.value }))} className="min-h-[80px]" placeholder="Instalação de 1 telemetria, 1 tablet e 1 câmera de fadiga…" />
+          </Field>
         </div>
       )}
 
-      {/* Passo 2: Atividades + IA */}
       {step === 1 && (
         <div className="space-y-4 animate-fade-up">
           <div className="card p-5 space-y-3">
-            <h2 className="section-title">O que foi realizado nesta viagem?</h2>
-            <p className="text-[12.5px] text-subtle">Escreva livremente, no seu estilo. O sistema sugere a padronização para 3ª pessoa sem alterar os fatos — e você decide se aceita.</p>
-            <Textarea
-              value={form.descricao}
-              onChange={(e) => setForm((f) => ({ ...f, descricao: e.target.value }))}
-              onBlur={persist}
-              placeholder="Ex.: Cheguei na mina as 8h, instalei o sensor no caminhão C-102, testei o funcionamento…"
-              className="min-h-[150px]"
-              aria-label="Descrição das atividades"
-            />
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="section-title">Atividades por equipamento</h2>
+              <Button size="sm" variant="outline" icon={<Plus size={14} />} onClick={() => setAtividades((l) => [...l, emptyActivity(form.dataViagem)])}>Adicionar</Button>
+            </div>
+            <p className="text-[12.5px] text-subtle">Registre instalação, desmobilização, manutenção ou conferência com os IDs reais: telemetria, Pulsus, câmera (IMEI) e Galileo.</p>
+            {atividades.length === 0 && <p className="text-[13px] text-subtle rounded-lg bg-muted/50 p-3">Nenhuma atividade estruturada ainda. Você pode adicionar linhas ou usar o relato livre abaixo.</p>}
+            <div className="space-y-3">
+              {atividades.map((a) => (
+                <div key={a.id} className="rounded-xl border border-border p-3.5 space-y-3">
+                  <div className="grid sm:grid-cols-[1fr_180px_auto] gap-2.5">
+                    <Field label="Equipamento" htmlFor={`eq-${a.id}`}><Input id={`eq-${a.id}`} value={a.equipamentoCodigo} onChange={(e) => updateActivity(a.id, { equipamentoCodigo: e.target.value.toUpperCase() })} placeholder="CP-101 / TYE-9A00" /></Field>
+                    <Field label="Tipo" htmlFor={`tp-${a.id}`}>
+                      <Select id={`tp-${a.id}`} value={a.tipo} onChange={(e) => updateActivity(a.id, { tipo: e.target.value as ActivityKind })}>
+                        {(Object.keys(ACTIVITY_KIND_LABEL) as ActivityKind[]).map((k) => <option key={k} value={k}>{ACTIVITY_KIND_LABEL[k]}</option>)}
+                      </Select>
+                    </Field>
+                    <div className="flex items-end"><Button size="sm" variant="ghost" icon={<Trash2 size={14} />} onClick={() => setAtividades((l) => l.filter((x) => x.id !== a.id))} aria-label="Remover atividade">Remover</Button></div>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <Field label="Telemetria" htmlFor={`tel-${a.id}`}><Input id={`tel-${a.id}`} value={a.telemetria ?? ''} onChange={(e) => updateActivity(a.id, { telemetria: e.target.value })} placeholder="0987" inputMode="numeric" /></Field>
+                    <Field label="Pulsus" htmlFor={`pul-${a.id}`}><Input id={`pul-${a.id}`} value={a.pulsus ?? ''} onChange={(e) => updateActivity(a.id, { pulsus: e.target.value })} placeholder="2758" inputMode="numeric" /></Field>
+                    <Field label="Câmera (IMEI)" htmlFor={`cam-${a.id}`}><Input id={`cam-${a.id}`} value={a.cameraFadiga ?? ''} onChange={(e) => updateActivity(a.id, { cameraFadiga: e.target.value })} placeholder="864993060408250" inputMode="numeric" /></Field>
+                    <Field label="Galileo" htmlFor={`gal-${a.id}`}><Input id={`gal-${a.id}`} value={a.galileo ?? ''} onChange={(e) => updateActivity(a.id, { galileo: e.target.value })} placeholder="867782071392430" inputMode="numeric" /></Field>
+                  </div>
+                  <Field label="Observação" htmlFor={`obs-${a.id}`}><Input id={`obs-${a.id}`} value={a.observacao ?? ''} onChange={(e) => updateActivity(a.id, { observacao: e.target.value })} placeholder="Telemetria antiga: 0995 / ID Câmera: …" /></Field>
+                </div>
+              ))}
+            </div>
+            {consistency.length > 0 && (
+              <div className="space-y-1.5">
+                {consistency.map((c, i) => (
+                  <p key={i} className={cn('text-[12.5px] flex items-start gap-1.5', c.nivel === 'erro' ? 'text-destructive' : c.nivel === 'atencao' ? 'text-warning' : 'text-subtle')}>
+                    <AlertTriangle size={13} className="shrink-0 mt-0.5" aria-hidden /> {c.mensagem}
+                  </p>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="card p-5 space-y-3">
+            <h2 className="section-title">Relato livre</h2>
+            <p className="text-[12.5px] text-subtle">Escreva no seu estilo. O sistema sugere a padronização para 3ª pessoa sem alterar os fatos — e você decide se aceita.</p>
+            <Textarea value={form.descricao} onChange={(e) => setForm((f) => ({ ...f, descricao: e.target.value }))} onBlur={persist}
+              placeholder="Ex.: Foi realizado instalação do equipamento CP-101, telemetria numero 0987…" className="min-h-[150px]" aria-label="Descrição das atividades" />
             <div className="text-[11.5px] text-subtle text-right">{form.descricao.trim().length} caracteres</div>
           </div>
-          {form.descricao.trim().length >= 20 && (
-            <PadronizacaoPanel report={{ ...report, descricaoAtual: form.descricao }} actorName={colab?.nome ?? 'Colaborador'} canEdit />
+          {(form.descricao.trim().length >= 20 || atividades.length > 0) && (
+            <PadronizacaoPanel report={{ ...report, descricaoAtual: form.descricao, atividades, objetivo: form.objetivo, periodoInicio: form.periodoInicio, periodoFim: form.periodoFim, tipo: form.tipo }} actorName={colab?.nome ?? 'Colaborador'} canEdit />
           )}
         </div>
       )}
 
-      {/* Passo 3: Fotos & OCR */}
       {step === 2 && (
-        <div className="animate-fade-up">
-          <PhotosOcrPanel report={report} actorName={colab?.nome ?? 'Colaborador'} canUpload canValidate />
-        </div>
+        <div className="animate-fade-up"><PhotosOcrPanel report={report} actorName={colab?.nome ?? 'Colaborador'} canUpload canValidate /></div>
       )}
 
-      {/* Passo 4: Revisar & enviar */}
       {step === 3 && (
         <div className="space-y-4 animate-fade-up">
           <div className="card p-5">
             <h2 className="section-title mb-4">Confira antes de enviar</h2>
             <dl className="grid sm:grid-cols-2 gap-x-6 gap-y-3 text-[13.5px]">
-              <div><dt className="text-[11px] font-bold uppercase tracking-wider text-subtle">Viagem</dt><dd>{fmtDate(form.dataViagem + 'T12:00:00')} · {form.origem} → {form.destino}</dd></div>
-              <div><dt className="text-[11px] font-bold uppercase tracking-wider text-subtle">Hodômetro</dt><dd>{form.kmInicio ? `${form.kmInicio} → ${form.kmFim || '—'} km` : 'não informado'}</dd></div>
-              <div><dt className="text-[11px] font-bold uppercase tracking-wider text-subtle">Fotos</dt><dd>{report.fotos.length} anexada(s)</dd></div>
-              <div><dt className="text-[11px] font-bold uppercase tracking-wider text-subtle">Equipamentos confirmados</dt><dd>{report.equipamentosIds.length}</dd></div>
+              <div><dt className="text-[11px] font-bold uppercase tracking-wider text-subtle">Tipo</dt><dd>{REPORT_KIND_LABEL[form.tipo]}</dd></div>
+              <div><dt className="text-[11px] font-bold uppercase tracking-wider text-subtle">Período</dt><dd>{fmtDate(form.periodoInicio + 'T12:00:00')} → {fmtDate(form.periodoFim + 'T12:00:00')}</dd></div>
+              <div><dt className="text-[11px] font-bold uppercase tracking-wider text-subtle">Objetivo</dt><dd>{form.objetivo || '—'}</dd></div>
+              <div><dt className="text-[11px] font-bold uppercase tracking-wider text-subtle">Atividades / Fotos</dt><dd>{atividades.length} atividade(s) · {report.fotos.length} foto(s)</dd></div>
             </dl>
             <div className="mt-4 rounded-lg bg-muted/50 p-4">
               <div className="text-[11px] font-bold uppercase tracking-wider text-subtle mb-1.5">Descrição que será enviada</div>
-              <p className="text-[13.5px] text-secondary whitespace-pre-wrap">{report.descricaoAtual || form.descricao}</p>
+              <p className="text-[13.5px] text-secondary whitespace-pre-wrap">{report.descricaoAtual || form.descricao || '(sem relato livre)'}</p>
             </div>
-            {report.deteccoes.some((d) => d.status === 'aguardando') && (
-              <Banner tone="warn" className="mt-3" icon={<AlertTriangle size={16} />}>
-                Há leituras de equipamentos aguardando conferência. Você pode confirmá-las no passo anterior ou deixar para a revisão — a aprovação final exigirá a conferência.
-              </Banner>
-            )}
+            <div className="grid sm:grid-cols-2 gap-3 mt-4">
+              <Field label="Avaliação técnica" htmlFor="fv-aval"><Textarea id="fv-aval" value={form.avaliacaoTecnica} onChange={(e) => setForm((f) => ({ ...f, avaliacaoTecnica: e.target.value }))} className="min-h-[80px]" /></Field>
+              <Field label="Sensação do cliente" htmlFor="fv-sens"><Textarea id="fv-sens" value={form.sensacaoCliente} onChange={(e) => setForm((f) => ({ ...f, sensacaoCliente: e.target.value }))} className="min-h-[80px]" /></Field>
+              <Field label="Pontos positivos" htmlFor="fv-pos"><Textarea id="fv-pos" value={form.pontosPositivos} onChange={(e) => setForm((f) => ({ ...f, pontosPositivos: e.target.value }))} className="min-h-[70px]" /></Field>
+              <Field label="Melhorias" htmlFor="fv-mel"><Textarea id="fv-mel" value={form.melhorias} onChange={(e) => setForm((f) => ({ ...f, melhorias: e.target.value }))} className="min-h-[70px]" /></Field>
+            </div>
           </div>
           <Banner tone="info" icon={<ShieldCheck size={16} />}>
             Ao enviar, o texto original fica preservado e o relatório segue para a revisão humana. Nada é enviado ao cliente sem aprovação da responsável.
           </Banner>
-          <Button variant="success" size="lg" icon={<Send size={17} />} onClick={submit} className="w-full">
-            Enviar para revisão
-          </Button>
+          <Button variant="success" size="lg" icon={<Send size={17} />} onClick={submit} className="w-full">Enviar para revisão</Button>
         </div>
       )}
 
-      {/* Navegação */}
       {step < 3 && (
         <div className="flex justify-between mt-5">
           <Button variant="outline" icon={<ChevronLeft size={16} />} onClick={back} disabled={step === 0}>Voltar</Button>
-          <Button variant="accent" onClick={next}>
-            Continuar <ChevronRight size={16} aria-hidden />
-          </Button>
+          <Button variant="accent" onClick={next}>Continuar <ChevronRight size={16} aria-hidden /></Button>
         </div>
       )}
     </Shell>
@@ -299,16 +351,16 @@ function Shell({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-3">
             <LogoMark size={32} />
             <div className="leading-none">
-              <div className="text-[13.5px] font-extrabold text-white tracking-tight">RAJAMINE FIELDOPS</div>
-              <div className="text-[10.5px] text-sky-300/90 mt-0.5">Preenchimento de relatório de viagem</div>
+              <Wordmark className="text-[16px]" />
+              <div className="text-[10.5px] text-zinc-400 mt-0.5">Preenchimento de relatório de campo</div>
             </div>
           </div>
-          <Badge tone="amber" className="bg-amber-400/10 text-amber-300">link individual · demo</Badge>
+          <Badge tone="amber" className="bg-brand/10 text-brand">link individual · demo</Badge>
         </div>
       </header>
       <main className="max-w-2xl mx-auto px-4 py-6">{children}</main>
       <footer className="max-w-2xl mx-auto px-4 pb-8 text-center text-[11px] text-subtle">
-        Protótipo demonstrativo · dados fictícios · processamento local (OCR e padronização)
+        Protótipo · referências da empresa + exemplos sintéticos · processamento local (OCR e padronização)
       </footer>
     </div>
   );

@@ -37,7 +37,7 @@ describe('Regras de negócio do fluxo de relatórios', () => {
     const s = baseState();
     const id = s.createReport({
       colaboradorId: 'u_carlos', clienteId: 'c_serra', caminhaoId: 't101',
-      dataViagem: '2026-01-10', origem: '', destino: '',
+      dataViagem: '2026-01-10', origem: '', destino: '', tipo: 'viagem',
     }, 'Helena Duarte');
     const res = useStore.getState().submitToReview(id, 'Carlos Menezes');
     expect(res.ok).toBe(false);
@@ -48,7 +48,7 @@ describe('Regras de negócio do fluxo de relatórios', () => {
     const s = baseState();
     const id = s.createReport({
       colaboradorId: 'u_carlos', clienteId: 'c_serra', caminhaoId: 't101',
-      dataViagem: '2026-01-10', origem: 'BH', destino: 'Itabira',
+      dataViagem: '2026-01-10', origem: 'BH', destino: 'Itabira', tipo: 'viagem',
     }, 'Helena Duarte');
     useStore.getState().saveFillDraft(id, { descricao: 'Eu instalei o equipamento EQ-2041 e testei a comunicação com a central.' }, 'Carlos Menezes');
     const res = useStore.getState().submitToReview(id, 'Carlos Menezes');

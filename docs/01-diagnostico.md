@@ -50,3 +50,16 @@ pendente → rascunho → em_revisao → [correcao ⇄ em_revisao] → aprovado 
 - Não tratamos OCR como verdade: toda leitura nasce "aguardando conferência".
 - Não disparos reais: links, lembretes e envios são simulados e rotulados.
 - Não prometemos "conformidade LGPD pronta": o mapa legal separa o que é técnica do que é decisão jurídica da empresa.
+
+## 6. Correções trazidas pelas referências reais (set/2026)
+
+O material enviado pela empresa mudou o centro de gravidade do produto:
+
+- **Equipamento do cliente, não apenas caminhão.** Códigos reais como `CP-101`, `TYE-9A00`, `RUU-1G56`, `ESC-49` e a frota MFS (`RNT-9C00`, `TEK-9A00`…) são a chave operacional. O caminhão virou vínculo opcional.
+- **Dispositivos embarcados têm IDs próprios.** Telemetria (4 dígitos com zeros à esquerda), tablet **Pulsus**, **câmera de fadiga** (IMEI 15 dígitos) e **Galileo/rotograma**. O sistema preserva zeros à esquerda e valida tamanho de IMEI.
+- **Atividades tipificadas.** Instalação, desmobilização, manutenção, conferência e coleta de telemetria — espelhando a planilha real.
+- **Transferência × erro.** Os mesmos IDs em instalação (CP-101) e desmobilização (CP-5015) no mesmo dia são sinalizados como possível transferência legítima, nunca “corrigidos” automaticamente.
+- **Consolidado semanal.** Agrupamento por cliente/período com checagem de datas; o documento real tinha atividades fora do período informado, e o sistema alerta sem alterar o original.
+- **Identidade visual.** Grafite/preto + amarelo Rajamine substituiu o azul genérico, mantendo contraste AA e o design system acessível.
+
+Detalhamento completo em [09-referencias-empresa.md](09-referencias-empresa.md).

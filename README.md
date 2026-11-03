@@ -1,9 +1,11 @@
 # Rajamine FieldOps
 
 **Sistema de Gestão e Padronização de Relatórios de Campo**
-Protótipo de alta fidelidade desenvolvido para o desafio da **Rajamine Inteligência em Mineração LTDA** — competição tecnológica SENAI.
+Protótipo de alta fidelidade para a **Rajamine Inteligência em Mineração LTDA** — competição tecnológica SENAI.
 
-> Do link de preenchimento ao arquivo final: coleta móvel, padronização inteligente de textos, leitura de equipamentos por foto (OCR real no navegador), revisão humana obrigatória e geração de dois PDFs profissionais — com trilha de auditoria completa.
+> Do link de preenchimento ao arquivo final: coleta móvel, padronização de textos, leitura de equipamentos por foto (OCR real no navegador), revisão humana obrigatória e geração de PDFs profissionais — com trilha de auditoria completa.
+>
+> **Atualizado com referências reais da empresa (set/2026):** planilha de instalações/manutenções/retiradas, relatório de visita técnica, atividade externa e consolidado semanal. Identidade visual grafite + amarelo Rajamine.
 
 ---
 
@@ -20,60 +22,61 @@ npm run dev          # http://localhost:5173
 Outros comandos:
 
 ```bash
-npm test             # 50 testes unitários + smoke de renderização (Vitest)
+npm test             # 60 testes unitários + smoke de renderização (Vitest)
 npm run build        # build de produção (TypeScript + Vite)
 npm run test:e2e     # Playwright (requer: npx playwright install chromium)
 node scripts/ocr-smoke.mjs   # verifica o OCR real nas fotos de exemplo (Node)
 ```
 
-> **Nota sobre o OCR:** `setup:ocr` copia o worker e o core WASM do `node_modules` e baixa o modelo `eng.traineddata` do repositório oficial `tesseract-ocr/tessdata_fast` (Apache-2.0). Tudo é servido localmente de `public/ocr/` — **nenhuma imagem sai do dispositivo**. Se o download falhar, o sistema continua funcionando com o modo demonstrativo rotulado.
+> **OCR:** `setup:ocr` copia worker/core do `node_modules` e baixa o modelo `eng.traineddata` do repositório oficial `tesseract-ocr/tessdata_fast` (Apache-2.0). Tudo é servido localmente de `public/ocr/` — **nenhuma imagem sai do dispositivo**. Se o download falhar, o sistema continua com o modo demonstrativo rotulado.
 
-## 🧭 Roteiro de demonstração (10 minutos)
+## 🧭 Roteiro de demonstração (10–12 minutos)
 
-1. **Login** — escolha **Helena Duarte (Administradora)**. Três perfis demonstrativos com permissões diferentes.
-2. **Dashboard** — KPIs, gráficos por período, prazos atrasados/psóximos, produtividade e atividades recentes. Clique em **Lembrar** num prazo crítico (lembrete simulado, registrado na auditoria).
-3. **Novo relatório** — crie um relatório: o sistema gera o **link individual** do colaborador com prazo de 48 h. Copie ou abra o link.
-4. **Preenchimento (visão do colaborador)** — stepper em 4 passos, pensado para celular. Escreva em 1ª pessoa ("Cheguei na mina as 8h e instalei o sensor…") e veja a **IA sugerir a 3ª pessoa** com diff visual. Aceite, edite ou rejeite — o original é preservado.
-5. **Fotos & OCR** — anexe uma foto de exemplo e clique **Executar OCR** (Tesseract WASM real, multi-pass). Ou gere uma **foto sintética de teste** para ver o reconhecimento com alta confiança. Confirme/corrija/rejeite a leitura — só então o equipamento é associado ao caminhão.
-6. **Central de Revisão** — entre como **Marta Fonseca (Revisão)**. Tente aprovar um relatório com OCR pendente: o sistema **bloqueia**. Confira a leitura, aprove e veja o registro com autor/data.
-7. **Documentos** — gere os **2 PDFs reais**: cliente (sem fotos, com bloco de aprovação) e interno (fotos, OCR, texto original, histórico). Visualize no navegador e baixe. Registre o **envio ao cliente (simulado)**.
-8. **Equipamentos / Caminhões** — pesquise `EQ-2041` e veja o histórico de instalações e relatórios vinculados.
-9. **Arquivo** — documentos e fotografias com filtros por cliente, período, tipo e identificação.
-10. **Segurança & LGPD** — o que está implementado, o que depende de produção, mapa de dispositivos legais, exportação de dados (JSON) e restauração da base demo.
+1. **Login** — Helena (Administradora), Marta (Revisão) ou Glauber (colaborador de referência real).
+2. **Dashboard** — KPIs, prazos, produtividade e o painel **Referências reais da Rajamine integradas**.
+3. **Operações de campo** (`/operacoes`) — planilha real MFS 22/09/2026: equipamento, telemetria, Pulsus, câmera (IMEI), atividade, observação e fotos. Exporte CSV e veja alertas de consistência.
+4. **Novo relatório** — caminhão agora é **opcional**; escolha visita técnica / atividade externa / viagem, informe objetivo, setor e cidade. O sistema gera o **link individual** com prazo de 48 h.
+5. **Preenchimento (colaborador)** — stepper em 4 passos. Registre **atividades por equipamento** com IDs reais (telemetria `0987`, Pulsus `2758`, câmera `864993060408250`). Escreva o relato livre e veja a **IA sugerir 3ª pessoa / correções** com diff. Aceite, edite ou rejeite — o original é preservado.
+6. **Fotos & OCR** — anexe foto de exemplo ou gere foto sintética. OCR real multi-pass; confirme/corrija/rejeite. Agora reconhece códigos reais (`CP-101`, `TYE-9A00`) e IMEI de 15 dígitos.
+7. **Central de Revisão** — como Marta, tente aprovar com OCR pendente: **bloqueia**. Confira e aprove.
+8. **Documentos** — gere os **2 PDFs reais** nos formatos da empresa: cliente (Visita Técnica / Atividade Externa, sem fotos) e interno (fotos, OCR, original, sensação do cliente, melhorias, histórico). Envio ao cliente é **simulado**.
+9. **Consolidado semanal** (`/semanal`) — referência real AMDA/FDX e gerador de PDF semanal a partir de relatórios **aprovados**. O sistema sinaliza atividade fora do período sem alterá-la.
+10. **Equipamentos & IDs** — busque `0987`, `2758` ou um IMEI e veja equipamentos/relatórios vinculados.
+11. **Segurança & LGPD** — medidas implementadas, pendências de produção, mapa legal, exportação JSON com proveniência e restauração da base demo.
 
-## ✅ O que é real × o que é simulado (integridade)
+## ✅ Real × simulado (integridade)
 
-| Funcionalidade | Status no protótipo |
+| Funcionalidade | Status |
 |---|---|
-| Navegação, formulários, filtros, cadastros | **Real** (persistência local do navegador) |
-| Padronização 1ª→3ª pessoa + alertas | **Real, motor local de regras** (determinístico, auditável; não é LLM) |
-| OCR de etiquetas | **Real — Tesseract.js 7 (WASM) local**, pipeline multi-pass; fallback simulado **rotulado** |
-| Geração dos 2 PDFs | **Real — pdf-lib**, download e preview funcionais |
-| Aprovação humana obrigatória | **Real** (regra de negócio bloqueante) |
-| Trilha de auditoria / versões | **Real** (quem, quando, o quê; originais preservados) |
-| Autenticação | **Simulada** (seleção de perfil; produção exige OIDC/MFA — ver docs) |
-| Envio de link, lembretes, envio ao cliente | **Simulados e rotulados** (nenhuma mensagem real disparada) |
+| Navegação, formulários, filtros, cadastros, atividades por equipamento | **Real** (persistência local do navegador) |
+| Padronização 1ª→3ª pessoa + concordância + alertas de IDs/período | **Real, motor local de regras** (determinístico; não é LLM) |
+| OCR de etiquetas/códigos/IMEI | **Real — Tesseract.js 7 (WASM) local**, multi-pass; fallback simulado **rotulado** |
+| Geração dos 2 PDFs + consolidado semanal | **Real — pdf-lib**, download e preview funcionais |
+| Aprovação humana obrigatória | **Real** (regra bloqueante, inclusive no semanal) |
+| Trilha de auditoria / versões / proveniência de dados | **Real** |
+| Autenticação | **Simulada** (seleção de perfil; produção exige OIDC/MFA) |
+| Envio de link, lembretes, envio ao cliente | **Simulados e rotulados** |
 | Banco de dados / backend | **Camada demonstrativa** (localStorage + IndexedDB); arquitetura de produção documentada |
-| Dados | **100% fictícios**; fotos de exemplo geradas por IA e identificadas como demonstrativas |
+| Dados | **Base mista**: exemplos sintéticos + referências reais fornecidas pela empresa, marcadas com `origemDados`. Imagens originais não são commitadas. |
 
 ## 🗂 Estrutura
 
 ```
 ├── src/
 │   ├── components/      # UI kit, layout, painel IA, painel OCR, diff, timeline
-│   ├── pages/           # Dashboard, Relatórios, Preencher, Revisão, Equipamentos,
-│   │                    # Caminhões, Cadastros, Documentos, Conformidade, Login
-│   ├── services/        # padronizacao.ts (motor de regras), ocr.ts (Tesseract),
-│   │                    # pdf.ts (pdf-lib)
+│   ├── pages/           # Dashboard, Relatórios, Preencher, Revisão, Operações,
+│   │                    # Semanal, Equipamentos, Caminhões, Cadastros, Documentos,
+│   │                    # Conformidade, Login
+│   ├── services/        # padronizacao.ts, ocr.ts (Tesseract), pdf.ts (pdf-lib + semanal)
 │   ├── store/           # Zustand + persistência; fotos no IndexedDB
-│   ├── data/            # tipos de domínio + seed fictício
-│   └── lib/             # diff LCS, formatação, helpers de documentos
+│   ├── data/            # types, seed sintético, referencias.ts (material real)
+│   └── lib/             # diff, formatação, operations.ts (consistência real), docs
 ├── public/ocr/          # assets locais do Tesseract (gerados por setup:ocr)
-├── public/demo/         # fotos demonstrativas (geradas por IA, fictícias)
-├── tests/               # Vitest: motores, regras de negócio, PDF, smoke de telas
+├── public/demo/         # fotos demonstrativas sintéticas (não são fotos reais da empresa)
+├── tests/               # Vitest: motores, regras, PDF, referências reais, smoke de telas
 ├── e2e/                 # Playwright: fluxos completos (CI/local)
 ├── scripts/             # setup-ocr.mjs, ocr-smoke.mjs
-└── docs/                # documentação técnica completa (índice abaixo)
+└── docs/                # documentação técnica (índice abaixo)
 ```
 
 ## 📚 Documentação técnica
@@ -81,21 +84,20 @@ node scripts/ocr-smoke.mjs   # verifica o OCR real nas fotos de exemplo (Node)
 | Doc | Conteúdo |
 |---|---|
 | [01-diagnostico.md](docs/01-diagnostico.md) | Problema, gargalos, proposta e diferenciais |
-| [02-design-system.md](docs/02-design-system.md) | UI UX Pro Max: processo, saída do gerador e aplicação |
+| [02-design-system.md](docs/02-design-system.md) | UI UX Pro Max + adaptação à identidade real Rajamine |
 | [03-arquitetura.md](docs/03-arquitetura.md) | Stack, comparações, banco de dados, produção |
 | [04-seguranca.md](docs/04-seguranca.md) | OWASP (Top 10, ASVS 5.0, Cheat Sheets, API, ZAP) |
-| [05-ia-ocr.md](docs/05-ia-ocr.md) | Estratégia de IA/OCR, PaddleOCR × Tesseract, PDFs |
+| [05-ia-ocr.md](docs/05-ia-ocr.md) | IA/OCR, PaddleOCR × Tesseract, PDFs, IDs reais |
 | [06-legal.md](docs/06-legal.md) | LGPD, Marco Civil, decretos e resoluções ANPD |
 | [07-custos.md](docs/07-custos.md) | Estimativas mensais em R$ com premissas e fontes |
-| [08-plano.md](docs/08-plano.md) | MVP, plano de desenvolvimento, riscos e limitações |
+| [08-plano.md](docs/08-plano.md) | MVP, plano de desenvolvimento, riscos e demonstração |
+| [09-referencias-empresa.md](docs/09-referencias-empresa.md) | **Material real recebido, correções aplicadas e limites de inferência** |
 | [design-system-output.md](docs/design-system-output.md) | Saída bruta do gerador UI UX Pro Max |
 
 ## 🧰 Stack
 
 Vite 7 · React 19 · TypeScript 5.9 · Tailwind CSS 4 · React Router 7 · Zustand 5 · Recharts 3 · Lucide · **pdf-lib** (MIT) · **Tesseract.js 7** (Apache-2.0) · Zod 4 · idb-keyval · Vitest 5 · Playwright · Fontes self-hosted (Plus Jakarta Sans + JetBrains Mono, OFL).
 
-Nenhuma biblioteca foi adicionada sem necessidade: cada escolha está justificada em [docs/03-arquitetura.md](docs/03-arquitetura.md) e [docs/05-ia-ocr.md](docs/05-ia-ocr.md).
-
 ---
 
-*Protótipo demonstrativo — dados fictícios, envios simulados. A conformidade plena com a LGPD depende das medidas de produção e de validação jurídica da empresa (ver [docs/06-legal.md](docs/06-legal.md)).*
+*Protótipo demonstrativo — base mista (sintética + referências reais marcadas), envios simulados. A conformidade plena com a LGPD depende das medidas de produção e de validação jurídica da empresa (ver [docs/06-legal.md](docs/06-legal.md)).*

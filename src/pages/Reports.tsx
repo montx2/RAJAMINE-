@@ -41,7 +41,8 @@ export default function Reports() {
           const client = clients.find((c) => c.id === r.clienteId)?.nome ?? '';
           const truck = trucks.find((t) => t.id === r.caminhaoId);
           const eqCodes = r.equipamentosIds.map((id) => equipment.find((e) => e.id === id)?.codigo ?? '').join(' ');
-          const hay = `${r.codigo} ${colab} ${client} ${truck?.placa} ${truck?.frota} ${r.origem} ${r.destino} ${eqCodes}`.toLowerCase();
+          const actCodes = (r.atividades ?? []).map((a) => `${a.equipamentoCodigo} ${a.telemetria ?? ''} ${a.pulsus ?? ''} ${a.cameraFadiga ?? ''} ${a.galileo ?? ''}`).join(' ');
+          const hay = `${r.codigo} ${colab} ${client} ${truck?.placa} ${truck?.frota} ${r.origem} ${r.destino} ${r.objetivo ?? ''} ${r.cidadeBairro ?? ''} ${eqCodes} ${actCodes}`.toLowerCase();
           if (!hay.includes(term)) return false;
         }
         return true;
@@ -134,6 +135,7 @@ export default function Reports() {
                     <td className="td">
                       <Link to={`/relatorios/${r.id}`} className="mono font-bold text-accent hover:underline">{r.codigo}</Link>
                       {r.enviadoCliente && <Badge tone="teal" className="ml-2">enviado</Badge>}
+                      {r.origemDados === 'referencia_empresa' && <Badge tone="amber" className="ml-2">referência</Badge>}
                     </td>
                     <td className="td">
                       <div className="flex items-center gap-2.5">
@@ -142,11 +144,11 @@ export default function Reports() {
                       </div>
                     </td>
                     <td className="td text-secondary">{client?.nome}</td>
-                    <td className="td"><span className="mono">{truck?.frota}</span> <span className="text-subtle text-[12px]">{truck?.placa}</span></td>
+                    <td className="td">{truck ? <><span className="mono">{truck.frota}</span> <span className="text-subtle text-[12px]">{truck.placa}</span></> : <span className="text-subtle">—</span>}</td>
                     <td className="td whitespace-nowrap">{fmtDate(r.dataViagem + 'T12:00:00')}</td>
                     <td className="td">
-                      <div className="max-w-[220px] truncate text-[13px] text-secondary" title={`${r.origem} → ${r.destino}`}>
-                        {r.origem.split('—')[1]?.trim() ?? r.origem} → {r.destino.split('—')[1]?.trim() ?? r.destino}
+                      <div className="max-w-[220px] truncate text-[13px] text-secondary" title={r.origem ? `${r.origem} → ${r.destino}` : r.objetivo ?? r.cidadeBairro ?? ''}>
+                        {r.origem ? `${r.origem.split('—')[1]?.trim() ?? r.origem} → ${r.destino.split('—')[1]?.trim() ?? r.destino}` : r.objetivo || r.cidadeBairro || '—'}
                       </div>
                     </td>
                     <td className="td"><StatusBadge status={r.status} /></td>

@@ -75,3 +75,15 @@ Se o WASM não carregar (dispositivo sem suporte), o botão "Simular leitura" ge
 - **Cliente**: dados da viagem → descrição padronizada → equipamentos validados → bloco "APROVADO PARA ENVIO" com autor/data/código de verificação. **Sem fotos internas.**
 - **Interno**: tudo do cliente + registro fotográfico (legendas, marcação de imagem demo) → leituras OCR com confiança e resultado da conferência → **texto original preservado** → notas de revisão → histórico completo.
 - Rodapé em todas as páginas: código de verificação (hash dos campos aprovados — identificado como mecanismo de protótipo, não assinatura digital ICP-Brasil), paginação, aviso de uso.
+
+## 4. Identificadores reais suportados (pós-referências)
+
+| Tipo | Exemplo real | Tratamento |
+|---|---|---|
+| Equipamento de cliente | `CP-101`, `TYE-9A00`, `RUU-1G56`, `ESC-49` | Regex `[A-Z]{2,4}-[A-Z0-9]{2,6}`; matching por código |
+| Telemetria | `0987`, `0035`, `1438` | Texto com zeros à esquerda; 4 dígitos; alerta se fora do padrão |
+| Tablet Pulsus | `2758`, `2296` | Texto; 4 dígitos; histórico de “tablet antigo” |
+| Câmera de fadiga (IMEI) | `864993060408250` | 15 dígitos; candidato OCR tipo `imei`; alerta se tamanho ≠ 15 |
+| Galileo / rotograma | `867782071392430` | 15 dígitos; extraído de observação “ID Galileo: …” |
+
+A padronização aprendeu concordâncias reais dos documentos (“Foi realizado instalação” → “Foi realizada a instalação”; “camera” → “câmera”; “tablette” → “tablet”) **sem alterar números, códigos ou horários**. Alertas de consistência cobrem transferência de dispositivos entre equipamentos e atividades fora do período semanal.

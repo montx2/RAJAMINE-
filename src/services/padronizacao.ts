@@ -28,6 +28,9 @@ export interface PadronizacaoResult {
   alertas: TextAlert[];
 }
 
+import type { ActivityEntry } from '../data/types';
+import { validateActivities } from '../lib/operations';
+
 export interface ReportContext {
   colaboradorNome?: string;
   origem?: string;
@@ -38,6 +41,10 @@ export interface ReportContext {
   placaCaminhao?: string;
   frotaCaminhao?: string;
   equipamentosConfirmados?: string[];
+  atividades?: ActivityEntry[];
+  periodoInicio?: string;
+  periodoFim?: string;
+  tipo?: string;
 }
 
 /* 1ª pessoa do singular → 3ª pessoa (pretérito perfeito, presente e futuro comuns) */
@@ -57,6 +64,8 @@ const VERBOS_1S: Record<string, string> = {
   assinei: 'assinou', revisei: 'revisou', montei: 'montou', desmontei: 'desmontou',
   apertei: 'apertou', isolei: 'isolou', etiquetei: 'etiquetou', parametrizei: 'parametrizou',
   reiniciei: 'reiniciou', religuei: 'religou', desliguei: 'desligou', liguei: 'ligou',
+  desmobilizei: 'desmobilizou', mobilizei: 'mobilizou', compareci: 'compareceu', devolvi: 'devolveu',
+  removi: 'removeu', reinstalei: 'reinstalou', calibrei2: 'calibrou', sinalizei: 'sinalizou',
   // presente
   instalo: 'instala', verifico: 'verifica', realizo: 'realiza', faço: 'faz', testo: 'testa',
   configuro: 'configura', valido: 'valida', registro: 'registra', confiro: 'confere',
@@ -83,6 +92,12 @@ const GRAMATICA: Array<[RegExp, string, string]> = [
   [/\bserie\b/gi, 'série', 'Acentuação de "série" (contexto de número de série)'],
   [/\bem baixo\b/gi, 'embaixo', 'Grafia de "embaixo"'],
   [/\bconcerto\b(?=[^.]*\b(equipamento|sensor|câmera|camera|rastreador|telemetria)\b)/gi, 'conserto', '"Conserto" (reparo) em vez de "concerto" (musical)'],
+  [/\bcamera\b/gi, 'câmera', 'Acentuação de "câmera"'],
+  [/\bcameras\b/gi, 'câmeras', 'Acentuação de "câmeras"'],
+  [/\btablette\b/gi, 'tablet', 'Grafia de "tablet"'],
+  [/\bFoi realizado instalação\b/gi, 'Foi realizada a instalação', 'Concordância nominal ("instalação" é feminino)'],
+  [/\bFoi realizado a desmobilização\b/gi, 'Foi realizada a desmobilização', 'Concordância nominal ("desmobilização" é feminino)'],
+  [/\bFoi desmobilizado camera\b/gi, 'Foi desmobilizada a câmera', 'Concordância nominal ("câmera" é feminino)'],
 ];
 
 const ESTILO: Array<[RegExp, string, string]> = [
@@ -226,8 +241,9 @@ export function padronizar(texto: string, ctx: ReportContext = {}): Padronizacao
   }
 
   // ── Alertas de completude e inconsistência (nunca inventa dados) ──
-  if (!ctx.origem?.trim()) alertas.push({ nivel: 'erro', mensagem: 'Origem da viagem não informada.' });
-  if (!ctx.destino?.trim()) alertas.push({ nivel: 'erro', mensagem: 'Destino da viagem não informado.' });
+  const exigeTrajeto = !ctx.tipo || ctx.tipo === 'viagem';
+  if (exigeTrajeto && !ctx.origem?.trim()) alertas.push({ nivel: 'erro', mensagem: 'Origem da viagem não informada.' });
+  if (exigeTrajeto && !ctx.destino?.trim()) alertas.push({ nivel: 'erro', mensagem: 'Destino da viagem não informado.' });
   if (!ctx.dataViagem) alertas.push({ nivel: 'erro', mensagem: 'Data da viagem não informada.' });
   else if (ctx.dataViagem > new Date().toISOString().slice(0, 10)) alertas.push({ nivel: 'atencao', mensagem: 'A data da viagem está no futuro — verificar lançamento.' });
   if (ctx.origem && ctx.destino && ctx.origem.trim().toLowerCase() === ctx.destino.trim().toLowerCase()) {
@@ -239,8 +255,19 @@ export function padronizar(texto: string, ctx: ReportContext = {}): Padronizacao
   if (t.length < 90) {
     alertas.push({ nivel: 'atencao', mensagem: 'Descrição muito curta. Detalhar atividades, horários e testes realizados (sem inventar informações).' });
   }
-  if (/\bequipamento|sensor|rastreador|telemetria|câmera\b/i.test(t) && !/EQ-\d{3,6}/i.test(t) && (ctx.equipamentosConfirmados?.length ?? 0) === 0) {
+  const codigoReal = /\b[A-Z]{2,4}-[A-Z0-9]{2,6}\b/i.test(t);
+  if (/\bequipamento|sensor|rastreador|telemetria|câmera\b/i.test(t) && !codigoReal && (ctx.equipamentosConfirmados?.length ?? 0) === 0) {
     alertas.push({ nivel: 'info', mensagem: 'O texto cita equipamento sem código de identificação. Confirmar o número via foto/OCR ou informar manualmente.' });
+  }
+  // Consistência de dispositivos e período (referências reais da Rajamine)
+  if (ctx.atividades?.length) {
+    for (const a of validateActivities(ctx.atividades, { inicio: ctx.periodoInicio, fim: ctx.periodoFim })) {
+      alertas.push(a);
+    }
+  }
+  const imeis = t.match(/\b\d{13,16}\b/g) ?? [];
+  for (const imei of imeis) {
+    if (imei.length !== 15) alertas.push({ nivel: 'atencao', mensagem: `Número longo "${imei}" pode ser IMEI/ID de câmera, mas não tem 15 dígitos. Conferir.` });
   }
   const placaMenos = ctx.placaCaminhao?.replace(/[^A-Z0-9]/gi, '').toUpperCase();
   const placasNoTexto = t.match(/\b[A-Z]{3}[- ]?\d[A-Z0-9]\d{2}\b/gi) ?? [];

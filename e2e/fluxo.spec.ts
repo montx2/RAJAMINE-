@@ -42,7 +42,7 @@ test('aprovação bloqueada com OCR pendente; conferência humana libera', async
 test('link individual permite preenchimento sem login', async ({ page }) => {
   await page.goto('/login');
   await page.getByText('Abrir link individual do colaborador').click();
-  await expect(page.getByText('Dados da viagem')).toBeVisible();
+  await expect(page.getByText('Dados da visita / atividade')).toBeVisible();
   await expect(page.getByText(/link individual/i).first()).toBeVisible();
 });
 
@@ -59,6 +59,17 @@ test('arquivo de documentos lista PDFs gerados', async ({ page }) => {
   await page.goto('/documentos');
   await expect(page.getByText('REL-2026-0139').first()).toBeVisible();
   await expect(page.getByText('Cliente · sem fotos').first()).toBeVisible();
+});
+
+test('operações de campo mostram a planilha real e o consolidado semanal exige aprovação', async ({ page }) => {
+  await page.goto('/login');
+  await page.getByRole('button', { name: /Helena Duarte/ }).click();
+  await page.goto('/operacoes');
+  await expect(page.getByText('TYE-9A00').first()).toBeVisible();
+  await expect(page.getByText('864993060369890').first()).toBeVisible();
+  await page.goto('/semanal');
+  await expect(page.getByText('Consolidado semanal de viagens')).toBeVisible();
+  await expect(page.getByText('RUU-1G56').first()).toBeVisible();
 });
 
 test('perfil colaborador tem escopo restrito (menor privilégio)', async ({ page }) => {

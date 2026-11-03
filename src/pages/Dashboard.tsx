@@ -15,9 +15,11 @@ import { STATUS_LABEL, type ReportStatus } from '../data/types';
 import { deadlineLabel, hoursUntil, timeAgo, fmtShortDate, firstName } from '../lib/format';
 import { cn } from '../lib/cn';
 import { toast } from '../components/ui';
+import { realOperations } from '../data/referencias';
+import { Table2, CalendarRange, BadgeCheck } from 'lucide-react';
 
 const STATUS_COLORS: Record<ReportStatus, string> = {
-  pendente: '#d97706', rascunho: '#64748b', em_revisao: '#0369a1', correcao: '#dc2626', aprovado: '#15803d', arquivado: '#0f766e',
+  pendente: '#d97706', rascunho: '#71717a', em_revisao: '#b45309', correcao: '#dc2626', aprovado: '#15803d', arquivado: '#0f766e',
 };
 
 export default function Dashboard() {
@@ -67,7 +69,7 @@ export default function Dashboard() {
 
   const deadlines = useMemo(() =>
     reports
-      .filter((r) => ['pendente', 'rascunho', 'correcao'].includes(r.status))
+      .filter((r) => ['pendente', 'rascunho', 'correcao'].includes(r.status) && r.origemDados !== 'referencia_empresa')
       .sort((a, b) => a.prazoEm.localeCompare(b.prazoEm)),
   [reports]);
 
@@ -135,6 +137,23 @@ export default function Dashboard() {
         ))}
       </div>
 
+      {/* Referências reais da empresa */}
+      <div className="card p-5 border-brand/40 bg-brand-soft/40">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="section-title flex items-center gap-2"><BadgeCheck size={17} className="text-accent" aria-hidden /> Referências reais da Rajamine integradas</h2>
+            <p className="text-[12.5px] text-subtle mt-1">
+              Planilha de operações ({realOperations.length} linhas), visita técnica Cedro Mariana e consolidado semanal — transcritos como referência, sem presumir aprovações ou envios.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" variant="outline" icon={<Table2 size={14} />} onClick={() => navigate('/operacoes')}>Operações de campo</Button>
+            <Button size="sm" variant="outline" icon={<CalendarRange size={14} />} onClick={() => navigate('/semanal')}>Consolidado semanal</Button>
+            <Button size="sm" variant="accent" onClick={() => navigate('/relatorios/r_201')}>Visita técnica real</Button>
+          </div>
+        </div>
+      </div>
+
       {/* Gráficos */}
       <div className="grid lg:grid-cols-[1.6fr_1fr] gap-4">
         <div className="card p-5">
@@ -150,8 +169,8 @@ export default function Dashboard() {
               <AreaChart data={weekly} margin={{ top: 4, right: 4, left: -22, bottom: 0 }}>
                 <defs>
                   <linearGradient id="gTotal" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#0369A1" stopOpacity={0.18} />
-                    <stop offset="100%" stopColor="#0369A1" stopOpacity={0.01} />
+                    <stop offset="0%" stopColor="#B45309" stopOpacity={0.18} />
+                    <stop offset="100%" stopColor="#B45309" stopOpacity={0.01} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
@@ -162,7 +181,7 @@ export default function Dashboard() {
                   formatter={(v, name) => [v ?? 0, name === 'total' ? 'Criados' : 'Aprovados']}
                   labelFormatter={(l) => `Semana de ${l}`}
                 />
-                <Area type="monotone" dataKey="total" stroke="#0369A1" strokeWidth={2.2} fill="url(#gTotal)" name="total" />
+                <Area type="monotone" dataKey="total" stroke="#B45309" strokeWidth={2.2} fill="url(#gTotal)" name="total" />
                 <Area type="monotone" dataKey="aprovados" stroke="#15803d" strokeWidth={2} fill="transparent" name="aprovados" />
               </AreaChart>
             </ResponsiveContainer>

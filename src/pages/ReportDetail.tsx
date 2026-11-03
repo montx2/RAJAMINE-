@@ -13,6 +13,8 @@ import { useDocBuilder } from '../lib/docs';
 import { fmtDate, fmtDateTime, fmtKm, deadlineLabel } from '../lib/format';
 import type { DocKind } from '../services/pdf';
 import { cn } from '../lib/cn';
+import { ACTIVITY_KIND_LABEL, REPORT_KIND_LABEL } from '../data/types';
+import { validateActivities } from '../lib/operations';
 
 export default function ReportDetail() {
   const { id } = useParams();
@@ -46,8 +48,9 @@ export default function ReportDetail() {
     if (!report) return [];
     const detsPending = report.deteccoes.filter((d) => d.status === 'aguardando').length;
     return [
-      { ok: !!report.origem && !!report.destino && !!report.dataViagem, label: 'Dados da viagem completos' },
-      { ok: report.descricaoAtual.trim().length >= 20, label: 'Descrição das atividades registrada' },
+      { ok: !!report.dataViagem && ((report.tipo ?? 'viagem') !== 'viagem' || (!!report.origem && !!report.destino)), label: 'Dados da visita/viagem completos' },
+      { ok: report.descricaoAtual.trim().length >= 20 || !!(report.atividades?.length), label: 'Atividades registradas (texto ou estrutura por equipamento)' },
+      { ok: validateActivities(report.atividades ?? [], { inicio: report.periodoInicio, fim: report.periodoFim }).filter((a) => a.nivel === 'erro').length === 0, label: 'IDs e período consistentes (quando informados)' },
       { ok: report.kmInicio == null || report.kmFim == null || report.kmFim > report.kmInicio, label: 'Hodômetro consistente (quando informado)' },
       { ok: detsPending === 0, label: detsPending ? `${detsPending} leitura(s) OCR aguardando conferência` : 'Leituras OCR conferidas (ou inexistentes)' },
       { ok: report.fotos.length > 0, label: report.fotos.length ? `${report.fotos.length} fotografia(s) anexada(s)` : 'Sem fotografias (verificar se eram esperadas)', optional: true },
@@ -148,11 +151,13 @@ export default function ReportDetail() {
               <StatusBadge status={report.status} />
               {dl && <Badge tone={dl.tom === 'late' ? 'red' : dl.tom === 'warn' ? 'amber' : 'slate'} dot>{dl.texto}</Badge>}
               {report.enviadoCliente && <Badge tone="teal">enviado ao cliente (simulação)</Badge>}
+              {report.origemDados === 'referencia_empresa' && <Badge tone="amber">referência real da empresa</Badge>}
             </div>
             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-subtle">
               <span className="flex items-center gap-2"><Avatar nome={colab?.nome ?? '?'} size="sm" /> {colab?.nome}</span>
-              <span>{client?.nome}</span>
-              <span className="mono">{truck?.frota} · {truck?.placa}</span>
+              <span>{client?.nome ?? 'Consolidado semanal'}</span>
+              {truck && <span className="mono">{truck.frota} · {truck.placa}</span>}
+              <span>{REPORT_KIND_LABEL[report.tipo ?? 'viagem']}</span>
               <span>{fmtDate(report.dataViagem + 'T12:00:00')}</span>
             </div>
           </div>
@@ -182,12 +187,17 @@ export default function ReportDetail() {
       {tab === 'dados' && (
         <div className="grid lg:grid-cols-[1.5fr_1fr] gap-4">
           <div className="card p-5">
-            <h2 className="section-title mb-4">Dados da viagem</h2>
+            <h2 className="section-title mb-4">Dados da visita / atividade</h2>
+            {report.fonteReferencia && <p className="text-[12px] text-subtle mb-3">Fonte: {report.fonteReferencia}</p>}
             <dl className="grid sm:grid-cols-2 gap-x-6 gap-y-4">
               {[
                 ['Colaborador', `${colab?.nome} — ${colab?.cargo}`],
-                ['Cliente', `${client?.nome} (${client?.cidade}/${client?.uf})`],
-                ['Caminhão', `${truck?.frota} · ${truck?.placa} · ${truck?.marca} ${truck?.modelo}`],
+                ['Cliente / Empresa', client ? `${client.nome}${client.cidade ? ` (${client.cidade}/${client.uf})` : ''}` : 'Consolidado semanal'],
+                ['Setor', report.setor || '—'],
+                ['Cidade / Bairros', report.cidadeBairro || '—'],
+                ['Objetivo', report.objetivo || '—'],
+                ['Período', report.periodoInicio ? `${fmtDate(report.periodoInicio + 'T12:00:00')} → ${fmtDate((report.periodoFim ?? report.periodoInicio) + 'T12:00:00')}` : fmtDate(report.dataViagem + 'T12:00:00')],
+                ...(truck ? [['Caminhão', `${truck.frota} · ${truck.placa} · ${truck.marca} ${truck.modelo}`] as [string, string]] : []),
                 ['Data da viagem', fmtDate(report.dataViagem + 'T12:00:00')],
                 ['Origem', report.origem || '—'],
                 ['Destino', report.destino || '—'],
@@ -202,6 +212,28 @@ export default function ReportDetail() {
                 </div>
               ))}
             </dl>
+            {(report.atividades?.length ?? 0) > 0 && (
+              <div className="mt-6">
+                <h3 className="text-[11px] font-bold uppercase tracking-wider text-subtle mb-2">Atividades por equipamento</h3>
+                <div className="overflow-x-auto rounded-lg border border-border">
+                  <table className="w-full min-w-[640px]">
+                    <thead className="bg-muted/50"><tr><th className="th">Equipamento</th><th className="th">Atividade</th><th className="th">Telemetria</th><th className="th">Pulsus</th><th className="th">Câmera / Galileo</th><th className="th">Observação</th></tr></thead>
+                    <tbody className="divide-y divide-border/70">
+                      {report.atividades!.map((a) => (
+                        <tr key={a.id}>
+                          <td className="td mono font-bold">{a.equipamentoCodigo || '—'}</td>
+                          <td className="td text-[13px]">{ACTIVITY_KIND_LABEL[a.tipo]}{a.componentes?.length ? ` · ${a.componentes.join(', ')}` : ''}</td>
+                          <td className="td mono">{a.telemetria ?? '—'}</td>
+                          <td className="td mono">{a.pulsus ?? '—'}</td>
+                          <td className="td mono text-[12px]">{a.cameraFadiga ?? '—'}{a.galileo ? <div className="text-[11px] text-subtle">Galileo {a.galileo}</div> : null}</td>
+                          <td className="td text-[12.5px] text-subtle">{a.observacao || a.descricao || '—'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
             <div className="mt-6">
               <h3 className="text-[11px] font-bold uppercase tracking-wider text-subtle mb-2">Descrição vigente</h3>
               <p className="text-[14px] leading-relaxed text-secondary whitespace-pre-wrap rounded-lg bg-muted/50 p-4">

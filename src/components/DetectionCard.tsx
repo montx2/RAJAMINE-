@@ -7,7 +7,9 @@ import { Badge, Button, ConfidenceBar, Input, Select, toast } from './ui';
 import { fmtDateTime } from '../lib/format';
 import { cn } from '../lib/cn';
 
-const TIPOS: EquipmentType[] = ['Telemetria veicular', 'Rastreador GPS', 'Sensor de fadiga', 'Câmera embarcada', 'Sensor de carga'];
+const TIPOS: EquipmentType[] = ['Equipamento de cliente', 'Telemetria veicular', 'Tablet Pulsus', 'Câmera de fadiga', 'Galileo / rotograma', 'Rastreador GPS', 'Sensor de fadiga', 'Câmera embarcada', 'Sensor de carga'];
+const CODE_RE = /^(EQ-\d{3,6}|[A-Z]{2,4}-[A-Z0-9]{2,6})$/i;
+const CAND_LABEL: Record<string, string> = { codigo: 'código', serial: 'nº de série', imei: 'IMEI / ID', telemetria: 'telemetria', pulsus: 'Pulsus', numero: 'número' };
 
 export default function DetectionCard({ report, detection, actorName, canValidate }: {
   report: Report; detection: Detection; actorName: string; canValidate: boolean;
@@ -18,7 +20,7 @@ export default function DetectionCard({ report, detection, actorName, canValidat
   const [selected, setSelected] = useState(0);
   const [correcting, setCorrecting] = useState(false);
   const [manualCode, setManualCode] = useState('');
-  const [manualType, setManualType] = useState<EquipmentType>('Telemetria veicular');
+  const [manualType, setManualType] = useState<EquipmentType>('Equipamento de cliente');
 
   const matches = useMemo(
     () => matchCandidates(detection.candidatos, equipment, report.caminhaoId),
@@ -33,26 +35,26 @@ export default function DetectionCard({ report, detection, actorName, canValidat
     if (!m) return;
     // Equipamento encontrado no cadastro tem prioridade; número isolado vira EQ-XXXX
     const codigo = m.equipment?.codigo
-      ?? (m.candidate.tipo === 'codigo' ? m.candidate.normalizado : `EQ-${m.candidate.normalizado.replace(/\D/g, '')}`);
+      ?? (m.candidate.tipo === 'codigo' ? m.candidate.normalizado : m.candidate.normalizado);
     const res = resolveDetection(report.id, detection.id, 'confirmar', {
       codigo,
       equipmentId: m.equipment?.id,
       tipo: manualType,
       serial: m.candidate.tipo === 'serial' ? m.candidate.normalizado : undefined,
     }, actorName);
-    if (res.ok) toast(`Identificação confirmada e associada ao caminhão ${truck?.frota ?? ''}.`);
+    if (res.ok) toast(`Identificação confirmada${truck ? ` e associada ao caminhão ${truck.frota}` : ' e vinculada ao relatório'}.`);
     else toast(res.erro ?? 'Não foi possível confirmar.', 'error');
   };
 
   const submitCorrection = () => {
     const code = manualCode.toUpperCase().trim();
-    if (!/^(EQ-)?\d{3,6}$/.test(code)) {
-      toast('Informe um código válido, ex.: EQ-2041.', 'error');
+    const normalized = CODE_RE.test(code) ? code : (/^\d{3,6}$/.test(code) ? `EQ-${code}` : code);
+    if (!CODE_RE.test(normalized)) {
+      toast('Informe um código válido, ex.: CP-101, TYE-9A00 ou EQ-2041.', 'error');
       return;
     }
-    const normalized = code.startsWith('EQ-') ? code : `EQ-${code.replace(/\D/g, '')}`;
     const res = resolveDetection(report.id, detection.id, 'corrigir', { codigo: normalized, tipo: manualType }, actorName);
-    if (res.ok) { toast(`Identificação corrigida para ${normalized} e associada ao caminhão.`); setCorrecting(false); }
+    if (res.ok) { toast(`Identificação corrigida para ${normalized} e vinculada ao relatório.`); setCorrecting(false); }
     else toast(res.erro ?? 'Erro ao corrigir.', 'error');
   };
 
@@ -100,8 +102,8 @@ export default function DetectionCard({ report, detection, actorName, canValidat
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="mono font-bold text-[14px] text-primary">{m.candidate.normalizado}</span>
-                  <Badge tone={m.candidate.tipo === 'codigo' ? 'blue' : m.candidate.tipo === 'serial' ? 'teal' : 'slate'}>
-                    {m.candidate.tipo === 'codigo' ? 'código' : m.candidate.tipo === 'serial' ? 'nº de série' : 'número'}
+                  <Badge tone={m.candidate.tipo === 'codigo' ? 'blue' : m.candidate.tipo === 'serial' || m.candidate.tipo === 'imei' ? 'teal' : 'slate'}>
+                    {CAND_LABEL[m.candidate.tipo] ?? 'número'}
                   </Badge>
                   <span className="text-[12px] text-subtle tabular-nums">{m.candidate.confianca}%</span>
                   {m.candidate.valor !== m.candidate.normalizado && (
@@ -117,7 +119,7 @@ export default function DetectionCard({ report, detection, actorName, canValidat
                         : `Encontrado no cadastro: ${m.equipment.tipo} · ${m.equipment.codigo}`}
                     </span>
                   ) : (
-                    <span className="text-subtle">Não cadastrado — confirmar irá cadastrar e associar a {truck?.frota ?? 'caminhão'}.</span>
+                    <span className="text-subtle">Não cadastrado — confirmar irá cadastrar e vincular ao relatório{truck ? ` (${truck.frota})` : ''}.</span>
                   )}
                 </div>
               </div>
@@ -139,7 +141,7 @@ export default function DetectionCard({ report, detection, actorName, canValidat
           <span className="font-bold text-primary mono">{detection.codigoConfirmado}</span>
           {confirmedEq && <span className="text-subtle"> · {confirmedEq.tipo} · série {confirmedEq.serial}</span>}
           <div className="text-[12px] text-subtle mt-1">
-            Validado por {detection.confirmadoPor} em {fmtDateTime(detection.confirmadoEm)} · associado a {truck?.frota} ({truck?.placa})
+            Validado por {detection.confirmadoPor} em {fmtDateTime(detection.confirmadoEm)}{truck ? ` · associado a ${truck.frota} (${truck.placa})` : ' · vinculado ao relatório'}
           </div>
         </div>
       )}
@@ -164,7 +166,7 @@ export default function DetectionCard({ report, detection, actorName, canValidat
             <div className="rounded-lg border border-border bg-surface p-3 space-y-3">
               <p className="text-[12.5px] text-subtle">Digite o código correto conforme a etiqueta física. A correção fica registrada no histórico com seu nome.</p>
               <div className="grid sm:grid-cols-2 gap-3">
-                <Input value={manualCode} onChange={(e) => setManualCode(e.target.value)} placeholder="EQ-0000" aria-label="Código correto" />
+                <Input value={manualCode} onChange={(e) => setManualCode(e.target.value)} placeholder="CP-101 / EQ-0000" aria-label="Código correto" />
                 <Select value={manualType} onChange={(e) => setManualType(e.target.value as EquipmentType)} aria-label="Tipo de equipamento">
                   {TIPOS.map((t) => <option key={t} value={t}>{t}</option>)}
                 </Select>

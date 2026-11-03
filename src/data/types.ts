@@ -1,6 +1,9 @@
 /* Modelo de domínio do Rajamine FieldOps.
-   No protótipo, persistido em localStorage (metadados) + IndexedDB (fotos enviadas).
-   Em produção, mapeia para PostgreSQL + storage de objetos (ver docs/03-arquitetura.md). */
+   A partir das referências reais fornecidas pela empresa (set/2026), o modelo
+   diferencia EQUIPAMENTO DO CLIENTE (ex.: CP-101, TYE-9A00) dos DISPOSITIVOS
+   embarcados (telemetria, tablet Pulsus, câmera de fadiga, Galileo).
+   No protótipo, persistido em localStorage (metadados) + IndexedDB (fotos).
+   Em produção, mapeia para PostgreSQL + storage de objetos (docs/03). */
 
 export type Role = 'admin' | 'revisora' | 'colaborador';
 
@@ -11,7 +14,10 @@ export interface User {
   role: Role;
   cargo: string;
   ativo: boolean;
+  origemDados?: DataOrigin;
 }
+
+export type DataOrigin = 'sintetico' | 'referencia_empresa';
 
 export interface Client {
   id: string;
@@ -21,6 +27,7 @@ export interface Client {
   uf: string;
   contato: string;
   email: string;
+  origemDados?: DataOrigin;
 }
 
 export interface Truck {
@@ -34,38 +41,103 @@ export interface Truck {
 }
 
 export type EquipmentType =
+  | 'Equipamento de cliente'
   | 'Telemetria veicular'
+  | 'Tablet Pulsus'
+  | 'Câmera de fadiga'
+  | 'Galileo / rotograma'
   | 'Rastreador GPS'
   | 'Sensor de fadiga'
   | 'Câmera embarcada'
   | 'Sensor de carga';
 
-export type EquipmentStatus = 'instalado' | 'estoque' | 'manutencao';
+export type EquipmentStatus = 'instalado' | 'estoque' | 'manutencao' | 'desmobilizado';
 
-export interface Equipment {
+/** Identificadores reais usados nas planilhas e relatórios da Rajamine. */
+export interface DeviceIds {
+  telemetria?: string;      // ex.: 0987 (preservar zeros à esquerda)
+  pulsus?: string;          // tablet, ex.: 2758
+  cameraFadiga?: string;    // IMEI, ex.: 864993060408250
+  galileo?: string;         // ID Galileo, ex.: 867782071392430
+}
+
+export interface Equipment extends DeviceIds {
   id: string;
-  codigo: string; // ex.: EQ-2041
+  codigo: string;           // ex.: CP-101, TYE-9A00 ou EQ-2041 (demo)
   tipo: EquipmentType;
   serial: string;
   status: EquipmentStatus;
   truckId: string | null;
+  clienteId?: string | null;
   instaladoEm?: string;
+  origemDados?: DataOrigin;
 }
 
 export type ReportStatus =
-  | 'pendente'      // link enviado, aguardando preenchimento
-  | 'rascunho'      // colaborador começou a preencher
-  | 'em_revisao'    // enviado para a responsável
-  | 'correcao'      // revisão devolveu com pedidos de correção
-  | 'aprovado'      // aprovação humana registrada
-  | 'arquivado';    // documentos gerados e arquivados
+  | 'pendente' | 'rascunho' | 'em_revisao' | 'correcao' | 'aprovado' | 'arquivado';
+
+export type ReportKind = 'viagem' | 'visita_tecnica' | 'atividade_externa' | 'semanal_viagens';
+
+export const REPORT_KIND_LABEL: Record<ReportKind, string> = {
+  viagem: 'Relatório de viagem',
+  visita_tecnica: 'Relatório de visita técnica',
+  atividade_externa: 'Relatório de atividade externa',
+  semanal_viagens: 'Relatório semanal — viagens',
+};
+
+export type ActivityKind =
+  | 'instalacao' | 'desmobilizacao' | 'manutencao' | 'conferencia'
+  | 'coleta_telemetria' | 'reuniao' | 'treinamento' | 'outro';
+
+export const ACTIVITY_KIND_LABEL: Record<ActivityKind, string> = {
+  instalacao: 'Instalação',
+  desmobilizacao: 'Desmobilização',
+  manutencao: 'Manutenção',
+  conferencia: 'Conferência',
+  coleta_telemetria: 'Coleta de telemetria',
+  reuniao: 'Reunião',
+  treinamento: 'Treinamento',
+  outro: 'Outro',
+};
+
+export type TelemetrySituation = 'ok' | 'pendente' | 'antiga' | 'nao_informada';
+export type PhotosSituation = 'enviadas' | 'pendentes' | 'nao_informado';
+
+/** Linha de atividade por equipamento — espelha a planilha real da empresa. */
+export interface ActivityEntry extends DeviceIds {
+  id: string;
+  data: string;                       // yyyy-mm-dd
+  clienteId?: string;                 // no consolidado semanal, cada linha pode ter um cliente
+  colaboradorId?: string;
+  equipamentoCodigo: string;          // CP-101, TYE-9A00, RUU-1G56…
+  tipo: ActivityKind;
+  componentes?: string[];             // ['Telemetria', 'Câmera de fadiga', 'Tablet']
+  observacao?: string;                // "Telemetria antiga: 0995", "ID Galileo: …"
+  situacaoTelemetria?: TelemetrySituation;
+  fotos?: PhotosSituation;
+  descricao?: string;                 // relato livre da atividade
+}
+
+/** Linha transcrita da planilha "Instalações/Manutenções/Retiradas — Equipamentos". */
+export interface OperationRow extends DeviceIds {
+  id: string;
+  data: string;
+  empresa: string;
+  tecnico: string;
+  equipamento: string;
+  atividade: string;
+  observacao: string;
+  situacaoTelemetria: TelemetrySituation;
+  fotos: PhotosSituation;
+  origemDados: DataOrigin;
+}
 
 export interface Photo {
   id: string;
   nome: string;
   origem: 'demo' | 'upload';
-  src?: string;        // caminho público (fotos demonstrativas)
-  storageKey?: string; // chave no IndexedDB (uploads)
+  src?: string;
+  storageKey?: string;
   mime: string;
   legenda: string;
   categoria: 'equipamento' | 'atividade';
@@ -73,10 +145,10 @@ export interface Photo {
 }
 
 export interface OcrCandidate {
-  valor: string;       // como lido, ex.: "EQ-2O41"
-  normalizado: string; // ex.: "EQ-2041"
-  confianca: number;   // 0–100
-  tipo: 'codigo' | 'serial' | 'numero';
+  valor: string;
+  normalizado: string;
+  confianca: number;
+  tipo: 'codigo' | 'serial' | 'numero' | 'imei' | 'telemetria' | 'pulsus';
 }
 
 export type DetectionStatus = 'aguardando' | 'confirmado' | 'corrigido' | 'rejeitado';
@@ -127,28 +199,28 @@ export interface GeneratedDoc {
   versao: number;
   geradoEm: string;
   geradoPor: string;
-  enviadoEm?: string;  // envio SIMULADO ao cliente
+  enviadoEm?: string;
   enviadoPor?: string;
 }
 
 export interface Report {
   id: string;
-  codigo: string; // REL-2026-0142
-  token: string;  // link individual de preenchimento
+  codigo: string;
+  token: string;
   colaboradorId: string;
   clienteId: string;
-  caminhaoId: string;
-  dataViagem: string; // yyyy-mm-dd
+  caminhaoId: string;                 // '' quando a operação não é centrada em caminhão
+  dataViagem: string;
   origem: string;
   destino: string;
   kmInicio?: number;
   kmFim?: number;
-  descricaoOriginal: string; // nunca sobrescrito após o envio
-  descricaoAtual: string;    // versão vigente (padronizada/editada)
+  descricaoOriginal: string;
+  descricaoAtual: string;
   versoesTexto: TextVersion[];
   status: ReportStatus;
   criadoEm: string;
-  prazoEm: string; // criadoEm + 48 h
+  prazoEm: string;
   enviadoRevisaoEm?: string;
   aprovadoEm?: string;
   aprovadoPor?: string;
@@ -159,6 +231,21 @@ export interface Report {
   documentos: GeneratedDoc[];
   equipamentosIds: string[];
   enviadoCliente: boolean;
+
+  // Campos alinhados aos documentos reais da Rajamine
+  tipo?: ReportKind;
+  setor?: string;
+  cidadeBairro?: string;
+  periodoInicio?: string;
+  periodoFim?: string;
+  objetivo?: string;
+  avaliacaoTecnica?: string;
+  sensacaoCliente?: string;
+  pontosPositivos?: string;
+  melhorias?: string;
+  atividades?: ActivityEntry[];
+  origemDados?: DataOrigin;
+  fonteReferencia?: string;
 }
 
 export interface Notification {
@@ -172,10 +259,7 @@ export interface Notification {
   para: Role | 'todos';
 }
 
-export interface Session {
-  userId: string;
-  role: Role;
-}
+export interface Session { userId: string; role: Role; }
 
 export const STATUS_LABEL: Record<ReportStatus, string> = {
   pendente: 'Aguardando preenchimento',

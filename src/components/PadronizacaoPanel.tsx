@@ -32,6 +32,10 @@ export default function PadronizacaoPanel({ report, actorName, canEdit }: { repo
       placaCaminhao: truck?.placa,
       frotaCaminhao: truck?.frota,
       equipamentosConfirmados: report.equipamentosIds.map((id) => equipment.find((e) => e.id === id)?.codigo ?? ''),
+      atividades: report.atividades,
+      periodoInicio: report.periodoInicio,
+      periodoFim: report.periodoFim,
+      tipo: report.tipo,
     });
   }, [baseText, report, users, trucks, equipment]);
 

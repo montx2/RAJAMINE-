@@ -16,6 +16,8 @@ import Trucks from './pages/Trucks';
 import Registry from './pages/Registry';
 import Documents from './pages/Documents';
 import Compliance from './pages/Compliance';
+import Operations from './pages/Operations';
+import Weekly from './pages/Weekly';
 
 function RequireAuth({ roles, children }: { roles?: Role[]; children: ReactNode }) {
   const user = useCurrentUser();
@@ -39,6 +41,8 @@ export function AppRoutes() {
           <Route path="/relatorios/novo" element={<RequireAuth roles={['admin']}><NewReport /></RequireAuth>} />
           <Route path="/relatorios/:id" element={<ReportDetail />} />
           <Route path="/revisao" element={<RequireAuth roles={['admin', 'revisora']}><ReviewCenter /></RequireAuth>} />
+          <Route path="/operacoes" element={<Operations />} />
+          <Route path="/semanal" element={<RequireAuth roles={['admin', 'revisora']}><Weekly /></RequireAuth>} />
           <Route path="/equipamentos" element={<RequireAuth roles={['admin', 'revisora']}><EquipmentPage /></RequireAuth>} />
           <Route path="/caminhoes" element={<RequireAuth roles={['admin', 'revisora']}><Trucks /></RequireAuth>} />
           <Route path="/cadastros" element={<RequireAuth roles={['admin']}><Registry /></RequireAuth>} />

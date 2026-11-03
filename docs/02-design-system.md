@@ -67,3 +67,17 @@ Componentes consistentes em `src/components/ui.tsx`: Button (6 variantes), Badge
 - [x] `prefers-reduced-motion` respeitado
 - [x] Chips/badges sem clipping; truncamento com acesso ao valor
 - [x] Responsivo 375 / 768 / 1024 / 1440 (sidebar → drawer + bottom nav)
+
+## 6. Adaptação à identidade real da Rajamine
+
+Após receber os documentos reais da empresa, a paleta inicial (navy/azul) foi substituída pela identidade observada: **grafite/preto + amarelo/âmbar**.
+
+| Token | Valor | Uso |
+|---|---|---|
+| `--color-primary` | `#18181B` | Sidebar, títulos, texto principal |
+| `--color-brand` | `#FFC400` | Wordmark Mine, faixas de PDF, destaques de marca |
+| `--color-accent` | `#B45309` | Links, tabs, CTAs secundários (âmbar escuro para contraste AA sobre branco) |
+| `--color-accent-soft` | `#FEF3C7` | Fundos suaves de seleção/avisos |
+| `--color-background` | `#FAFAF9` | Fundo geral |
+
+O wordmark `RajaMine` (Raja em preto/branco, Mine em amarelo) foi aproximado tipograficamente para o protótipo; não é o vetor oficial. Os PDFs usam título preto + faixa amarela + wordmark no canto, como nos documentos reais. A base de acessibilidade do UI UX Pro Max (foco visível, reduced-motion, labels, contraste) foi mantida.

@@ -198,7 +198,7 @@ export function Toaster() {
     <div className="fixed bottom-4 right-4 left-4 sm:left-auto z-[60] flex flex-col gap-2 sm:w-96" aria-live="polite">
       {toasts.map((t) => (
         <div key={t.id} className={cn('flex items-start gap-3 rounded-xl border px-4 py-3 shadow-pop bg-surface animate-fade-up',
-          t.tipo === 'success' && 'border-green-200', t.tipo === 'error' && 'border-red-200', t.tipo === 'info' && 'border-sky-200')}>
+          t.tipo === 'success' && 'border-green-200', t.tipo === 'error' && 'border-red-200', t.tipo === 'info' && 'border-amber-200')}>
           {t.tipo === 'success' && <CheckCircle2 size={18} className="text-success shrink-0 mt-0.5" />}
           {t.tipo === 'error' && <AlertTriangle size={18} className="text-destructive shrink-0 mt-0.5" />}
           {t.tipo === 'info' && <Info size={18} className="text-accent shrink-0 mt-0.5" />}
@@ -213,7 +213,7 @@ export function Toaster() {
 /* ── Banner ── */
 export function Banner({ tone = 'info', icon, children, className }: { tone?: 'info' | 'warn' | 'success' | 'danger'; icon?: ReactNode; children: ReactNode; className?: string }) {
   const tones = {
-    info: 'bg-accent-soft/60 border-sky-200 text-sky-900',
+    info: 'bg-accent-soft/60 border-amber-200 text-amber-950',
     warn: 'bg-warning-soft/70 border-amber-200 text-amber-900',
     success: 'bg-success-soft/70 border-green-200 text-green-900',
     danger: 'bg-destructive-soft/70 border-red-200 text-red-900',

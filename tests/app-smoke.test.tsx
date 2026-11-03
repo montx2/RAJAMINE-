@@ -33,7 +33,7 @@ function renderAt(path: string) {
 }
 
 describe('Renderização das telas', () => {
-  it('login mostra os três perfis demonstrativos', () => {
+  it('login mostra os perfis demonstrativos', () => {
     renderAt('/login');
     expect(screen.getByText('Acessar demonstração')).toBeTruthy();
     expect(screen.getByText('Helena Duarte')).toBeTruthy();
@@ -84,7 +84,7 @@ describe('Renderização das telas', () => {
   it('link individual abre o preenchimento sem sessão', () => {
     const token = useStore.getState().reports.find((r) => r.id === 'r_148')!.token;
     renderAt(`/preencher/${token}`);
-    expect(screen.getByText('Dados da viagem')).toBeTruthy();
+    expect(screen.getByText('Dados da visita / atividade')).toBeTruthy();
     expect(screen.getByText('REL-2026-0148')).toBeTruthy();
   });
 
@@ -98,6 +98,30 @@ describe('Renderização das telas', () => {
     useStore.setState({ session: { userId: 'u_helena', role: 'admin' } });
     renderAt('/equipamentos');
     expect(screen.getAllByText('EQ-2041').length).toBeGreaterThan(0);
+  });
+
+  it('operações de campo reproduz a planilha real da Rajamine', () => {
+    useStore.setState({ session: { userId: 'u_helena', role: 'admin' } });
+    renderAt('/operacoes');
+    expect(screen.getAllByText('Operações de campo').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('TYE-9A00').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('864993060369890').length).toBeGreaterThan(0);
+  });
+
+  it('consolidado semanal mostra a referência real e o gerador', () => {
+    useStore.setState({ session: { userId: 'u_helena', role: 'admin' } });
+    renderAt('/semanal');
+    expect(screen.getByText('Consolidado semanal de viagens')).toBeTruthy();
+    expect(screen.getByText('Gerar consolidado a partir de relatórios aprovados')).toBeTruthy();
+    expect(screen.getAllByText('RUU-1G56').length).toBeGreaterThan(0);
+  });
+
+  it('relatório de referência real mostra atividades por equipamento', () => {
+    useStore.setState({ session: { userId: 'u_marta', role: 'revisora' } });
+    renderAt('/relatorios/r_201');
+    expect(screen.getByText('referência real da empresa')).toBeTruthy();
+    expect(screen.getAllByText('CP-101').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('0987').length).toBeGreaterThan(0);
   });
 
   it('página de conformidade lista medidas e limitações', () => {

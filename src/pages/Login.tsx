@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, ScanLine, Sparkles, ClipboardCheck, ArrowRight, ExternalLink } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { Avatar, Badge } from '../components/ui';
-import { Logo } from '../components/Logo';
+import { Logo, LogoMark, Wordmark } from '../components/Logo';
 import { ROLE_LABEL } from '../data/types';
 
 export default function Login() {
@@ -11,7 +11,7 @@ export default function Login() {
   const users = useStore((s) => s.users);
   const reports = useStore((s) => s.reports);
 
-  const profiles = ['u_helena', 'u_marta', 'u_carlos'].map((id) => users.find((u) => u.id === id)!).filter(Boolean);
+  const profiles = ['u_helena', 'u_marta', 'u_glauber', 'u_carlos'].map((id) => users.find((u) => u.id === id)!).filter(Boolean);
   const pendingLink = reports.find((r) => r.status === 'pendente' || r.status === 'correcao');
 
   const enter = (userId: string, role: string) => {
@@ -27,7 +27,7 @@ export default function Login() {
           style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '28px 28px' }} />
         <Logo />
         <div className="relative max-w-lg">
-          <Badge tone="blue" className="mb-5 bg-sky-400/10 text-sky-300">Protótipo · competição SENAI</Badge>
+          <Badge tone="amber" className="mb-5 bg-brand/10 text-brand">Protótipo · competição SENAI · referências reais</Badge>
           <h1 className="text-[34px] xl:text-[40px] font-extrabold tracking-tight text-white leading-[1.15]">
             Relatórios de campo,<br />do jeito que a operação merece.
           </h1>
@@ -43,7 +43,7 @@ export default function Login() {
               { icon: ShieldCheck, t: 'Segurança e LGPD', d: 'Perfis de acesso, trilha de auditoria e minimização de dados' },
             ].map((f) => (
               <div key={f.t} className="flex items-start gap-3.5">
-                <span className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-sky-300 shrink-0">
+                <span className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-brand shrink-0">
                   <f.icon size={17} aria-hidden />
                 </span>
                 <div>
@@ -55,24 +55,18 @@ export default function Login() {
           </div>
         </div>
         <p className="relative text-[11.5px] text-slate-500">
-          Rajamine Inteligência em Mineração LTDA · Dados 100% fictícios · Nenhuma mensagem real é disparada
+          Rajamine Inteligência em Mineração LTDA · Referências da empresa + exemplos sintéticos · Nenhuma mensagem real é disparada
         </p>
       </div>
 
       {/* Seleção de perfil */}
       <div className="flex items-center justify-center p-6 sm:p-10">
         <div className="w-full max-w-md">
-          <div className="lg:hidden mb-8 [&_div]:text-primary">
-            <div className="flex items-center gap-3">
-              <svg width="38" height="38" viewBox="0 0 64 64" fill="none" aria-hidden>
-                <rect width="64" height="64" rx="14" fill="#0F172A" />
-                <path d="M32 12 L50 22.5 V43.5 L32 54 L14 43.5 V22.5 Z" stroke="#38BDF8" strokeWidth="3.2" strokeLinejoin="round" />
-                <path d="M22 38 L30 26 L35 33 L38 29 L44 38 Z" fill="#F8FAFC" />
-              </svg>
-              <div>
-                <div className="text-[17px] font-extrabold tracking-tight text-primary">RAJAMINE</div>
-                <div className="text-[10px] font-semibold tracking-[0.18em] text-accent">FIELDOPS</div>
-              </div>
+          <div className="lg:hidden mb-8 flex items-center gap-3">
+            <LogoMark size={38} />
+            <div>
+              <Wordmark className="text-[19px]" light={false} />
+              <div className="text-[10px] font-semibold tracking-[0.18em] text-accent">FIELDOPS</div>
             </div>
           </div>
           <h2 className="text-[22px] font-extrabold tracking-tight text-primary">Acessar demonstração</h2>
@@ -117,7 +111,7 @@ export default function Login() {
           )}
 
           <p className="mt-6 text-[11.5px] text-subtle leading-relaxed">
-            Ao continuar, você usa um ambiente de demonstração com dados fictícios, conforme a LGPD (Lei 13.709/2018).
+            Ao continuar, você usa um ambiente de demonstração com referências reais fornecidas pela empresa e exemplos sintéticos, conforme a LGPD (Lei 13.709/2018).
             Envios, notificações e lembretes são simulados e registrados na trilha de auditoria.
           </p>
         </div>

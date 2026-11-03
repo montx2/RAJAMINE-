@@ -14,7 +14,7 @@ const IMPLEMENTADO = [
   ['Preservação de originais', 'Texto original e fotos nunca são sobrescritos silenciosamente; versões e trilha de auditoria por evento.'],
   ['Trilha de auditoria', 'Criação, edição, revisão, aprovação, geração e envio registrados com autor, data/hora e detalhe.'],
   ['Simulações rotuladas', 'Envios, lembretes e resultados de OCR simulados são explicitamente identificados na interface e na auditoria.'],
-  ['Dados fictícios', 'Nenhum dado pessoal real no protótipo; base restaurável para apresentação.'],
+  ['Proveniência de dados', 'Base mista: exemplos sintéticos + referências reais fornecidas pela empresa, marcadas como origemDados. Imagens originais não são commitadas; campos ausentes não são inventados.'],
 ];
 
 const PRODUCAO = [
@@ -48,7 +48,7 @@ export default function Compliance() {
 
   const exportData = () => {
     const payload = {
-      aviso: 'Dados 100% fictícios — exportação demonstrativa do Rajamine FieldOps',
+      aviso: 'Exportação demonstrativa do Rajamine FieldOps — inclui exemplos sintéticos e referências reais fornecidas pela empresa (origemDados). Não é base de produção.',
       exportadoEm: new Date().toISOString(),
       users: state.users, clients: state.clients, trucks: state.trucks,
       equipment: state.equipment, reports: state.reports, notifications: state.notifications,
@@ -74,7 +74,7 @@ export default function Compliance() {
       />
 
       <Banner tone="warn" icon={<AlertTriangle size={17} />}>
-        <strong>Transparência:</strong> este ambiente é um protótipo com dados fictícios e autenticação demonstrativa.
+        <strong>Transparência:</strong> este ambiente é um protótipo com autenticação demonstrativa e base mista (exemplos sintéticos + referências reais fornecidas pela Rajamine, devidamente marcadas).
         Ele <strong>não declara conformidade plena</strong> com a LGPD — várias medidas dependem de implantação em produção
         e de orientação jurídica especializada, conforme detalhado abaixo.
       </Banner>
@@ -133,8 +133,8 @@ export default function Compliance() {
       <div className="card p-5">
         <h2 className="section-title mb-2">Dados da demonstração</h2>
         <p className="text-[13px] text-subtle mb-4">
-          Direito de acesso/portabilidade (LGPD art. 18) demonstrado na prática: exporte toda a base fictícia em JSON
-          ou restaure o cenário inicial para uma nova apresentação.
+          Direito de acesso/portabilidade (LGPD art. 18) demonstrado na prática: exporte a base demonstrativa em JSON
+          (com proveniência por registro) ou restaure o cenário inicial para uma nova apresentação.
         </p>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" icon={<FileJson size={16} />} onClick={exportData}>Exportar dados (JSON)</Button>
@@ -172,8 +172,8 @@ export default function Compliance() {
           <Button variant="danger" icon={<RotateCcw size={15} />} loading={resetting} onClick={doReset}>Restaurar tudo</Button>
         </>}>
         <p className="text-[13.5px] text-secondary">
-          Todos os relatórios, fotos enviadas, equipamentos e notificações voltarão ao cenário inicial fictício.
-          Útil para reiniciar a apresentação. <strong>A ação não afeta nenhum dado real.</strong>
+          Todos os relatórios, fotos enviadas, equipamentos e notificações voltarão ao cenário inicial da demonstração
+          (sintéticos + referências transcritas). Útil para reiniciar a apresentação. <strong>A ação não afeta sistemas reais da empresa.</strong>
         </p>
       </Modal>
     </div>
