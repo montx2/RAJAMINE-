@@ -1,0 +1,21 @@
+node_modules
+dist
+out
+build
+coverage
+.vite
+*.local
+.DS_Store
+playwright-report
+test-results
+.env
+.env.*
+!.env.example
+# Assets OCR locais (baixados por scripts/setup-ocr.mjs — não versionar binários)
+public/ocr/core
+public/ocr/worker.min.js
+public/ocr/lang/*.gz
+
+# Cache do Tesseract em Node
+eng.traineddata
+*.traineddata
