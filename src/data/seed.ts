@@ -86,6 +86,30 @@ const fotoAtividade = (id: string, offset: number): Photo => ({
   id, nome: 'foto-atividade.jpg', origem: 'demo', src: '/demo/foto-atividade.jpg', mime: 'image/jpeg',
   legenda: 'Registro da instalação em campo', categoria: 'atividade', criadaEm: iso(offset),
 });
+const fotoCameraFadiga = (id: string, offset: number): Photo => ({
+  id, nome: 'foto-camera-fadiga.jpg', origem: 'demo', src: '/demo/foto-camera-fadiga.jpg', mime: 'image/jpeg',
+  legenda: 'Câmera de fadiga no para-brisa — etiqueta EQ-3315', categoria: 'equipamento', criadaEm: iso(offset),
+});
+const fotoChassiGps = (id: string, offset: number): Photo => ({
+  id, nome: 'foto-chassi-gps.jpg', origem: 'demo', src: '/demo/foto-chassi-gps.jpg', mime: 'image/jpeg',
+  legenda: 'Rastreador GPS no chassi — etiqueta EQ-1087 (ângulo inferior)', categoria: 'equipamento', criadaEm: iso(offset),
+});
+const fotoInstalacaoChicote = (id: string, offset: number): Photo => ({
+  id, nome: 'foto-instalacao-chicote.jpg', origem: 'demo', src: '/demo/foto-instalacao-chicote.jpg', mime: 'image/jpeg',
+  legenda: 'Conexão do chicote durante a instalação — tag EQ-2041', categoria: 'atividade', criadaEm: iso(offset),
+});
+const fotoCaminhaoMina = (id: string, offset: number): Photo => ({
+  id, nome: 'foto-caminhao-mina.jpg', origem: 'demo', src: '/demo/foto-caminhao-mina.jpg', mime: 'image/jpeg',
+  legenda: 'Caminhão fora de estrada na mina (contexto da viagem)', categoria: 'atividade', criadaEm: iso(offset),
+});
+const fotoCameraExterna = (id: string, offset: number): Photo => ({
+  id, nome: 'foto-camera-externa.jpg', origem: 'demo', src: '/demo/foto-camera-externa.jpg', mime: 'image/jpeg',
+  legenda: 'Câmera embarcada externa — etiqueta EQ-4520', categoria: 'equipamento', criadaEm: iso(offset),
+});
+const fotoChecklistCampo = (id: string, offset: number): Photo => ({
+  id, nome: 'foto-checklist-campo.jpg', origem: 'demo', src: '/demo/foto-checklist-campo.jpg', mime: 'image/jpeg',
+  legenda: 'Checklist de instalação em campo — tag EQ-5102', categoria: 'atividade', criadaEm: iso(offset),
+});
 
 interface MkArgs {
   n: number;
@@ -186,7 +210,7 @@ export const seedReports: Report[] = [
     n: 145, colaboradorId: 'u_carlos', clienteId: 'c_serra', caminhaoId: 't102', tripDaysAgo: 1, status: 'em_revisao',
     criadoAgoMs: 26 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Mina Serra Azul — Itabira/MG',
     kmInicio: 84310, kmFim: 84682, original: txt145,
-    fotos: [fotoEq3315('ph_145a', -7 * H), fotoAtividade('ph_145b', -7 * H)],
+    fotos: [fotoEq3315('ph_145a', -7 * H), fotoAtividade('ph_145b', -7 * H), fotoCameraFadiga('ph_145c', -7 * H)],
     deteccoes: [{
       id: 'det_145', photoId: 'ph_145a', motor: 'demo', status: 'aguardando',
       candidatos: [
@@ -199,7 +223,7 @@ export const seedReports: Report[] = [
     historico: [
       ev(-26 * H, 'Helena Duarte', 'Relatório criado', 'Link individual enviado a Carlos Menezes (simulação)'),
       ev(-8 * H, 'Carlos Menezes', 'Preenchimento iniciado'),
-      ev(-7 * H, 'Carlos Menezes', 'Fotos adicionadas', '2 fotografias anexadas'),
+      ev(-7 * H, 'Carlos Menezes', 'Fotos adicionadas', '3 fotografias anexadas'),
       ev(-6 * H, 'Sistema', 'OCR demonstrativo executado', 'Resultado simulado — aguardando conferência humana'),
       ev(-5 * H, 'Carlos Menezes', 'Enviado para revisão'),
     ],
@@ -208,7 +232,7 @@ export const seedReports: Report[] = [
     n: 144, colaboradorId: 'u_andre', clienteId: 'c_aco', caminhaoId: 't104', tripDaysAgo: 2, status: 'em_revisao',
     criadoAgoMs: 2 * D + 4 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Planta Vale do Aço — Ipatinga/MG',
     kmInicio: 51220, kmFim: 51590, original: txt144,
-    fotos: [fotoAtividade('ph_144a', -2 * D)],
+    fotos: [fotoAtividade('ph_144a', -2 * D), fotoCameraExterna('ph_144b', -2 * D)],
     historico: [
       ev(-2 * D - 4 * H, 'Helena Duarte', 'Relatório criado', 'Link individual enviado a André Luiz Santos (simulação)'),
       ev(-2 * D, 'André Luiz Santos', 'Enviado para revisão'),
@@ -219,7 +243,7 @@ export const seedReports: Report[] = [
     criadoAgoMs: 2 * D + 8 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Mina Serra Azul — Itabira/MG',
     kmInicio: 62100, kmFim: 62471, original: txt143, atual: txt143ia,
     versoes: [tv(-2 * D - 6 * H, txt143, 'original', 'João Pedro Rocha'), tv(-2 * D - 5 * H, txt143ia, 'ia', 'João Pedro Rocha', 'Sugestão do motor de padronização aceita pelo colaborador')],
-    fotos: [fotoEq2041('ph_143a', -2 * D - 2 * H)],
+    fotos: [fotoEq2041('ph_143a', -2 * D - 2 * H), fotoInstalacaoChicote('ph_143b', -2 * D - 2 * H), fotoCaminhaoMina('ph_143c', -2 * D - 2 * H)],
     deteccoes: [{
       id: 'det_143', photoId: 'ph_143a', motor: 'demo', status: 'confirmado',
       candidatos: [
@@ -254,7 +278,7 @@ export const seedReports: Report[] = [
     criadoAgoMs: 5 * D + 4 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Planta Vale do Aço — Ipatinga/MG',
     kmInicio: 112480, kmFim: 112855, original: txt141, atual: txt141ia,
     versoes: [tv(-5 * D - 2 * H, txt141, 'original', 'André Luiz Santos'), tv(-5 * D - H, txt141ia, 'ia', 'André Luiz Santos', 'Sugestão aceita; original preservado')],
-    fotos: [fotoEq1087('ph_141a', -5 * D), fotoAtividade('ph_141b', -5 * D)],
+    fotos: [fotoEq1087('ph_141a', -5 * D), fotoAtividade('ph_141b', -5 * D), fotoChassiGps('ph_141c', -5 * D)],
     deteccoes: [{
       id: 'det_141', photoId: 'ph_141a', motor: 'demo', status: 'confirmado',
       candidatos: [{ valor: 'EQ-1087', normalizado: 'EQ-1087', confianca: 89, tipo: 'codigo' }],
@@ -275,6 +299,7 @@ export const seedReports: Report[] = [
     n: 140, colaboradorId: 'u_carlos', clienteId: 'c_rita', caminhaoId: 't105', tripDaysAgo: 6, status: 'aprovado',
     criadoAgoMs: 6 * D + 5 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Pedreira Santa Rita — Sete Lagoas/MG',
     kmInicio: 78040, kmFim: 78215, original: txt140, atual: txt140,
+    fotos: [fotoChecklistCampo('ph_140a', -6 * D), fotoAtividade('ph_140b', -6 * D)],
     equipamentosIds: ['e5102'],
     aprovadoAgoMs: 3 * D,
     historico: [
@@ -288,7 +313,7 @@ export const seedReports: Report[] = [
     criadoAgoMs: 9 * D + 6 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Mina Serra Azul — Itabira/MG',
     kmInicio: 61730, kmFim: 62100, original: txtGeneric, atual: txtGenericIA,
     versoes: [tv(-9 * D - 4 * H, txtGeneric, 'original', 'João Pedro Rocha'), tv(-9 * D - 3 * H, txtGenericIA, 'ia', 'Marta Fonseca', 'Padronização aplicada na revisão')],
-    fotos: [fotoEq2041('ph_139a', -9 * D)],
+    fotos: [fotoEq2041('ph_139a', -9 * D), fotoInstalacaoChicote('ph_139b', -9 * D)],
     equipamentosIds: ['e2041'],
     aprovadoAgoMs: 8 * D, docs: docsPadrao(8 * D - 2 * H, 7 * D), enviadoCliente: true,
     historico: [
@@ -303,7 +328,7 @@ export const seedReports: Report[] = [
     n: 138, colaboradorId: 'u_andre', clienteId: 'c_aco', caminhaoId: 't104', tripDaysAgo: 12, status: 'arquivado',
     criadoAgoMs: 12 * D + 4 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Planta Vale do Aço — Ipatinga/MG',
     kmInicio: 50840, kmFim: 51210, original: txtGeneric, atual: txtGenericIA,
-    fotos: [fotoAtividade('ph_138a', -12 * D)],
+    fotos: [fotoAtividade('ph_138a', -12 * D), fotoCameraExterna('ph_138b', -12 * D)],
     equipamentosIds: ['e4520'],
     aprovadoAgoMs: 11 * D, docs: docsPadrao(11 * D - 3 * H),
     historico: [
@@ -317,7 +342,7 @@ export const seedReports: Report[] = [
     n: 137, colaboradorId: 'u_felipe', clienteId: 'c_horizonte', caminhaoId: 't106', tripDaysAgo: 16, status: 'arquivado',
     criadoAgoMs: 16 * D + 5 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Mina Horizonte — Nova Lima/MG',
     kmInicio: 143220, kmFim: 143402, original: txtGeneric, atual: txtGenericIA,
-    fotos: [fotoAtividade('ph_137a', -16 * D)],
+    fotos: [fotoAtividade('ph_137a', -16 * D), fotoCaminhaoMina('ph_137b', -16 * D)],
     equipamentosIds: ['e8123'],
     aprovadoAgoMs: 15 * D, docs: docsPadrao(15 * D - 2 * H, 14 * D), enviadoCliente: true,
     historico: [
@@ -332,7 +357,7 @@ export const seedReports: Report[] = [
     n: 136, colaboradorId: 'u_carlos', clienteId: 'c_rita', caminhaoId: 't105', tripDaysAgo: 21, status: 'arquivado',
     criadoAgoMs: 21 * D + 6 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Pedreira Santa Rita — Sete Lagoas/MG',
     kmInicio: 77640, kmFim: 77816, original: txtGeneric, atual: txtGenericIA,
-    fotos: [fotoAtividade('ph_136a', -21 * D)],
+    fotos: [fotoAtividade('ph_136a', -21 * D), fotoChecklistCampo('ph_136b', -21 * D)],
     equipamentosIds: ['e5102'],
     aprovadoAgoMs: 20 * D, docs: docsPadrao(20 * D - 4 * H, 19 * D), enviadoCliente: true,
     historico: [
@@ -347,7 +372,7 @@ export const seedReports: Report[] = [
     n: 135, colaboradorId: 'u_joao', clienteId: 'c_aco', caminhaoId: 't103', tripDaysAgo: 27, status: 'arquivado',
     criadoAgoMs: 27 * D + 5 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Planta Vale do Aço — Ipatinga/MG',
     kmInicio: 111900, kmFim: 112275, original: txtGeneric, atual: txtGenericIA,
-    fotos: [fotoEq1087('ph_135a', -27 * D)],
+    fotos: [fotoEq1087('ph_135a', -27 * D), fotoChassiGps('ph_135b', -27 * D)],
     equipamentosIds: ['e1087'],
     aprovadoAgoMs: 26 * D, docs: docsPadrao(26 * D - 2 * H, 25 * D), enviadoCliente: true,
     historico: [
@@ -362,6 +387,7 @@ export const seedReports: Report[] = [
     n: 134, colaboradorId: 'u_andre', clienteId: 'c_serra', caminhaoId: 't102', tripDaysAgo: 33, status: 'arquivado',
     criadoAgoMs: 33 * D + 4 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Mina Serra Azul — Itabira/MG',
     kmInicio: 83900, kmFim: 84270, original: txtGeneric, atual: txtGenericIA,
+    fotos: [fotoEq3315('ph_134a', -33 * D), fotoCameraFadiga('ph_134b', -33 * D)],
     equipamentosIds: ['e3315'],
     aprovadoAgoMs: 32 * D, docs: docsPadrao(32 * D - 3 * H, 31 * D), enviadoCliente: true,
   }),
@@ -369,12 +395,14 @@ export const seedReports: Report[] = [
     n: 133, colaboradorId: 'u_carlos', clienteId: 'c_horizonte', caminhaoId: 't106', tripDaysAgo: 38, status: 'arquivado',
     criadoAgoMs: 38 * D + 6 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Mina Horizonte — Nova Lima/MG',
     kmInicio: 142700, kmFim: 142884, original: txtGeneric, atual: txtGenericIA,
+    fotos: [fotoCaminhaoMina('ph_133a', -38 * D)],
     aprovadoAgoMs: 37 * D, docs: docsPadrao(37 * D - 2 * H, 36 * D), enviadoCliente: true,
   }),
   mk({
     n: 132, colaboradorId: 'u_felipe', clienteId: 'c_rita', caminhaoId: 't105', tripDaysAgo: 44, status: 'arquivado',
     criadoAgoMs: 44 * D + 5 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Pedreira Santa Rita — Sete Lagoas/MG',
     kmInicio: 77100, kmFim: 77276, original: txtGeneric, atual: txtGenericIA,
+    fotos: [fotoChecklistCampo('ph_132a', -44 * D)],
     equipamentosIds: ['e5102'],
     aprovadoAgoMs: 43 * D, docs: docsPadrao(43 * D - 4 * H, 42 * D), enviadoCliente: true,
   }),
@@ -382,6 +410,7 @@ export const seedReports: Report[] = [
     n: 131, colaboradorId: 'u_joao', clienteId: 'c_serra', caminhaoId: 't101', tripDaysAgo: 51, status: 'arquivado',
     criadoAgoMs: 51 * D + 4 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Mina Serra Azul — Itabira/MG',
     kmInicio: 61200, kmFim: 61570, original: txtGeneric, atual: txtGenericIA,
+    fotos: [fotoCaminhaoMina('ph_131a', -51 * D), fotoAtividade('ph_131b', -51 * D)],
     aprovadoAgoMs: 50 * D, docs: docsPadrao(50 * D - 2 * H, 49 * D), enviadoCliente: true,
   }),
   ...realReports,
@@ -390,7 +419,7 @@ export const seedReports: Report[] = [
 export const seedNotifications: Notification[] = [
   { id: 'n1', tipo: 'prazo', titulo: 'Prazo expirado — REL-2026-0147', mensagem: 'João Pedro Rocha ainda não preencheu o relatório da viagem a Ipatinga. Prazo vencido há 4 h.', criadaEm: iso(-4 * H), lida: false, reportId: 'r_147', para: 'admin' },
   { id: 'n2', tipo: 'prazo', titulo: 'Prazo próximo — REL-2026-0148', mensagem: 'O relatório de Carlos Menezes vence em menos de 24 h.', criadaEm: iso(-6 * H), lida: false, reportId: 'r_148', para: 'admin' },
-  { id: 'n3', tipo: 'revisao', titulo: 'Novo relatório para revisão', mensagem: 'REL-2026-0145 (Carlos Menezes) foi enviado para revisão com 2 fotos e 1 leitura OCR aguardando conferência.', criadaEm: iso(-5 * H), lida: false, reportId: 'r_145', para: 'revisora' },
+  { id: 'n3', tipo: 'revisao', titulo: 'Novo relatório para revisão', mensagem: 'REL-2026-0145 (Carlos Menezes) foi enviado para revisão com 3 fotos e 1 leitura OCR aguardando conferência.', criadaEm: iso(-5 * H), lida: false, reportId: 'r_145', para: 'revisora' },
   { id: 'n4', tipo: 'revisao', titulo: 'Novo relatório para revisão', mensagem: 'REL-2026-0143 (João Pedro Rocha) aguarda revisão. Equipamento EQ-2041 já confirmado.', criadaEm: iso(-2 * D), lida: false, reportId: 'r_143', para: 'revisora' },
   { id: 'n5', tipo: 'correcao', titulo: 'Correção solicitada — REL-2026-0142', mensagem: 'Marta Fonseca solicitou complementação de dados a Felipe Araújo.', criadaEm: iso(-2 * D), lida: true, reportId: 'r_142', para: 'colaborador' },
   { id: 'n6', tipo: 'documento', titulo: 'Documentos gerados — REL-2026-0139', mensagem: 'PDF do cliente e PDF interno disponíveis no arquivo. Envio ao cliente registrado (simulação).', criadaEm: iso(-7 * D), lida: true, reportId: 'r_139', para: 'todos' },

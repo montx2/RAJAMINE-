@@ -367,24 +367,39 @@ export async function generateSyntheticPhoto(codigo: string, serial: string): Pr
   return canvas.toDataURL('image/jpeg', 0.92);
 }
 
-/** Fallback DEMONSTRATIVO (rotulado) quando o WASM não está disponível. */
+/** Fallback DEMONSTRATIVO (rotulado) quando o WASM não está disponível.
+  * Conhece as imagens da galeria demonstrativa para devolver candidatos coerentes
+  * com a etiqueta fotografada. Ainda assim é SIMULAÇÃO e exige confirmação humana. */
 export function demoOcrResult(photoSrc: string): OcrRunResult {
-  const known: Array<[string, string, string, number]> = [
-    ['eq2041', 'EQ-2041', '88231', 93],
-    ['eq1087', 'EQ-1087', '45102', 88],
-    ['eq3315', 'EQ-3315', '71590', 58],
+  const known: Array<{ keys: string[]; codigo: string; serial?: string; imei?: string; conf: number }> = [
+    { keys: ['eq2041', 'instalacao-chicote'], codigo: 'EQ-2041', serial: '88231', conf: 93 },
+    { keys: ['eq1087', 'chassi-gps'], codigo: 'EQ-1087', serial: '45102', conf: 88 },
+    { keys: ['eq3315', 'camera-fadiga'], codigo: 'EQ-3315', serial: '71590', conf: 58 },
+    { keys: ['camera-externa'], codigo: 'EQ-4520', serial: '60415', conf: 86 },
+    { keys: ['sensor-carga'], codigo: 'EQ-2988', serial: '33078', conf: 84 },
+    { keys: ['checklist-campo'], codigo: 'EQ-5102', serial: '90233', conf: 79 },
+    { keys: ['painel-cp101'], codigo: 'CP-101', serial: '0987', conf: 90 },
+    { keys: ['tablet-pulsus'], codigo: 'CP-101', serial: '2758', conf: 82 },
+    { keys: ['galileo-rotograma'], codigo: 'MOBI', imei: '867782071392430', conf: 76 },
   ];
-  const hit = known.find(([k]) => photoSrc.toLowerCase().includes(k));
-  const codigo = hit?.[1] ?? `EQ-${String(1000 + Math.floor(Math.random() * 9000))}`;
-  const serial = hit?.[2] ?? String(10000 + Math.floor(Math.random() * 89999));
-  const conf = hit?.[3] ?? 72;
+  const src = photoSrc.toLowerCase();
+  const hit = known.find((k) => k.keys.some((key) => src.includes(key)));
+  const codigo = hit?.codigo ?? `EQ-${String(1000 + Math.floor(Math.random() * 9000))}`;
+  const serial = hit?.serial ?? String(10000 + Math.floor(Math.random() * 89999));
+  const conf = hit?.conf ?? 72;
+  const candidatos: OcrCandidate[] = [
+    { valor: codigo, normalizado: codigo, confianca: conf, tipo: 'codigo' },
+  ];
+  if (hit?.imei) {
+    candidatos.push({ valor: hit.imei, normalizado: hit.imei, confianca: conf - 3, tipo: 'imei' });
+  } else {
+    candidatos.push({ valor: `SN ${serial}`, normalizado: serial, confianca: conf - 4, tipo: 'serial' });
+  }
+  const lines = [codigo, hit?.imei ? `ID ${hit.imei}` : `SN ${serial}`, '(simulação — OCR não executado)'];
   return {
-    textoBruto: `${codigo}\nSN ${serial}\n(simulação — OCR não executado)`,
+    textoBruto: lines.join('\n'),
     confianca: conf,
-    candidatos: [
-      { valor: codigo, normalizado: codigo, confianca: conf, tipo: 'codigo' },
-      { valor: `SN ${serial}`, normalizado: serial, confianca: conf - 4, tipo: 'serial' },
-    ],
+    candidatos,
     duracaoMs: 0,
   };
 }

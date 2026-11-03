@@ -28,6 +28,7 @@ Este documento registra **o que foi aprendido com o material real** enviado pela
 - CNPJ, e-mail, contato e cidade de MFS/AMDA/FDX quando não constavam no material → campos vazios.
 - Aprovações e envios dos documentos reais → relatórios de referência entram como **em revisão**, sem `aprovadoEm` presumido.
 - Fotos originais da planilha → marcadas como “Enviadas” na transcrição, mas os arquivos não foram anexados; nenhuma foto demo é apresentada como foto real da empresa.
+- Galeria demonstrativa ampliada para **14 imagens sintéticas** (`public/demo/`): etiquetas EQ/CP, câmera de fadiga, câmera externa, tablet Pulsus, Galileo/rotograma, sensor de carga, chicote, checklist e caminhão na mina. O seed distribui imagens diferentes por relatório para evitar repetição, e o painel de Fotos & OCR bloqueia reanexar a mesma imagem no mesmo relatório.
 - Situação de telemetria quando a coluna estava vazia → `nao_informada`, mesmo que a observação cite dispositivo antigo.
 
 ## 4. Privacidade e governança

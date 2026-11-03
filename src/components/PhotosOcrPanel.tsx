@@ -1,20 +1,15 @@
 import { useRef, useState } from 'react';
-import { Upload, Camera, ScanLine, Trash2, FlaskConical, ImagePlus, Loader2, ShieldCheck } from 'lucide-react';
+import { Upload, Camera, ScanLine, Trash2, FlaskConical, ImagePlus, Loader2, ShieldCheck, Shuffle, Images } from 'lucide-react';
 import type { Photo, Report } from '../data/types';
 import { useStore } from '../store/useStore';
 import { savePhotoBytes, validateImageFile } from '../store/photos';
 import { runOcr, demoOcrResult, generateSyntheticPhoto, newDetectionId, type OcrProgress } from '../services/ocr';
 import { uid } from '../lib/id';
-import { Button, Badge, Banner, Select, Input, toast, Modal } from './ui';
+import { DEMO_PHOTOS, demoPhotoBySrc } from '../data/demoPhotos';
+import { Button, Badge, Banner, Input, toast, Modal } from './ui';
 import PhotoImg from './PhotoImg';
 import DetectionCard from './DetectionCard';
 
-const DEMO_PHOTOS: Array<{ src: string; legenda: string; categoria: Photo['categoria'] }> = [
-  { src: '/demo/foto-eq2041.jpg', legenda: 'Telemetria no painel — etiqueta EQ-2041 (nítida)', categoria: 'equipamento' },
-  { src: '/demo/foto-eq1087.jpg', legenda: 'Rastreador no chassi — etiqueta EQ-1087 (poeira leve)', categoria: 'equipamento' },
-  { src: '/demo/foto-eq3315.jpg', legenda: 'Sensor de fadiga — etiqueta EQ-3315 (suja, com reflexo)', categoria: 'equipamento' },
-  { src: '/demo/foto-atividade.jpg', legenda: 'Registro da instalação em campo (atividade)', categoria: 'atividade' },
-];
 
 export default function PhotosOcrPanel({ report, actorName, canUpload, canValidate }: {
   report: Report; actorName: string; canUpload: boolean; canValidate: boolean;
@@ -25,6 +20,8 @@ export default function PhotosOcrPanel({ report, actorName, canUpload, canValida
   const equipment = useStore((s) => s.equipment);
   const fileRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState<Record<string, OcrProgress | null>>({});
+  const attachedSrcs = new Set(report.fotos.map((f) => f.src).filter(Boolean) as string[]);
+  const availableDemo = DEMO_PHOTOS.filter((d) => !attachedSrcs.has(d.src));
   const [demoPick, setDemoPick] = useState(DEMO_PHOTOS[0].src);
   const [synthOpen, setSynthOpen] = useState(false);
   const [synthCode, setSynthCode] = useState('CP-101');
@@ -47,14 +44,26 @@ export default function PhotosOcrPanel({ report, actorName, canUpload, canValida
     }
   };
 
-  const addDemo = () => {
-    const d = DEMO_PHOTOS.find((x) => x.src === demoPick)!;
+  const addDemo = (src?: string) => {
+    const chosen = src ?? demoPick;
+    if (attachedSrcs.has(chosen)) { toast('Esta imagem demonstrativa já está anexada a este relatório.', 'info'); return; }
+    const d = demoPhotoBySrc(chosen);
+    if (!d) { toast('Imagem demonstrativa não encontrada.', 'error'); return; }
     const photo: Photo = {
       id: uid('ph'), nome: d.src.split('/').pop()!, origem: 'demo', src: d.src, mime: 'image/jpeg',
       legenda: `${d.legenda} [imagem demonstrativa]`, categoria: d.categoria, criadaEm: new Date().toISOString(),
     };
     addPhoto(report.id, photo, actorName);
+    const next = DEMO_PHOTOS.find((x) => !attachedSrcs.has(x.src) && x.src !== chosen);
+    if (next) setDemoPick(next.src);
     toast('Foto demonstrativa anexada.');
+  };
+
+  const addRandomDemo = () => {
+    const pool = availableDemo.length ? availableDemo : DEMO_PHOTOS;
+    const d = pool[Math.floor(Math.random() * pool.length)];
+    setDemoPick(d.src);
+    addDemo(d.src);
   };
 
   const addSynthetic = async () => {
@@ -139,14 +148,51 @@ export default function PhotosOcrPanel({ report, actorName, canUpload, canValida
             <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" multiple className="hidden" aria-label="Enviar fotografias"
               onChange={(e) => { if (e.target.files?.length) handleFiles(e.target.files); e.target.value = ''; }} />
           </div>
-          <div className="flex flex-wrap items-end gap-2">
-            <div className="flex-1 min-w-[220px]">
-              <label className="label" htmlFor="demo-photo">Adicionar foto de exemplo (demonstrativa)</label>
-              <Select id="demo-photo" value={demoPick} onChange={(e) => setDemoPick(e.target.value)}>
-                {DEMO_PHOTOS.map((d) => <option key={d.src} value={d.src}>{d.legenda}</option>)}
-              </Select>
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span id="demo-photo-label" className="label mb-0 flex items-center gap-1.5">
+                <Images size={14} aria-hidden /> Galeria demonstrativa ({DEMO_PHOTOS.length} imagens · {availableDemo.length} ainda não anexadas)
+              </span>
+              <div className="flex gap-2">
+                <Button size="sm" variant="ghost" icon={<Shuffle size={14} />} onClick={addRandomDemo} disabled={availableDemo.length === 0}>
+                  Aleatória
+                </Button>
+                <Button size="sm" variant="outline" icon={<Camera size={15} />} onClick={() => addDemo()} disabled={attachedSrcs.has(demoPick)}>
+                  Anexar selecionada
+                </Button>
+              </div>
             </div>
-            <Button variant="outline" icon={<Camera size={16} />} onClick={addDemo}>Anexar exemplo</Button>
+            <div
+              id="demo-photo"
+              role="listbox"
+              aria-labelledby="demo-photo-label"
+              className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2 max-h-56 overflow-y-auto rounded-xl border border-border bg-muted/30 p-2"
+            >
+              {DEMO_PHOTOS.map((d) => {
+                const used = attachedSrcs.has(d.src);
+                const selected = demoPick === d.src;
+                return (
+                  <button
+                    key={d.src}
+                    type="button"
+                    role="option"
+                    aria-selected={selected}
+                    disabled={used}
+                    title={used ? `${d.legenda} (já anexada)` : d.legenda}
+                    onClick={() => setDemoPick(d.src)}
+                    onDoubleClick={() => !used && addDemo(d.src)}
+                    className={`relative rounded-lg overflow-hidden border-2 text-left transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-45 ${selected ? 'border-accent ring-2 ring-accent/25' : 'border-transparent hover:border-accent/50'}`}
+                  >
+                    <img src={d.src} alt="" loading="lazy" decoding="async" className="h-16 w-full object-cover" />
+                    <span className="block px-1.5 py-1 text-[10px] leading-tight text-secondary bg-surface/95 line-clamp-2">{d.legenda}</span>
+                    {used && <span className="absolute top-1 right-1 rounded bg-primary/80 px-1 text-[9px] font-bold text-white">anexada</span>}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-[11.5px] text-subtle">
+              Selecione uma miniatura e clique em “Anexar selecionada” (ou dê duplo clique). Todas são imagens sintéticas de demonstração, não fotos reais de clientes.
+            </p>
           </div>
         </div>
       )}

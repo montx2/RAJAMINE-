@@ -39,7 +39,7 @@ node scripts/ocr-smoke.mjs   # verifica o OCR real nas fotos de exemplo (Node)
 3. **Operações de campo** (`/operacoes`) — planilha real MFS 22/09/2026: equipamento, telemetria, Pulsus, câmera (IMEI), atividade, observação e fotos. Exporte CSV e veja alertas de consistência.
 4. **Novo relatório** — caminhão agora é **opcional**; escolha visita técnica / atividade externa / viagem, informe objetivo, setor e cidade. O sistema gera o **link individual** com prazo de 48 h.
 5. **Preenchimento (colaborador)** — stepper em 4 passos. Registre **atividades por equipamento** com IDs reais (telemetria `0987`, Pulsus `2758`, câmera `864993060408250`). Escreva o relato livre e veja a **IA sugerir 3ª pessoa / correções** com diff. Aceite, edite ou rejeite — o original é preservado.
-6. **Fotos & OCR** — anexe foto de exemplo ou gere foto sintética. OCR real multi-pass; confirme/corrija/rejeite. Agora reconhece códigos reais (`CP-101`, `TYE-9A00`) e IMEI de 15 dígitos.
+6. **Fotos & OCR** — galeria demonstrativa com **14 imagens de campo** (etiquetas, câmera de fadiga, tablet Pulsus, Galileo, chicote, checklist, caminhão na mina), anexo aleatório sem repetição ou foto sintética. OCR real multi-pass; confirme/corrija/rejeite. Reconhece códigos reais (`CP-101`, `TYE-9A00`) e IMEI de 15 dígitos.
 7. **Central de Revisão** — como Marta, tente aprovar com OCR pendente: **bloqueia**. Confira e aprove.
 8. **Documentos** — gere os **2 PDFs reais** nos formatos da empresa: cliente (Visita Técnica / Atividade Externa, sem fotos) e interno (fotos, OCR, original, sensação do cliente, melhorias, histórico). Envio ao cliente é **simulado**.
 9. **Consolidado semanal** (`/semanal`) — referência real AMDA/FDX e gerador de PDF semanal a partir de relatórios **aprovados**. O sistema sinaliza atividade fora do período sem alterá-la.
@@ -74,7 +74,7 @@ node scripts/ocr-smoke.mjs   # verifica o OCR real nas fotos de exemplo (Node)
 │   ├── data/            # types, seed sintético, referencias.ts (material real)
 │   └── lib/             # diff, formatação, operations.ts (consistência real), docs
 ├── public/ocr/          # assets locais do Tesseract (gerados por setup:ocr)
-├── public/demo/         # fotos demonstrativas sintéticas (não são fotos reais da empresa)
+├── public/demo/         # 14 fotos demonstrativas sintéticas (não são fotos reais da empresa)
 ├── tests/               # Vitest: motores, regras, PDF, referências reais, smoke de telas
 ├── e2e/                 # Playwright: fluxos completos (CI/local)
 ├── scripts/             # setup-ocr.mjs, ocr-smoke.mjs
