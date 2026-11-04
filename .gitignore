@@ -26,3 +26,8 @@ Rajamine-FieldOps-Pendrive.zip
 
 # Auditoria visual local (screenshots)
 .audit/
+
+# Renders de conferência do TCC e cache Python
+tcc/preview_artigo/
+tcc/preview_monografia/
+__pycache__/
