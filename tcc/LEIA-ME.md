@@ -2,8 +2,8 @@
 
 | Formato | Arquivo | Quando usar |
 | --- | --- | --- |
-| **ABNT com capa e sumário** | `TCC_Rajamine_FieldOps_ABNT.pdf` / `.docx` | 23 páginas, texto enxuto e **25 figuras** do sistema. É a versão para quem quer ver o produto. |
-| Artigo científico (NBR 6022) | `TCC_Rajamine_FieldOps.pdf` / `.docx` | 8 páginas, texto corrido, 3 figuras. Para submissão como artigo. |
+| **ABNT com capa e sumário** | `TCC_SAFIP_FieldOps_ABNT.pdf` / `.docx` | 23 páginas, texto enxuto e **25 figuras** do sistema. É a versão para quem quer ver o produto. |
+| Artigo científico (NBR 6022) | `TCC_SAFIP_FieldOps.pdf` / `.docx` | 8 páginas, texto corrido, 3 figuras. Para submissão como artigo. |
 
 Ambos são gerados por script a partir de uma fonte única: editar o texto em um
 lugar mantém PDF e DOCX sincronizados.
@@ -26,8 +26,8 @@ frota, ocorrências, cadastros, tema escuro e o portal do motorista no celular.
 
 | Caminho | O que é |
 | --- | --- |
-| `TCC_Rajamine_FieldOps_ABNT.pdf` | documento final, 23 páginas |
-| `TCC_Rajamine_FieldOps_ABNT.docx` | mesmo conteúdo, editável no Word |
+| `TCC_SAFIP_FieldOps_ABNT.pdf` | documento final, 23 páginas |
+| `TCC_SAFIP_FieldOps_ABNT.docx` | mesmo conteúdo, editável no Word |
 | `gerar_tcc_visual.py` | conteúdo + geradores de PDF e DOCX (fonte única) |
 | `figuras_tcc/` | 27 capturas preparadas, em 2× para impressão |
 | `figuras/` | capturas brutas, antes do reenquadre (não versionado) |
@@ -80,7 +80,7 @@ instituição tiver manual próprio, ele prevalece sobre a NBR.
 
 | Caminho | O que é |
 | --- | --- |
-| `TCC_Rajamine_FieldOps.pdf` / `.docx` | artigo final |
+| `TCC_SAFIP_FieldOps.pdf` / `.docx` | artigo final |
 | `gerar_artigo.py` | fonte única do artigo |
 | `figuras_artigo/` | 3 capturas |
 | `monografia-45-paginas/` | gerador da versão longa anterior, reproduzível |

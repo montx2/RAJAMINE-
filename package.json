@@ -1,8 +1,8 @@
 {
-  "name": "rajamine-fieldops",
+  "name": "safip-fieldops",
   "private": true,
   "version": "0.1.0",
-  "description": "Rajamine FieldOps — Sistema de Gestão e Padronização de Relatórios de Campo (protótipo de alta fidelidade)",
+  "description": "SAFIP FieldOps — Sistema de Gestão e Padronização de Relatórios de Campo (protótipo de alta fidelidade)",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 5173",

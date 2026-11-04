@@ -1,7 +1,7 @@
 /*
   Geração REAL de PDFs no navegador com pdf-lib (MIT).
-  Layout alinhado aos documentos reais da Rajamine: título em preto, faixa amarela,
-  wordmark RajaMine, seções de visita técnica / atividade externa / semanal.
+  Layout alinhado aos documentos reais da SAFIP: título em preto, faixa amarela,
+  wordmark SAFIP, seções de visita técnica / atividade externa / semanal.
   · Documento CLIENTE: sem fotografias internas; exige aprovação humana registrada.
   · Documento INTERNO: fotos, OCR, texto original, sensação do cliente, melhorias e histórico.
 */
@@ -75,10 +75,17 @@ class Flow {
     this.addPage(true);
   }
 
+  /** Wordmark SAFIP: o "I" usa o amarelo da marca e o mesmo corpo das demais letras. */
   private wordmark(x: number, y: number, size: number) {
-    const raja = 'Raja';
-    this.page.drawText(raja, { x, y, size, font: this.bold, color: INK });
-    this.page.drawText('Mine', { x: x + this.bold.widthOfTextAtSize(raja, size), y, size, font: this.bold, color: BRAND });
+    this.page.drawText('SAF', { x, y, size, font: this.bold, color: INK });
+    const ix = x + this.bold.widthOfTextAtSize('SAF', size);
+    this.page.drawText('I', { x: ix, y, size, font: this.bold, color: BRAND });
+    this.page.drawText('P', { x: ix + this.bold.widthOfTextAtSize('I', size), y, size, font: this.bold, color: INK });
+  }
+
+  /** Largura total do wordmark. */
+  private wordmarkWidth(size: number) {
+    return this.bold.widthOfTextAtSize('SAFIP', size);
   }
 
   addPage(first = false) {
@@ -92,7 +99,7 @@ class Flow {
         ty -= 18;
       }
       const wmSize = 18;
-      const wmW = this.bold.widthOfTextAtSize('RajaMine', wmSize);
+      const wmW = this.wordmarkWidth(wmSize);
       this.wordmark(PAGE_W - MARGIN - wmW, PAGE_H - 56, wmSize);
       this.page.drawRectangle({ x: MARGIN, y: PAGE_H - 92, width: CONTENT_W, height: 6, color: BRAND });
       this.y = PAGE_H - 122;
@@ -202,7 +209,7 @@ class Flow {
     const pages = this.doc.getPages();
     pages.forEach((p, i) => {
       p.drawLine({ start: { x: MARGIN, y: 50 }, end: { x: PAGE_W - MARGIN, y: 50 }, thickness: 0.6, color: BORDER });
-      const left = `Rajamine FieldOps · Gerado eletronicamente · Verificação ${verification}`;
+      const left = `SAFIP FieldOps · Gerado eletronicamente · Verificação ${verification}`;
       p.drawText(left, { x: MARGIN, y: 38, size: 7, font: this.font, color: MUTED });
       const right = `Página ${i + 1} de ${pages.length}`;
       p.drawText(right, { x: PAGE_W - MARGIN - this.font.widthOfTextAtSize(right, 7), y: 38, size: 7, font: this.font, color: MUTED });
@@ -236,8 +243,8 @@ export async function buildReportPdf(report: Report, refs: PdfRefs, kind: DocKin
   }
   const doc = await PDFDocument.create();
   doc.setTitle(`${report.codigo} — ${clientTitle(report, kind)}`);
-  doc.setAuthor('Rajamine FieldOps');
-  doc.setCreator('Rajamine FieldOps — protótipo');
+  doc.setAuthor('SAFIP FieldOps');
+  doc.setCreator('SAFIP FieldOps — protótipo');
   doc.setProducer('pdf-lib');
   doc.setCreationDate(new Date());
 
@@ -336,9 +343,9 @@ export async function buildWeeklyPdf(
   if (notApproved.length) throw new Error(`O consolidado semanal exige aprovação humana de todos os relatórios selecionados. Pendentes: ${notApproved.map((r) => r.codigo).join(', ')}.`);
 
   const doc = await PDFDocument.create();
-  doc.setTitle(`Rajamine — Relatório semanal de viagens ${periodo.inicio} a ${periodo.fim}`);
-  doc.setAuthor('Rajamine FieldOps');
-  doc.setCreator('Rajamine FieldOps — protótipo');
+  doc.setTitle(`SAFIP — Relatório semanal de viagens ${periodo.inicio} a ${periodo.fim}`);
+  doc.setAuthor('SAFIP FieldOps');
+  doc.setCreator('SAFIP FieldOps — protótipo');
   doc.setProducer('pdf-lib');
   const font = await doc.embedFont(StandardFonts.Helvetica);
   const bold = await doc.embedFont(StandardFonts.HelveticaBold);
@@ -346,7 +353,7 @@ export async function buildWeeklyPdf(
   const f = new Flow(doc, font, bold, mono, `SEM-${periodo.inicio}`, 'cliente', 'RELATÓRIO SEMANAL - VIAGENS');
 
   f.paragraph(`Data: ${fmtDate((periodo.emissao ?? periodo.fim) + 'T12:00:00')}`, { font: bold });
-  f.paragraph(`O presente relatório tem como finalidade documentar as atividades de instalações, manutenções, reuniões e treinamentos realizados pela Equipe Rajamine, no período de ${fmtDate(periodo.inicio + 'T12:00:00')} a ${fmtDate(periodo.fim + 'T12:00:00')}, de forma presencial em empresas clientes, com o intuito de organizar e aprimorar nossos processos.`);
+  f.paragraph(`O presente relatório tem como finalidade documentar as atividades de instalações, manutenções, reuniões e treinamentos realizados pela Equipe SAFIP, no período de ${fmtDate(periodo.inicio + 'T12:00:00')} a ${fmtDate(periodo.fim + 'T12:00:00')}, de forma presencial em empresas clientes, com o intuito de organizar e aprimorar nossos processos.`);
 
   const byClient = new Map<string, Report[]>();
   for (const r of reports) {

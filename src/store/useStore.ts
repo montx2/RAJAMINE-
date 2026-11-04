@@ -716,7 +716,7 @@ export const useStore = create<State>()(
       };
     },
     {
-      name: 'rajamine-fieldops-v2',
+      name: 'safip-fieldops-v2',
       storage: createJSONStorage(() => localStorage),
       version: 4,
       migrate: (persisted, version) => {

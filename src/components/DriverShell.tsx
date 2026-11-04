@@ -140,7 +140,7 @@ export default function DriverShell() {
           </div>
           <button
             type="button"
-            onClick={() => window.dispatchEvent(new CustomEvent('rajamine-start-tour'))}
+            onClick={() => window.dispatchEvent(new CustomEvent('safip-start-tour'))}
             className="press rounded-xl p-2.5 text-secondary hover:bg-primary/5 cursor-pointer"
             aria-label="Abrir tutorial"
             title="Tutorial — como usar o portal"

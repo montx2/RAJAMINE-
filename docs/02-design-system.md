@@ -13,7 +13,7 @@ A plataforma desta sessão não instala "skills" nativamente, então — conform
 ```bash
 python3 design_system.py \
   "enterprise B2B SaaS dashboard field operations report management mining industrial professional trustworthy" \
-  -p "Rajamine FieldOps" -f markdown
+  -p "SAFIP FieldOps" -f markdown
 ```
 
 A saída completa está preservada em [design-system-output.md](design-system-output.md). Também consultamos os domínios `chart` (dashboards) e `ux` (formulários, tabelas, feedback, acessibilidade) e aplicamos as diretrizes no código.
@@ -68,7 +68,7 @@ Componentes consistentes em `src/components/ui.tsx`: Button (6 variantes), Badge
 - [x] Chips/badges sem clipping; truncamento com acesso ao valor
 - [x] Responsivo 375 / 768 / 1024 / 1440 (sidebar → drawer + bottom nav)
 
-## 6. Adaptação à identidade real da Rajamine
+## 6. Adaptação à identidade real da SAFIP
 
 Após receber os documentos reais da empresa, a paleta inicial (navy/azul) foi substituída pela identidade observada: **grafite/preto + amarelo/âmbar**.
 
@@ -80,7 +80,7 @@ Após receber os documentos reais da empresa, a paleta inicial (navy/azul) foi s
 | `--color-accent-soft` | `#FEF3C7` | Fundos suaves de seleção/avisos |
 | `--color-background` | `#FAFAF9` | Fundo geral |
 
-O wordmark `RajaMine` (Raja em preto/branco, Mine em amarelo) foi aproximado tipograficamente para o protótipo; não é o vetor oficial. Os PDFs usam título preto + faixa amarela + wordmark no canto, como nos documentos reais. A base de acessibilidade do UI UX Pro Max (foco visível, reduced-motion, labels, contraste) foi mantida.
+O wordmark `SAFIP` foi aproximado tipograficamente para o protótipo; não é o vetor oficial. O destaque do nome fica só na cor: `SAF` e `P` usam o grafite/branco do texto e apenas o `I` recebe o amarelo da marca (`#FFC400`). Os PDFs usam título preto + faixa amarela + wordmark no canto, como nos documentos reais. A base de acessibilidade do UI UX Pro Max (foco visível, reduced-motion, labels, contraste) foi mantida.
 
 ## 7. Reformulação v3 — “Liquid Glass Clean” (pedido do usuário)
 

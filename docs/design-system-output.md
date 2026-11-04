@@ -1,4 +1,4 @@
-## Design System: Rajamine FieldOps
+## Design System: SAFIP FieldOps
 
 ### Pattern
 - **Name:** Trust & Authority + Conversion
@@ -121,7 +121,7 @@ Clear focus rings (3-4px), ARIA labels, skip links, responsive design, reduced m
 
 ## Revisão v3 — glass clean (pedido do usuário)
 
-## Design System: Rajamine FieldOps
+## Design System: SAFIP FieldOps
 
 ### Pattern
 - **Name:** Hero + Features + CTA

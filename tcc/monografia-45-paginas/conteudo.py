@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Conteúdo textual do TCC Rajamine FieldOps (ABNT)."""
+"""Conteúdo textual do TCC SAFIP FieldOps (ABNT)."""
 
 TITULO = 'SISTEMA WEB PROGRESSIVO PARA GESTÃO E PADRONIZAÇÃO DE RELATÓRIOS DE CAMPO COM OCR LOCAL E REVISÃO HUMANA OBRIGATÓRIA'
-SUBTITULO = 'um estudo de caso aplicado à Rajamine Inteligência em Mineração'
+SUBTITULO = 'um estudo de caso aplicado à SAFIP Inteligência em Mineração'
 AUTOR = '[NOME COMPLETO DO AUTOR]'
 INSTITUICAO = '[NOME DA INSTITUIÇÃO]'
 CURSO = '[NOME DO CURSO SUPERIOR DE TECNOLOGIA / BACHARELADO]'
@@ -15,7 +15,7 @@ AREA = 'Engenharia de Software / Sistemas de Informação'
 
 RESUMO = (
     'O presente trabalho apresenta o desenvolvimento e a avaliação de um protótipo funcional de sistema web progressivo '
-    'para gestão, padronização e auditoria de relatórios de campo, aplicado ao contexto da Rajamine Inteligência em Mineração. '
+    'para gestão, padronização e auditoria de relatórios de campo, aplicado ao contexto da SAFIP Inteligência em Mineração. '
     'O problema investigado consiste em como reduzir retrabalho, dispersão de evidências e riscos de conformidade na elaboração '
     'de relatórios técnicos sem eliminar a revisão humana obrigatória antes da liberação de documentos ao cliente. A pesquisa '
     'caracteriza-se como aplicada, qualitativa e exploratória, conduzida pelo método Design Science Research, com construção '
@@ -33,7 +33,7 @@ PALAVRAS_CHAVE = 'relatórios de campo; reconhecimento óptico de caracteres; re
 
 ABSTRACT = (
     'This work presents the development and evaluation of a functional prototype of a progressive web system for managing, '
-    'standardizing, and auditing field reports, applied to the context of Rajamine Inteligência em Mineração. The research '
+    'standardizing, and auditing field reports, applied to the context of SAFIP Inteligência em Mineração. The research '
     'problem addresses how to reduce rework, scattered evidence, and compliance risks in technical report preparation without '
     'removing mandatory human review before documents are released to clients. The study is applied, qualitative, and '
     'exploratory, conducted through Design Science Research with iterative construction of a computational artifact. The system '
@@ -83,7 +83,7 @@ DEDICATORIA = (
 AGRADECIMENTOS = (
     'À instituição de ensino e ao corpo docente, pela formação técnica e humana que tornou possível este trabalho. '
     'Ao orientador, pela leitura crítica, pelas correções e pela exigência de rigor metodológico. '
-    'À Rajamine Inteligência em Mineração, pela disponibilização de referências operacionais que permitiram '
+    'À SAFIP Inteligência em Mineração, pela disponibilização de referências operacionais que permitiram '
     'aproximar o artefato de um problema real. Aos colegas de equipe, pela colaboração nas validações, '
     'nos testes e nas discussões de usabilidade. À família e aos amigos, pelo apoio constante durante '
     'as etapas de desenvolvimento, escrita e revisão. Por fim, às comunidades de software livre e às '
@@ -116,13 +116,13 @@ p('A operação de serviços técnicos em mineração depende de evidências de 
   'contas ao cliente e melhoria contínua. Quando o relatório é produzido de forma dispersa, em texto livre, com fotos em '
   'aplicativos de mensagem e sem trilha de revisão, a organização passa a depender de esforço manual para reconstruir o que '
   'ocorreu em campo.')
-p('No contexto da Rajamine Inteligência em Mineração, foram observados materiais reais de referência, como planilhas de '
+p('No contexto da SAFIP Inteligência em Mineração, foram observados materiais reais de referência, como planilhas de '
   'instalações e manutenções, relatórios de visita técnica, atividades externas e consolidados semanais. Esses materiais '
   'evidenciam a necessidade de padronizar códigos de equipamentos, identificadores de telemetria, tablets, câmeras, '
   'rastreadores e dados de viagem, preservando ao mesmo tempo a originalidade das informações coletadas. O desafio não é '
   'apenas digitalizar formulários, mas estruturar um fluxo documental confiável, auditável e compatível com a legislação '
   'brasileira de proteção de dados.')
-p('Este trabalho propõe e avalia o Rajamine FieldOps, um protótipo funcional de sistema web progressivo que reúne coleta '
+p('Este trabalho propõe e avalia o SAFIP FieldOps, um protótipo funcional de sistema web progressivo que reúne coleta '
   'móvel, padronização assistida de texto, OCR local, revisão humana obrigatória, geração de PDFs, gestão de equipamentos '
   'e frota, arquivo histórico e um Portal do Motorista. A proposta parte do princípio de que a automação deve reduzir '
   'trabalho repetitivo e risco operacional, mas não deve substituir a responsabilidade humana sobre aprovação, triagem e '
@@ -141,7 +141,7 @@ p('Esse problema desdobra-se em questões secundárias: como extrair identificad
 h2('1.3 Objetivos')
 h3('1.3.1 Objetivo geral')
 p('Desenvolver e avaliar um protótipo funcional de sistema web progressivo para gestão e padronização de relatórios de campo, '
-  'com OCR local, trilha de auditoria, revisão humana obrigatória e Portal do Motorista, aplicado ao contexto da Rajamine '
+  'com OCR local, trilha de auditoria, revisão humana obrigatória e Portal do Motorista, aplicado ao contexto da SAFIP '
   'Inteligência em Mineração.')
 h3('1.3.2 Objetivos específicos')
 bullets([
@@ -401,11 +401,11 @@ p('Os critérios de aceite foram: nenhum teste crítico falhando; build de produ
 # ─────────────────────────────────────────────
 h1('4 DESENVOLVIMENTO E RESULTADOS')
 h2('4.1 Visão geral do artefato')
-p('O Rajamine FieldOps é uma aplicação web de página única com rotas protegidas por perfil, estado persistido localmente '
+p('O SAFIP FieldOps é uma aplicação web de página única com rotas protegidas por perfil, estado persistido localmente '
   'e serviços executados no navegador. O artefato reúne módulos administrativos e operacionais: dashboard, relatórios, '
   'preenchimento por link, central de revisão, operações de campo, consolidado semanal, equipamentos, caminhões, cadastros, '
   'documentos, conformidade e Portal do Motorista. A Figura 2 apresenta a arquitetura lógica.')
-fig('figuras/fig1_arquitetura.png', 'Arquitetura lógica do protótipo Rajamine FieldOps')
+fig('figuras/fig1_arquitetura.png', 'Arquitetura lógica do protótipo SAFIP FieldOps')
 
 h2('4.2 Fluxo de relatório de campo')
 p('O fluxo começa com a criação de um relatório, que gera código sequencial, token individual e prazo de 48 horas. O '
@@ -611,14 +611,14 @@ p('Do ponto de vista de governança, recomenda-se nomear encarregado de dados, d
 # ─────────────────────────────────────────────
 h1('6 CONCLUSÃO')
 p('Este trabalho apresentou o desenvolvimento e a avaliação de um protótipo funcional de sistema web progressivo para '
-  'gestão e padronização de relatórios de campo, aplicado ao contexto da Rajamine Inteligência em Mineração. A contribuição '
+  'gestão e padronização de relatórios de campo, aplicado ao contexto da SAFIP Inteligência em Mineração. A contribuição '
   'principal está em demonstrar, de forma integrada, como OCR local, padronização assistida, revisão humana obrigatória, '
   'auditoria, geração de PDFs e Portal do Motorista podem compor um fluxo documental mais rastreável e seguro.')
 p('A pesquisa mostrou que automação não precisa significar perda de controle. Ao automatizar captura, sugestão, roteamento '
   'e sincronização, mas preservar aprovação, triagem e envio como decisões humanas, o artefato reduz retrabalho sem '
   'eliminar responsabilidade. A avaliação técnica, com 80 testes aprovados, build verificado e documentação de conformidade, '
   'oferece evidências de viabilidade, embora não substitua validação em produção.')
-p('Conclui-se que o Rajamine FieldOps constitui uma base acadêmica e técnica consistente para evolução do processo '
+p('Conclui-se que o SAFIP FieldOps constitui uma base acadêmica e técnica consistente para evolução do processo '
   'documental da empresa. Para produção, serão necessários backend autenticado, governança de dados, validação jurídica, '
   'auditoria de segurança e estudos com usuários. Como trabalho futuro, recomenda-se medir impacto real em tempo de '
   'elaboração, taxa de correção, satisfação dos usuários e redução de pendências documentais.')

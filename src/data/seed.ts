@@ -25,15 +25,15 @@ function dayStr(offsetDays: number): string {
 }
 
 export const seedUsers: User[] = [
-  { id: 'u_helena', nome: 'Helena Duarte', email: 'helena.duarte@rajamine.demo', role: 'admin', cargo: 'Coordenadora de Operações', ativo: true },
-  { id: 'u_marta', nome: 'Marta Fonseca', email: 'marta.fonseca@rajamine.demo', role: 'revisora', cargo: 'Analista de Relatórios', ativo: true },
-  { id: 'u_carlos', nome: 'Carlos Menezes', email: 'carlos.menezes@rajamine.demo', role: 'colaborador', cargo: 'Técnico de Instalação', ativo: true },
-  { id: 'u_joao', nome: 'João Pedro Rocha', email: 'joao.rocha@rajamine.demo', role: 'colaborador', cargo: 'Técnico de Instalação', ativo: true },
-  { id: 'u_andre', nome: 'André Luiz Santos', email: 'andre.santos@rajamine.demo', role: 'colaborador', cargo: 'Técnico Sênior', ativo: true },
-  { id: 'u_felipe', nome: 'Felipe Araújo', email: 'felipe.araujo@rajamine.demo', role: 'colaborador', cargo: 'Técnico de Eletrônica', ativo: true },
-  { id: 'u_mot_joao', nome: 'João Batista', email: 'joao.batista@rajamine.demo', role: 'motorista', cargo: 'Motorista de caminhão fora de estrada', ativo: true, truckIds: ['t101'] },
-  { id: 'u_mot_antonio', nome: 'Antônio Ferreira', email: 'antonio.ferreira@rajamine.demo', role: 'motorista', cargo: 'Motorista de caminhão fora de estrada', ativo: true, truckIds: ['t103'] },
-  { id: 'u_mot_marcos', nome: 'Marcos Paulo', email: 'marcos.paulo@rajamine.demo', role: 'motorista', cargo: 'Motorista de caminhão fora de estrada', ativo: true, truckIds: ['t105'] },
+  { id: 'u_helena', nome: 'Helena Duarte', email: 'helena.duarte@safip.demo', role: 'admin', cargo: 'Coordenadora de Operações', ativo: true },
+  { id: 'u_marta', nome: 'Marta Fonseca', email: 'marta.fonseca@safip.demo', role: 'revisora', cargo: 'Analista de Relatórios', ativo: true },
+  { id: 'u_carlos', nome: 'Carlos Menezes', email: 'carlos.menezes@safip.demo', role: 'colaborador', cargo: 'Técnico de Instalação', ativo: true },
+  { id: 'u_joao', nome: 'João Pedro Rocha', email: 'joao.rocha@safip.demo', role: 'colaborador', cargo: 'Técnico de Instalação', ativo: true },
+  { id: 'u_andre', nome: 'André Luiz Santos', email: 'andre.santos@safip.demo', role: 'colaborador', cargo: 'Técnico Sênior', ativo: true },
+  { id: 'u_felipe', nome: 'Felipe Araújo', email: 'felipe.araujo@safip.demo', role: 'colaborador', cargo: 'Técnico de Eletrônica', ativo: true },
+  { id: 'u_mot_joao', nome: 'João Batista', email: 'joao.batista@safip.demo', role: 'motorista', cargo: 'Motorista de caminhão fora de estrada', ativo: true, truckIds: ['t101'] },
+  { id: 'u_mot_antonio', nome: 'Antônio Ferreira', email: 'antonio.ferreira@safip.demo', role: 'motorista', cargo: 'Motorista de caminhão fora de estrada', ativo: true, truckIds: ['t103'] },
+  { id: 'u_mot_marcos', nome: 'Marcos Paulo', email: 'marcos.paulo@safip.demo', role: 'motorista', cargo: 'Motorista de caminhão fora de estrada', ativo: true, truckIds: ['t105'] },
 ];
 
 export const seedClients: Client[] = [
@@ -194,24 +194,24 @@ function docsPadrao(geradoAgoMs: number, enviadoAgoMs?: number): Report['documen
 export const seedReports: Report[] = [
   mk({
     n: 148, colaboradorId: 'u_carlos', clienteId: 'c_serra', caminhaoId: 't101', tripDaysAgo: 0, status: 'pendente',
-    criadoAgoMs: 30 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Mina Serra Azul — Itabira/MG',
+    criadoAgoMs: 30 * H, origem: 'Base SAFIP — Belo Horizonte/MG', destino: 'Mina Serra Azul — Itabira/MG',
     original: '',
     historico: [ev(-30 * H, 'Helena Duarte', 'Relatório criado', 'Link individual enviado a Carlos Menezes (simulação)'), ev(-6 * H, 'Sistema', 'Lembrete de prazo', 'Notificação automática de prazo próximo (simulação)')],
   }),
   mk({
     n: 147, colaboradorId: 'u_joao', clienteId: 'c_aco', caminhaoId: 't103', tripDaysAgo: 2, status: 'pendente',
-    criadoAgoMs: 52 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Planta Vale do Aço — Ipatinga/MG',
+    criadoAgoMs: 52 * H, origem: 'Base SAFIP — Belo Horizonte/MG', destino: 'Planta Vale do Aço — Ipatinga/MG',
     original: '',
     historico: [ev(-52 * H, 'Helena Duarte', 'Relatório criado', 'Link individual enviado a João Pedro Rocha (simulação)'), ev(-4 * H, 'Sistema', 'Prazo expirado', 'Relatório marcado como atrasado')],
   }),
   mk({
     n: 146, colaboradorId: 'u_felipe', clienteId: 'c_rita', caminhaoId: 't105', tripDaysAgo: 0, status: 'pendente',
-    criadoAgoMs: 6 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Pedreira Santa Rita — Sete Lagoas/MG',
+    criadoAgoMs: 6 * H, origem: 'Base SAFIP — Belo Horizonte/MG', destino: 'Pedreira Santa Rita — Sete Lagoas/MG',
     original: '',
   }),
   mk({
     n: 145, colaboradorId: 'u_carlos', clienteId: 'c_serra', caminhaoId: 't102', tripDaysAgo: 1, status: 'em_revisao',
-    criadoAgoMs: 26 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Mina Serra Azul — Itabira/MG',
+    criadoAgoMs: 26 * H, origem: 'Base SAFIP — Belo Horizonte/MG', destino: 'Mina Serra Azul — Itabira/MG',
     kmInicio: 84310, kmFim: 84682, original: txt145,
     fotos: [fotoEq3315('ph_145a', -7 * H), fotoAtividade('ph_145b', -7 * H), fotoCameraFadiga('ph_145c', -7 * H)],
     deteccoes: [{
@@ -233,7 +233,7 @@ export const seedReports: Report[] = [
   }),
   mk({
     n: 144, colaboradorId: 'u_andre', clienteId: 'c_aco', caminhaoId: 't104', tripDaysAgo: 2, status: 'em_revisao',
-    criadoAgoMs: 2 * D + 4 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Planta Vale do Aço — Ipatinga/MG',
+    criadoAgoMs: 2 * D + 4 * H, origem: 'Base SAFIP — Belo Horizonte/MG', destino: 'Planta Vale do Aço — Ipatinga/MG',
     kmInicio: 51220, kmFim: 51590, original: txt144,
     fotos: [fotoAtividade('ph_144a', -2 * D), fotoCameraExterna('ph_144b', -2 * D)],
     historico: [
@@ -243,7 +243,7 @@ export const seedReports: Report[] = [
   }),
   mk({
     n: 143, colaboradorId: 'u_joao', clienteId: 'c_serra', caminhaoId: 't101', tripDaysAgo: 2, status: 'em_revisao',
-    criadoAgoMs: 2 * D + 8 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Mina Serra Azul — Itabira/MG',
+    criadoAgoMs: 2 * D + 8 * H, origem: 'Base SAFIP — Belo Horizonte/MG', destino: 'Mina Serra Azul — Itabira/MG',
     kmInicio: 62100, kmFim: 62471, original: txt143, atual: txt143ia,
     versoes: [tv(-2 * D - 6 * H, txt143, 'original', 'João Pedro Rocha'), tv(-2 * D - 5 * H, txt143ia, 'ia', 'João Pedro Rocha', 'Sugestão do motor de padronização aceita pelo colaborador')],
     fotos: [fotoEq2041('ph_143a', -2 * D - 2 * H), fotoInstalacaoChicote('ph_143b', -2 * D - 2 * H), fotoCaminhaoMina('ph_143c', -2 * D - 2 * H)],
@@ -267,7 +267,7 @@ export const seedReports: Report[] = [
   }),
   mk({
     n: 142, colaboradorId: 'u_felipe', clienteId: 'c_horizonte', caminhaoId: 't106', tripDaysAgo: 3, status: 'correcao',
-    criadoAgoMs: 3 * D + 6 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Mina Horizonte — Nova Lima/MG',
+    criadoAgoMs: 3 * D + 6 * H, origem: 'Base SAFIP — Belo Horizonte/MG', destino: 'Mina Horizonte — Nova Lima/MG',
     original: txt142,
     notas: [{ id: 'nt_142', autor: 'Marta Fonseca', texto: 'Descrição muito resumida. Informar o código do equipamento instalado, o horário de chegada/saída e detalhar os testes realizados. Anexar foto da etiqueta do equipamento.', criadaEm: iso(-2 * D), tipo: 'correcao' }],
     historico: [
@@ -278,7 +278,7 @@ export const seedReports: Report[] = [
   }),
   mk({
     n: 141, colaboradorId: 'u_andre', clienteId: 'c_aco', caminhaoId: 't103', tripDaysAgo: 5, status: 'aprovado',
-    criadoAgoMs: 5 * D + 4 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Planta Vale do Aço — Ipatinga/MG',
+    criadoAgoMs: 5 * D + 4 * H, origem: 'Base SAFIP — Belo Horizonte/MG', destino: 'Planta Vale do Aço — Ipatinga/MG',
     kmInicio: 112480, kmFim: 112855, original: txt141, atual: txt141ia,
     versoes: [tv(-5 * D - 2 * H, txt141, 'original', 'André Luiz Santos'), tv(-5 * D - H, txt141ia, 'ia', 'André Luiz Santos', 'Sugestão aceita; original preservado')],
     fotos: [fotoEq1087('ph_141a', -5 * D), fotoAtividade('ph_141b', -5 * D), fotoChassiGps('ph_141c', -5 * D)],
@@ -300,7 +300,7 @@ export const seedReports: Report[] = [
   }),
   mk({
     n: 140, colaboradorId: 'u_carlos', clienteId: 'c_rita', caminhaoId: 't105', tripDaysAgo: 6, status: 'aprovado',
-    criadoAgoMs: 6 * D + 5 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Pedreira Santa Rita — Sete Lagoas/MG',
+    criadoAgoMs: 6 * D + 5 * H, origem: 'Base SAFIP — Belo Horizonte/MG', destino: 'Pedreira Santa Rita — Sete Lagoas/MG',
     kmInicio: 78040, kmFim: 78215, original: txt140, atual: txt140,
     fotos: [fotoChecklistCampo('ph_140a', -6 * D), fotoAtividade('ph_140b', -6 * D)],
     equipamentosIds: ['e5102'],
@@ -313,7 +313,7 @@ export const seedReports: Report[] = [
   }),
   mk({
     n: 139, colaboradorId: 'u_joao', clienteId: 'c_serra', caminhaoId: 't101', tripDaysAgo: 9, status: 'arquivado',
-    criadoAgoMs: 9 * D + 6 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Mina Serra Azul — Itabira/MG',
+    criadoAgoMs: 9 * D + 6 * H, origem: 'Base SAFIP — Belo Horizonte/MG', destino: 'Mina Serra Azul — Itabira/MG',
     kmInicio: 61730, kmFim: 62100, original: txtGeneric, atual: txtGenericIA,
     versoes: [tv(-9 * D - 4 * H, txtGeneric, 'original', 'João Pedro Rocha'), tv(-9 * D - 3 * H, txtGenericIA, 'ia', 'Marta Fonseca', 'Padronização aplicada na revisão')],
     fotos: [fotoEq2041('ph_139a', -9 * D), fotoInstalacaoChicote('ph_139b', -9 * D)],
@@ -329,7 +329,7 @@ export const seedReports: Report[] = [
   }),
   mk({
     n: 138, colaboradorId: 'u_andre', clienteId: 'c_aco', caminhaoId: 't104', tripDaysAgo: 12, status: 'arquivado',
-    criadoAgoMs: 12 * D + 4 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Planta Vale do Aço — Ipatinga/MG',
+    criadoAgoMs: 12 * D + 4 * H, origem: 'Base SAFIP — Belo Horizonte/MG', destino: 'Planta Vale do Aço — Ipatinga/MG',
     kmInicio: 50840, kmFim: 51210, original: txtGeneric, atual: txtGenericIA,
     fotos: [fotoAtividade('ph_138a', -12 * D), fotoCameraExterna('ph_138b', -12 * D)],
     equipamentosIds: ['e4520'],
@@ -343,7 +343,7 @@ export const seedReports: Report[] = [
   }),
   mk({
     n: 137, colaboradorId: 'u_felipe', clienteId: 'c_horizonte', caminhaoId: 't106', tripDaysAgo: 16, status: 'arquivado',
-    criadoAgoMs: 16 * D + 5 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Mina Horizonte — Nova Lima/MG',
+    criadoAgoMs: 16 * D + 5 * H, origem: 'Base SAFIP — Belo Horizonte/MG', destino: 'Mina Horizonte — Nova Lima/MG',
     kmInicio: 143220, kmFim: 143402, original: txtGeneric, atual: txtGenericIA,
     fotos: [fotoAtividade('ph_137a', -16 * D), fotoCaminhaoMina('ph_137b', -16 * D)],
     equipamentosIds: ['e8123'],
@@ -358,7 +358,7 @@ export const seedReports: Report[] = [
   }),
   mk({
     n: 136, colaboradorId: 'u_carlos', clienteId: 'c_rita', caminhaoId: 't105', tripDaysAgo: 21, status: 'arquivado',
-    criadoAgoMs: 21 * D + 6 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Pedreira Santa Rita — Sete Lagoas/MG',
+    criadoAgoMs: 21 * D + 6 * H, origem: 'Base SAFIP — Belo Horizonte/MG', destino: 'Pedreira Santa Rita — Sete Lagoas/MG',
     kmInicio: 77640, kmFim: 77816, original: txtGeneric, atual: txtGenericIA,
     fotos: [fotoAtividade('ph_136a', -21 * D), fotoChecklistCampo('ph_136b', -21 * D)],
     equipamentosIds: ['e5102'],
@@ -373,7 +373,7 @@ export const seedReports: Report[] = [
   }),
   mk({
     n: 135, colaboradorId: 'u_joao', clienteId: 'c_aco', caminhaoId: 't103', tripDaysAgo: 27, status: 'arquivado',
-    criadoAgoMs: 27 * D + 5 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Planta Vale do Aço — Ipatinga/MG',
+    criadoAgoMs: 27 * D + 5 * H, origem: 'Base SAFIP — Belo Horizonte/MG', destino: 'Planta Vale do Aço — Ipatinga/MG',
     kmInicio: 111900, kmFim: 112275, original: txtGeneric, atual: txtGenericIA,
     fotos: [fotoEq1087('ph_135a', -27 * D), fotoChassiGps('ph_135b', -27 * D)],
     equipamentosIds: ['e1087'],
@@ -388,7 +388,7 @@ export const seedReports: Report[] = [
   }),
   mk({
     n: 134, colaboradorId: 'u_andre', clienteId: 'c_serra', caminhaoId: 't102', tripDaysAgo: 33, status: 'arquivado',
-    criadoAgoMs: 33 * D + 4 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Mina Serra Azul — Itabira/MG',
+    criadoAgoMs: 33 * D + 4 * H, origem: 'Base SAFIP — Belo Horizonte/MG', destino: 'Mina Serra Azul — Itabira/MG',
     kmInicio: 83900, kmFim: 84270, original: txtGeneric, atual: txtGenericIA,
     fotos: [fotoEq3315('ph_134a', -33 * D), fotoCameraFadiga('ph_134b', -33 * D)],
     equipamentosIds: ['e3315'],
@@ -396,14 +396,14 @@ export const seedReports: Report[] = [
   }),
   mk({
     n: 133, colaboradorId: 'u_carlos', clienteId: 'c_horizonte', caminhaoId: 't106', tripDaysAgo: 38, status: 'arquivado',
-    criadoAgoMs: 38 * D + 6 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Mina Horizonte — Nova Lima/MG',
+    criadoAgoMs: 38 * D + 6 * H, origem: 'Base SAFIP — Belo Horizonte/MG', destino: 'Mina Horizonte — Nova Lima/MG',
     kmInicio: 142700, kmFim: 142884, original: txtGeneric, atual: txtGenericIA,
     fotos: [fotoCaminhaoMina('ph_133a', -38 * D)],
     aprovadoAgoMs: 37 * D, docs: docsPadrao(37 * D - 2 * H, 36 * D), enviadoCliente: true,
   }),
   mk({
     n: 132, colaboradorId: 'u_felipe', clienteId: 'c_rita', caminhaoId: 't105', tripDaysAgo: 44, status: 'arquivado',
-    criadoAgoMs: 44 * D + 5 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Pedreira Santa Rita — Sete Lagoas/MG',
+    criadoAgoMs: 44 * D + 5 * H, origem: 'Base SAFIP — Belo Horizonte/MG', destino: 'Pedreira Santa Rita — Sete Lagoas/MG',
     kmInicio: 77100, kmFim: 77276, original: txtGeneric, atual: txtGenericIA,
     fotos: [fotoChecklistCampo('ph_132a', -44 * D)],
     equipamentosIds: ['e5102'],
@@ -411,7 +411,7 @@ export const seedReports: Report[] = [
   }),
   mk({
     n: 131, colaboradorId: 'u_joao', clienteId: 'c_serra', caminhaoId: 't101', tripDaysAgo: 51, status: 'arquivado',
-    criadoAgoMs: 51 * D + 4 * H, origem: 'Base Rajamine — Belo Horizonte/MG', destino: 'Mina Serra Azul — Itabira/MG',
+    criadoAgoMs: 51 * D + 4 * H, origem: 'Base SAFIP — Belo Horizonte/MG', destino: 'Mina Serra Azul — Itabira/MG',
     kmInicio: 61200, kmFim: 61570, original: txtGeneric, atual: txtGenericIA,
     fotos: [fotoCaminhaoMina('ph_131a', -51 * D), fotoAtividade('ph_131b', -51 * D)],
     aprovadoAgoMs: 50 * D, docs: docsPadrao(50 * D - 2 * H, 49 * D), enviadoCliente: true,

@@ -1,6 +1,6 @@
 /* Tema claro/escuro persistido. Aplicado antes do primeiro paint (index.html). */
 export type Theme = 'light' | 'dark';
-const KEY = 'rajamine-theme';
+const KEY = 'safip-theme';
 
 export function getStoredTheme(): Theme | null {
   try {
@@ -27,7 +27,7 @@ export function applyTheme(theme: Theme) {
 export function setTheme(theme: Theme) {
   try { localStorage.setItem(KEY, theme); } catch { /* modo privado */ }
   applyTheme(theme);
-  window.dispatchEvent(new CustomEvent('rajamine-theme', { detail: theme }));
+  window.dispatchEvent(new CustomEvent('safip-theme', { detail: theme }));
 }
 
 export function currentTheme(): Theme {

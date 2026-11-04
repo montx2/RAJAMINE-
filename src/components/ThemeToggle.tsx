@@ -8,8 +8,8 @@ export default function ThemeToggle({ className }: { className?: string }) {
 
   useEffect(() => {
     const onChange = (e: Event) => setLocal((e as CustomEvent<Theme>).detail);
-    window.addEventListener('rajamine-theme', onChange);
-    return () => window.removeEventListener('rajamine-theme', onChange);
+    window.addEventListener('safip-theme', onChange);
+    return () => window.removeEventListener('safip-theme', onChange);
   }, []);
 
   const toggle = () => {

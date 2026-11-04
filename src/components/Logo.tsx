@@ -1,5 +1,7 @@
-/* Wordmark inspirado na identidade real da Rajamine (preto/grafite + amarelo).
-   Não é o arquivo vetorial oficial; é uma aproximação tipográfica para o protótipo. */
+/* Wordmark da SAFIP (preto/grafite + amarelo).
+   Não é o arquivo vetorial oficial; é uma aproximação tipográfica para o protótipo.
+   O "I" recebe apenas o amarelo da marca: mesmo corpo e mesma altura das demais
+   letras, a cor é o único elemento de destaque. */
 export function LogoMark({ size = 32 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" fill="none" aria-hidden>
@@ -12,9 +14,10 @@ export function LogoMark({ size = 32 }: { size?: number }) {
 
 export function Wordmark({ className = '', light = true }: { className?: string; light?: boolean }) {
   return (
-    <span className={`font-extrabold italic tracking-tight leading-none ${className}`} aria-label="Rajamine">
-      <span className={light ? 'text-white' : 'text-primary'}>Raja</span>
-      <span className={light ? 'text-brand' : 'text-brand-ink'}>Mine</span>
+    <span className={`font-extrabold italic tracking-tight leading-none ${className}`} aria-label="SAFIP">
+      <span className={light ? 'text-white' : 'text-primary'}>SAF</span>
+      <span className="text-brand">I</span>
+      <span className={light ? 'text-white' : 'text-primary'}>P</span>
     </span>
   );
 }
