@@ -156,6 +156,7 @@ html {
 
 /* Plus Jakarta Sans tem espaço entre palavras estreito: em títulos com
    tracking negativo as palavras pareciam coladas ("Prazosependências"). */
+body { word-spacing: 0.03em; }
 h1, h2, h3, h4 { word-spacing: 0.06em; }
 
 body {

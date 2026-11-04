@@ -87,7 +87,7 @@ export default function PadronizacaoPanel({ report, actorName, canEdit }: { repo
         </Banner>
       ) : (
         <>
-          <div className="grid lg:grid-cols-2 gap-4">
+          <div className="grid xl:grid-cols-2 gap-4 [&>*]:min-w-0">
             <div className="card p-4">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-[13px] font-bold uppercase tracking-wide text-subtle">Texto atual (preservado)</h3>

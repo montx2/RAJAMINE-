@@ -184,7 +184,7 @@ export default function ReportDetail() {
 
       {/* ── DADOS ── */}
       {tab === 'dados' && (
-        <div className="grid lg:grid-cols-[1.5fr_1fr] gap-4">
+        <div className="grid xl:grid-cols-[1.5fr_1fr] gap-4 [&>*]:min-w-0">
           <div className="card p-5">
             <h2 className="section-title mb-4">Dados da visita / atividade</h2>
             <dl className="grid sm:grid-cols-2 gap-x-6 gap-y-4">
@@ -317,7 +317,7 @@ export default function ReportDetail() {
 
       {/* ── REVISÃO ── */}
       {tab === 'revisao' && (
-        <div className="grid lg:grid-cols-[1.4fr_1fr] gap-4">
+        <div className="grid xl:grid-cols-[1.4fr_1fr] gap-4 [&>*]:min-w-0">
           <div className="space-y-4">
             <div className="card p-5">
               <h2 className="section-title mb-4 flex items-center gap-2"><ShieldCheck size={17} className="text-accent" aria-hidden /> Checklist de revisão</h2>
@@ -472,7 +472,7 @@ export default function ReportDetail() {
 
       {/* ── HISTÓRICO ── */}
       {tab === 'historico' && (
-        <div className="grid lg:grid-cols-2 gap-4">
+        <div className="grid xl:grid-cols-2 gap-4 [&>*]:min-w-0">
           <div className="card p-5">
             <h2 className="section-title mb-4">Trilha de auditoria</h2>
             <Timeline events={report.historico} />
