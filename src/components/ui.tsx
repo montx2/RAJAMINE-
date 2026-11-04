@@ -38,7 +38,7 @@ type Tone = 'slate' | 'blue' | 'green' | 'amber' | 'red';
 export function Badge({ tone = 'slate', children, className, dot }: { tone?: Tone; children: ReactNode; className?: string; dot?: boolean }) {
   const tones: Record<Tone, string> = {
     slate: 'bg-primary/5 text-secondary border-primary/10',
-    blue: 'bg-accent-soft/70 text-accent border-accent/20',
+    blue: 'bg-info-soft text-info border-info/25',
     green: 'bg-success-soft/70 text-success border-success/20',
     amber: 'bg-warning-soft/70 text-warning border-warning/20',
     red: 'bg-destructive-soft/70 text-destructive border-destructive/20',
@@ -85,13 +85,17 @@ export function Textarea({ className, invalid, ...rest }: TextareaHTMLAttributes
 /* ── Modal ── */
 export function Modal({ open, onClose, title, children, wide, footer }: { open: boolean; onClose: () => void; title: string; children: ReactNode; wide?: boolean; footer?: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
+  // onClose costuma chegar como arrow function inline: guardar em ref evita que o
+  // efeito rode a cada render (o que devolvia o foco ao diálogo a cada tecla digitada).
+  const onCloseRef = useRef(onClose);
+  useEffect(() => { onCloseRef.current = onClose; });
   const titleId = useRef(`modal-${Math.random().toString(36).slice(2, 9)}`);
 
   useEffect(() => {
     if (!open) return;
     const previous = document.activeElement as HTMLElement | null;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') { onClose(); return; }
+      if (e.key === 'Escape') { onCloseRef.current(); return; }
       if (e.key !== 'Tab' || !ref.current) return;
       // Critério por atributo, não por layout: offsetParent é nulo em ancestrais
       // fixos e em ambientes sem layout, o que desligaria a armadilha de foco.
@@ -111,7 +115,7 @@ export function Modal({ open, onClose, title, children, wide, footer }: { open: 
       document.body.style.overflow = '';
       previous?.focus?.();
     };
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open) return null;
   // Portal para o body: as páginas usam `.page-enter` (animação com transform),
@@ -262,7 +266,7 @@ export function Toaster({ className }: { className?: string }) {
 /* ── Banner ─ */
 export function Banner({ tone = 'info', icon, children, className }: { tone?: 'info' | 'warn' | 'success' | 'danger'; icon?: ReactNode; children: ReactNode; className?: string }) {
   const tones = {
-    info: 'bg-primary/[0.03] border-primary/10 text-secondary',
+    info: 'bg-info-soft border-info/20 text-secondary',
     warn: 'bg-warning-soft/60 border-warning/20 text-warning',
     success: 'bg-success-soft/60 border-success/20 text-success',
     danger: 'bg-destructive-soft/60 border-destructive/20 text-destructive',

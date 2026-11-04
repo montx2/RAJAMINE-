@@ -15,7 +15,7 @@ import { STATUS_LABEL, type ReportStatus } from '../data/types';
 import { deadlineLabel, hoursUntil, timeAgo, fmtShortDate, firstName } from '../lib/format';
 
 const STATUS_COLORS: Record<ReportStatus, string> = {
-  pendente: '#d97706', rascunho: '#71717a', em_revisao: '#b45309', correcao: '#dc2626', aprovado: '#15803d', arquivado: '#0f766e',
+  pendente: '#f59e0b', rascunho: '#71717a', em_revisao: '#2563eb', correcao: '#dc2626', aprovado: '#15803d', arquivado: '#0f766e',
 };
 
 export default function Dashboard() {

@@ -65,7 +65,7 @@ export default function AppShell() {
       <nav className="flex-1 px-3 space-y-5 overflow-y-auto" aria-label="Navegação principal">
         {groups.map((g) => (
           <div key={g.name}>
-            <div className="px-3 mb-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-500">{g.name}</div>
+            <div className="px-3 mb-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-400">{g.name}</div>
             <div className="space-y-0.5">
               {g.items.map((item) => (
                 <NavLink
@@ -78,12 +78,12 @@ export default function AppShell() {
                     'group flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-semibold transition-[background-color,color,transform] duration-150 ease-out',
                     isActive
                       ? 'bg-white/10 text-white shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)]'
-                      : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/5',
+                      : 'text-zinc-300 hover:text-white hover:bg-white/5',
                   )}
                 >
                   {({ isActive }) => (
                     <>
-                      <span className={cn('flex items-center justify-center w-7 h-7 rounded-lg transition-colors', isActive ? 'bg-brand text-[#18181b]' : 'bg-white/5 text-zinc-400 group-hover:text-zinc-100')}>
+                      <span className={cn('flex items-center justify-center w-7 h-7 rounded-lg transition-colors', isActive ? 'bg-brand text-[#18181b]' : 'bg-white/[0.07] text-zinc-300 group-hover:text-white')}>
                         <item.icon size={15} aria-hidden />
                       </span>
                       <span className="truncate">{item.label}</span>
