@@ -130,9 +130,11 @@ export default function Reports() {
       </div>
 
       {/* Tabela enxuta */}
-      <div className="card overflow-hidden">
-        {/* Celular: lista em cartões — a tabela exigiria rolagem lateral e escondia o status */}
-        <ul className="md:hidden divide-soft" aria-label="Relatórios">
+      <div className="card overflow-hidden @container">
+        {/* Espaço estreito (celular ou notebook com barra lateral): lista em cartões —
+            a tabela exigiria rolagem lateral e escondia o status. Decide pela largura
+            do cartão, não da tela. */}
+        <ul className="@4xl:hidden divide-soft" aria-label="Relatórios">
           {filtered.map((r) => {
             const colab = users.find((u) => u.id === r.colaboradorId);
             const client = clients.find((c) => c.id === r.clienteId);
@@ -167,7 +169,7 @@ export default function Reports() {
             );
           })}
         </ul>
-        <div className="hidden md:block overflow-x-auto">
+        <div className="hidden @4xl:block overflow-x-auto">
           <table className="w-full min-w-[760px]">
             <thead className="border-b border-primary/8">
               <tr>

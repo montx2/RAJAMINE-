@@ -135,9 +135,11 @@ export default function Dashboard() {
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-[1.5fr_1fr] gap-4 items-start">
-        {/* Fila de prazos */}
-        <div className="card overflow-hidden">
+      <div className="grid xl:grid-cols-[1.5fr_1fr] gap-4 items-start [&>*]:min-w-0">
+        {/* Fila de prazos — o layout responde à largura do cartão (container query),
+            não à da tela: no computador a barra lateral e a coluna de atalhos
+            deixam o cartão estreito mesmo em telas grandes. */}
+        <div className="card overflow-hidden @container">
           <div className="flex items-center justify-between px-5 pt-4 pb-3">
             <h2 className="section-title flex items-center gap-2">
               <AlertTriangle size={15} className="text-warning" aria-hidden /> Prazos e pendências
@@ -153,9 +155,9 @@ export default function Dashboard() {
                 const colab = users.find((u) => u.id === r.colaboradorId);
                 const client = clients.find((c) => c.id === r.clienteId);
                 return (
-                  <div key={r.id} className="flex items-start sm:items-center gap-3 px-5 py-3 hover:bg-primary/[0.02] transition-colors">
+                  <div key={r.id} className="flex items-start @2xl:items-center gap-3 px-5 py-3 hover:bg-primary/[0.02] transition-colors">
                     <Avatar nome={colab?.nome ?? '?'} size="sm" />
-                    <div className="min-w-0 flex-1 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                    <div className="min-w-0 flex-1 flex flex-col @2xl:flex-row @2xl:items-center gap-2 @2xl:gap-3">
                       <div className="min-w-0 flex-1">
                         <Link to={`/relatorios/${r.id}`} className="text-[13px] font-bold text-primary hover:text-accent whitespace-nowrap">{r.codigo}</Link>
                         <div className="text-[12px] text-subtle truncate" title={`${colab?.nome} · ${client?.nome}`}>{colab?.nome} · {client?.nome}</div>
@@ -198,7 +200,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-[1fr_1.5fr] gap-4 items-start">
+      <div className="grid xl:grid-cols-[1fr_1.5fr] gap-4 items-start [&>*]:min-w-0">
         {/* Produtividade compacta */}
         <div className="card p-5">
           <h2 className="section-title mb-4">Indicadores de produtividade</h2>
@@ -250,7 +252,7 @@ export default function Dashboard() {
 
       {/* Análises sob demanda (progressive disclosure) */}
       <Disclosure title="Análises detalhadas" subtitle="Gráficos de período e distribuição por status — abra quando precisar." defaultOpen={false}>
-        <div className="grid lg:grid-cols-[1.6fr_1fr] gap-4 pt-2">
+        <div className="grid xl:grid-cols-[1.6fr_1fr] gap-4 pt-2 [&>*]:min-w-0">
           <div className="rounded-2xl border border-primary/8 bg-surface/50 p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-[13px] font-bold text-primary flex items-center gap-2"><TrendingUp size={14} className="text-accent" aria-hidden /> Relatórios por período</h3>
