@@ -128,7 +128,7 @@ export default function DriverChecklist() {
                     const eq = equipment.find((e) => e.id === i.equipmentId);
                     return (
                       <div key={i.id} className={cn('card p-4', i.status === 'falha' && 'border-destructive/30', i.status === 'atencao' && 'border-warning/30')}>
-                        <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                           <div>
                             <div className="text-[13.5px] font-bold text-primary">{i.label}</div>
                             {eq && <div className="text-[11.5px] text-subtle mono">{eq.codigo}{eq.serial !== '—' ? ` · SN ${eq.serial}` : ''}</div>}

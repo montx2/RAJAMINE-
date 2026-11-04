@@ -154,6 +154,10 @@ html {
   text-rendering: optimizeLegibility;
 }
 
+/* Plus Jakarta Sans tem espaço entre palavras estreito: em títulos com
+   tracking negativo as palavras pareciam coladas ("Prazosependências"). */
+h1, h2, h3, h4 { word-spacing: 0.06em; }
+
 body {
   color: var(--color-foreground);
   font-size: 15px;
@@ -276,7 +280,7 @@ body::before {
   .td { @apply px-4 py-3.5 text-[13.5px] text-foreground align-middle; }
   .link { @apply text-accent font-semibold hover:text-accent-hover hover:underline underline-offset-2 cursor-pointer; }
   .mono { font-family: var(--font-mono); @apply text-[12.5px] tracking-tight; }
-  .section-title { @apply text-[14px] font-bold text-primary tracking-tight; }
+  .section-title { @apply text-[14px] font-bold text-primary; word-spacing: 0.08em; }
   .eyebrow { @apply text-[10.5px] font-bold uppercase tracking-[0.14em] text-subtle; }
 
   .chip {
@@ -343,3 +347,13 @@ body::before {
 
 .lift { transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out); }
 .lift:hover { transform: translateY(-2px); box-shadow: var(--shadow-lift); }
+
+/* Tabelas largas no celular: sombra na borda indica que há mais colunas
+   para rolar lateralmente (antes as colunas sumiam sem nenhum aviso). */
+.overflow-x-auto:has(> table) {
+  background:
+    linear-gradient(to right, var(--glass-bg-strong) 30%, transparent) left center / 40px 100% no-repeat local,
+    linear-gradient(to left, var(--glass-bg-strong) 30%, transparent) right center / 40px 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%, rgb(24 24 27 / 0.16), transparent) left center / 14px 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, rgb(24 24 27 / 0.16), transparent) right center / 14px 100% no-repeat scroll;
+}
