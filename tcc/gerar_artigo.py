@@ -45,7 +45,7 @@ RESUMO = (
     'Research em estudo de caso único, com base sintética por exigência ética. O artefato implementa link '
     'individual de preenchimento com prazo de 48 horas, sugestão de padronização que preserva o texto original, '
     'reconhecimento óptico de caracteres no navegador, revisão humana obrigatória antes da geração de documentos '
-    'e portal do motorista sem conexão. A verificação combinou 96 testes automatizados, 37 capturas em navegador '
+    'e portal do motorista sem conexão. A verificação combinou 99 testes automatizados, 49 capturas em navegador '
     'real e 16 verificações funcionais; seis defeitos foram corrigidos, dois bloqueantes no celular. Conclui-se '
     'que a automação assistida reduz variabilidade sem suprimir a decisão humana, e que a auditoria visual '
     'instrumentada revela defeitos que testes de unidade não alcançam.'
@@ -59,7 +59,7 @@ ABSTRACT = (
     'authority to the software. Design Science Research was applied in a single case study with a synthetic dataset. '
     'The artefact provides an individual filling link with a 48-hour deadline, a standardisation suggestion that '
     'preserves the original text, in-browser optical character recognition, mandatory human review before document '
-    'generation, and an offline driver portal. Verification combined 96 automated tests, 37 real-browser screenshots '
+    'generation, and an offline driver portal. Verification combined 99 automated tests, 49 real-browser screenshots '
     'and 16 functional checks; six defects were fixed, two blocking on mobile. Assisted automation reduced '
     'variability without suppressing human decision.'
 )
@@ -132,11 +132,12 @@ p('O artefato foi construído em React 19 com TypeScript, Vite e Tailwind CSS 4;
   'localmente com Zustand, as imagens são lidas por Tesseract compilado em WebAssembly e os documentos '
   'são gerados no cliente com pdf-lib. Não há servidor de aplicação, o que mantém o protótipo '
   'autocontido e distribuível em mídia removível.')
-p('A verificação usou três instrumentos complementares. Primeiro, 96 testes automatizados em 13 arquivos '
+p('A verificação usou três instrumentos complementares. Primeiro, 99 testes automatizados em 13 arquivos '
   '(Vitest), cobrindo regras de negócio, guards por perfil, padronização, OCR e o guia de introdução. '
-  'Segundo, uma auditoria visual em Chromium real, com 37 capturas em duas resoluções (1440×900 e '
-  '390×844), nos temas claro e escuro e em localidade pt-BR, com verificação programática de estouro '
-  'horizontal, colisão entre elementos do cabeçalho, texto truncado e alinhamento do destaque do guia. '
+  'Segundo, uma auditoria visual em Chromium real, com 49 capturas em quatro resoluções (1440×900, '
+  '1280×720, 768×1024 e 390×844), nos temas claro e escuro e em localidade pt-BR, com verificação '
+  'programática de estouro horizontal, colisão entre elementos do cabeçalho, texto truncado, alvo de '
+  'toque e alinhamento do destaque do guia. '
   'Terceiro, 16 verificações funcionais de ponta a ponta executadas no navegador, incluindo persistência '
   'da exibição única do guia e o fluxo completo do checklist do motorista. A apresentação deste artigo segue '
   'a NBR 6022 (ABNT, 2018), com citações no sistema autor-data conforme a NBR 10520 (ABNT, 2023) e referências '
@@ -193,8 +194,8 @@ p('A auditoria foi tratada como parte do método, e não como conferência final
 tab('Tabela 1 – Critérios de verificação e resultados obtidos',
     ['Instrumento', 'Escopo', 'Resultado'],
     [
-        ['Testes automatizados', '13 arquivos: regras, guards, padronização, OCR, guia, componentes', '96 aprovados'],
-        ['Auditoria visual', '37 capturas; 1440×900 e 390×844; claro e escuro; pt-BR', '0 estouros, 0 colisões'],
+        ['Testes automatizados', '13 arquivos: regras, guards, padronização, OCR, guia, componentes', '99 aprovados'],
+        ['Auditoria visual', '49 capturas; quatro resoluções; claro e escuro; pt-BR', '0 estouros, 0 colisões'],
         ['Precisão do destaque', 'Retângulo do alvo versus anel, em navegador real', 'folga de 5 px por lado'],
         ['Verificações funcionais', 'Exibição única do guia, checklist, falha e ocorrência', '16 aprovadas'],
         ['Verificação de tipos', 'TypeScript em modo estrito, sem supressões', 'sem erros'],
@@ -204,7 +205,7 @@ tab('Tabela 2 – Defeitos identificados pela auditoria e correções aplicadas'
     [
         ['Confirmar inacessível no celular', 'Transform da animação cria contexto de empilhamento e prende o diálogo sob a barra fixa', 'Diálogo renderizado na raiz do documento'],
         ['Elemento oculto visível em 390 px', 'Classes concatenadas sem resolver conflito de display', 'Fusão de classes com resolução de conflito'],
-        ['Estouro de 49 px no login', 'Trilha da grade medida pelo conteúdo mínimo dos cartões', 'Trilha com mínimo zero'],
+        ['Alvo de toque de 19 px no login', 'Link auxiliar com área clicável insuficiente', 'Área ampliada para 32 px, sem alterar o alinhamento'],
         ['Estouro de 82 px no arquivo', 'Grade de filtros com colunas fixas', 'Filtros com quebra de linha'],
         ['Guia encerrava em página estranha', 'Rota de origem lida do objeto global', 'Rota do roteador e retorno'],
         ['Barra de envio cobria itens', 'Elemento fixo sobre a lista incompleta', 'Flutua só quando acionável'],
