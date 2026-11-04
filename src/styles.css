@@ -80,6 +80,8 @@
   --input-bg-focus: rgb(255 255 255 / 0.95);
   --input-border: rgb(24 24 27 / 0.10);
   --input-border-hover: rgb(24 24 27 / 0.18);
+  --input-border-focus: rgb(24 24 27 / 0.65);
+  --input-ring: rgb(24 24 27 / 0.10);
   --chip-bg: rgb(255 255 255 / 0.6);
   --divide-soft: rgb(24 24 27 / 0.06);
   --ambient-dot: rgb(24 24 27 / 0.035);
@@ -130,6 +132,8 @@
   --input-bg-focus: rgb(21 24 29 / 0.95);
   --input-border: rgb(255 255 255 / 0.10);
   --input-border-hover: rgb(255 255 255 / 0.18);
+  --input-border-focus: rgb(244 244 245 / 0.65);
+  --input-ring: rgb(244 244 245 / 0.14);
   --chip-bg: rgb(21 24 29 / 0.6);
   --divide-soft: rgb(255 255 255 / 0.06);
   --ambient-dot: rgb(255 255 255 / 0.03);
@@ -178,7 +182,9 @@ body::before {
 #root { position: relative; z-index: 1; }
 
 :focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--color-accent) 60%, transparent);
+  /* Anel de foco neutro: foco é affordance, não significado. Contraste >= 3:1
+     contra o fundo nos dois temas (WCAG 2.2, 2.4.11). */
+  outline: 3px solid var(--input-border-focus);
   outline-offset: 2px;
   border-radius: 6px;
 }
@@ -252,9 +258,9 @@ body::before {
   .input:hover { border-color: var(--input-border-hover); }
   .input:focus {
     outline: none;
-    border-color: var(--color-accent);
+    border-color: var(--input-border-focus);
     background: var(--input-bg-focus);
-    box-shadow: 0 0 0 3px rgb(180 83 9 / 0.16);
+    box-shadow: 0 0 0 3px var(--input-ring);
   }
   .input-error { border-color: var(--color-destructive) !important; }
   .input-error:focus { box-shadow: 0 0 0 3px rgb(220 38 38 / 0.16) !important; }

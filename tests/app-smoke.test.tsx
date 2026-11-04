@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest';
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { AppRoutes } from '../src/App';
 import { useStore } from '../src/store/useStore';
@@ -33,16 +33,59 @@ function renderAt(path: string) {
 }
 
 describe('Renderização das telas', () => {
-  it('login mostra os perfis demonstrativos', () => {
+  it('login é um formulário de acesso; perfis ficam em divulgação progressiva', () => {
     renderAt('/login');
-    expect(screen.getByText('Acessar demonstração')).toBeTruthy();
+    expect(screen.getByText('Acessar sua conta')).toBeTruthy();
+    expect(screen.getByLabelText('E-mail')).toBeTruthy();
+    expect(screen.getByLabelText('Senha')).toBeTruthy();
+    // recolhido: painel fora da ordem de foco e da árvore de acessibilidade
+    const panel = document.getElementById('demo-panel')!;
+    expect(panel.querySelector('[inert]')).toBeTruthy();
+    fireEvent.click(screen.getByText('Acesso de demonstração'));
+    expect(panel.querySelector('[inert]')).toBeNull();
     expect(screen.getByText('Helena Duarte')).toBeTruthy();
     expect(screen.getByText('Marta Fonseca')).toBeTruthy();
     expect(screen.getByText('Carlos Menezes')).toBeTruthy();
   });
 
+  it('login valida e-mail e senha antes de autenticar', () => {
+    renderAt('/login');
+    fireEvent.click(screen.getByRole('button', { name: 'Entrar' }));
+    expect(screen.getByText('Informe seu e-mail corporativo.')).toBeTruthy();
+    expect(screen.getByText('Informe sua senha.')).toBeTruthy();
+
+    fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'nao-e-um-email' } });
+    fireEvent.change(screen.getByLabelText('Senha'), { target: { value: 'x' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Entrar' }));
+    expect(screen.getByText('Formato de e-mail inválido.')).toBeTruthy();
+
+    fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'desconhecido@rajamine.demo' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Entrar' }));
+    expect(screen.getByText('E-mail não encontrado neste ambiente.')).toBeTruthy();
+    expect(useStore.getState().session).toBeNull();
+  });
+
+  it('login por e-mail corporativo autentica e leva ao destino do perfil', async () => {
+    renderAt('/login');
+    fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'HELENA.DUARTE@rajamine.demo' } });
+    fireEvent.change(screen.getByLabelText('Senha'), { target: { value: 'qualquer' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Entrar' }));
+    await waitFor(() => expect(useStore.getState().session?.userId).toBe('u_helena'), { timeout: 2000 });
+  });
+
+  it('alternador de senha muda o tipo do campo', () => {
+    renderAt('/login');
+    const input = screen.getByLabelText('Senha') as HTMLInputElement;
+    expect(input.type).toBe('password');
+    fireEvent.click(screen.getByRole('button', { name: 'Mostrar senha' }));
+    expect(input.type).toBe('text');
+    fireEvent.click(screen.getByRole('button', { name: 'Ocultar senha' }));
+    expect(input.type).toBe('password');
+  });
+
   it('login como admin navega para o dashboard com KPIs', () => {
     renderAt('/login');
+    fireEvent.click(screen.getByText('Acesso de demonstração'));
     fireEvent.click(screen.getByText('Helena Duarte'));
     expect(screen.getByText('Relatórios registrados')).toBeTruthy();
     expect(screen.getByText('Prazos e pendências')).toBeTruthy();
@@ -51,7 +94,7 @@ describe('Renderização das telas', () => {
 
   it('dashboard exige autenticação (redireciona para login)', () => {
     renderAt('/');
-    expect(screen.getByText('Acessar demonstração')).toBeTruthy();
+    expect(screen.getByText('Acessar sua conta')).toBeTruthy();
   });
 
   it('listagem de relatórios renderiza tabela com dados seed', () => {

@@ -194,3 +194,54 @@ escuro, `pt-BR`): 30 capturas, zero estouro horizontal, zero colisão no
 cabeçalho, zero texto truncado na navegação, zero jargão de IA visível e destaque
 do guia medido em −5/−5/+10/+10 px em relação ao alvo (o padding exato de 5 px).
 Os scripts ficam em `.audit/` (fora do versionamento).
+
+## 9. Revisão v5 — tela de acesso
+
+O primeiro contato com o produto era uma tela dividida: painel institucional
+escuro à esquerda com título de marketing e três cartões de diferenciais, e a
+escolha de perfil à direita. Em telas estreitas o painel empurrava o acesso para
+baixo, e a lista de cinco perfis dava à tela aparência de protótipo, não de produto.
+
+A pesquisa sobre telas de acesso corporativas é convergente: Stripe, GitHub,
+Notion e Linear usam **coluna única centrada**, com a marca presente mas discreta
+e apenas os campos essenciais. A recomendação prática é tratar a tela como porta
+de entrada, não como lugar de exploração, e manter a identidade reconhecível sem
+competir com o formulário.
+
+### O que mudou
+
+- **Painel institucional removido.** Título de marketing, parágrafo e três
+  cartões de diferenciais saíram da tela de acesso.
+- **Formulário real:** e-mail e senha, com rótulos, `autocomplete`, alternador de
+  visibilidade, aviso de Caps Lock e validação inline (campo vazio, formato
+  inválido, e-mail não cadastrado). O acesso autentica pelo e-mail corporativo.
+- **Divulgação progressiva:** os cinco perfis de demonstração e o link individual
+  do colaborador ficam num painel recolhido, aberto por “Acesso de demonstração”.
+  Recolhido, o painel recebe `inert`, saindo da ordem de foco e da árvore de
+  acessibilidade sem impedir a animação de altura.
+- **Marca discreta:** símbolo, wordmark e “FIELDOPS” centralizados acima do
+  cartão; rodapé de uma linha com a razão social e o aviso de dados sintéticos.
+- **Cartão sólido**, não vidro: sobre fundo liso o vidro fica turvo. Sombra em
+  duas camadas, raio de 16 px.
+- **Movimento contido:** entrada em cascata do cartão e dos campos, expansão
+  suave do painel, micro-press no botão. Nada em laço; `prefers-reduced-motion`
+  respeitado.
+
+### Regra permanente: foco é neutro
+
+O anel de foco (`:focus-visible` e `.input:focus`) usava o âmbar de destaque —
+herança da versão em que os botões também eram coloridos. Foco é *affordance*,
+não significado, e por isso passou a usar `--input-border-focus` (grafite a 65%
+no claro, off-white a 65% no escuro), com contraste acima de 3:1 contra o fundo
+nos dois temas, conforme WCAG 2.2 (2.4.11). Isso removeu o último elemento
+“alto” da interface, incluindo o contorno que aparecia no cartão do guia quando
+ele recebia foco programático.
+
+### Verificação
+
+Auditoria dedicada em Chromium real: 12 capturas em 1440×900, 1280×720, 768×1024
+e 390×844, nos dois temas, cobrindo estado inicial, validação vazia, formato
+inválido, e-mail desconhecido, painel aberto, alternância de senha e login por
+e-mail. Zero estouro horizontal, zero elemento fora da viewport e nenhum alvo de
+toque abaixo de 24 px — o link “Esqueci minha senha” tinha 19 px e foi ampliado
+com padding e margem negativa, preservando o alinhamento visual.
