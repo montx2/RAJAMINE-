@@ -209,7 +209,7 @@ export default function AppShell() {
           </div>
         </header>
 
-        <main key={location.pathname} className="page-enter flex-1 px-4 sm:px-6 py-6 max-w-[1200px] w-full mx-auto pb-24 lg:pb-10">
+        <main key={location.pathname} className="page-enter flex-1 px-4 sm:px-6 py-6 max-w-[1520px] w-full mx-auto pb-24 lg:pb-10">
           <Outlet />
         </main>
       </div>

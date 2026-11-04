@@ -135,118 +135,128 @@ export default function Dashboard() {
         ))}
       </div>
 
-      <div className="grid xl:grid-cols-[1.5fr_1fr] gap-4 items-start [&>*]:min-w-0">
-        {/* Fila de prazos — o layout responde à largura do cartão (container query),
-            não à da tela: no computador a barra lateral e a coluna de atalhos
-            deixam o cartão estreito mesmo em telas grandes. */}
-        <div className="card overflow-hidden @container">
-          <div className="flex items-center justify-between px-5 pt-4 pb-3">
-            <h2 className="section-title flex items-center gap-2">
-              <AlertTriangle size={15} className="text-warning" aria-hidden /> Prazos e pendências
-            </h2>
-            <Link to="/relatorios" className="link text-[12px]">Ver todos</Link>
-          </div>
-          {deadlines.length === 0 ? (
-            <EmptyState title="Nenhuma pendência de prazo" description="Todos os relatórios estão dentro do fluxo." />
-          ) : (
-            <div className="divide-soft">
-              {deadlines.slice(0, 4).map((r) => {
-                const dl = deadlineLabel(r.prazoEm);
-                const colab = users.find((u) => u.id === r.colaboradorId);
-                const client = clients.find((c) => c.id === r.clienteId);
-                return (
-                  <div key={r.id} className="flex items-start @2xl:items-center gap-3 px-5 py-3 hover:bg-primary/[0.02] transition-colors">
-                    <Avatar nome={colab?.nome ?? '?'} size="sm" />
-                    <div className="min-w-0 flex-1 flex flex-col @2xl:flex-row @2xl:items-center gap-2 @2xl:gap-3">
-                      <div className="min-w-0 flex-1">
-                        <Link to={`/relatorios/${r.id}`} className="text-[13px] font-bold text-primary hover:text-accent whitespace-nowrap">{r.codigo}</Link>
-                        <div className="text-[12px] text-subtle truncate" title={`${colab?.nome} · ${client?.nome}`}>{colab?.nome} · {client?.nome}</div>
-                      </div>
-                      <div className="flex flex-wrap items-center gap-2 shrink-0">
-                        <StatusBadge status={r.status} />
-                        <Badge tone={dl.tom === 'late' ? 'red' : dl.tom === 'warn' ? 'amber' : 'slate'} dot>{dl.texto}</Badge>
-                        {hoursUntil(r.prazoEm) < 24 && (
-                          <Button size="sm" variant="ghost" icon={<BellRing size={13} />}
-                            onClick={() => { sendReminder(r.id, user.nome); toast(`Lembrete enviado a ${colab?.nome} (simulação).`, 'info'); }}>
-                            Lembrar
-                          </Button>
-                        )}
+      {/* Duas colunas com a mesma proporção em toda a página: à esquerda o que
+          exige ação (prazos, atividade), à direita os apoios. Evita colunas
+          desencontradas entre as linhas no computador. */}
+      <div className="grid xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] gap-4 items-start">
+        <div className="space-y-4 min-w-0">
+          {/* Fila de prazos — o layout responde à largura do cartão (container query),
+              não à da tela: no computador a barra lateral e a coluna de atalhos
+              deixam o cartão estreito mesmo em telas grandes. */}
+          <div className="card overflow-hidden @container">
+            <div className="flex items-center justify-between px-5 pt-4 pb-3">
+              <h2 className="section-title flex items-center gap-2">
+                <AlertTriangle size={15} className="text-warning" aria-hidden /> Prazos e pendências
+              </h2>
+              <Link to="/relatorios" className="link text-[12px]">Ver todos</Link>
+            </div>
+            {deadlines.length === 0 ? (
+              <EmptyState title="Nenhuma pendência de prazo" description="Todos os relatórios estão dentro do fluxo." />
+            ) : (
+              <div className="divide-soft">
+                {deadlines.slice(0, 4).map((r) => {
+                  const dl = deadlineLabel(r.prazoEm);
+                  const colab = users.find((u) => u.id === r.colaboradorId);
+                  const client = clients.find((c) => c.id === r.clienteId);
+                  return (
+                    <div key={r.id} className="flex items-start @2xl:items-center gap-3 px-5 py-3 hover:bg-primary/[0.02] transition-colors">
+                      <Avatar nome={colab?.nome ?? '?'} size="sm" />
+                      <div className="min-w-0 flex-1 flex flex-col @2xl:flex-row @2xl:items-center gap-2 @2xl:gap-3">
+                        <div className="min-w-0 flex-1">
+                          <Link to={`/relatorios/${r.id}`} className="text-[13px] font-bold text-primary hover:text-accent whitespace-nowrap">{r.codigo}</Link>
+                          <div className="text-[12px] text-subtle truncate" title={`${colab?.nome} · ${client?.nome}`}>{colab?.nome} · {client?.nome}</div>
+                        </div>
+                        {/* Em linha (cartão largo), prazo e "Lembrar" ocupam colunas de largura
+                            fixa para que os selos fiquem alinhados entre as linhas. */}
+                        <div className="flex flex-wrap items-center gap-2 shrink-0 @2xl:flex-nowrap @2xl:justify-end">
+                          <StatusBadge status={r.status} />
+                          <div className="@2xl:w-[104px]">
+                            <Badge tone={dl.tom === 'late' ? 'red' : dl.tom === 'warn' ? 'amber' : 'slate'} dot>{dl.texto}</Badge>
+                          </div>
+                          {hoursUntil(r.prazoEm) < 24 ? (
+                            <div className="@2xl:w-[92px] @2xl:flex @2xl:justify-end">
+                              <Button size="sm" variant="ghost" icon={<BellRing size={13} />}
+                                onClick={() => { sendReminder(r.id, user.nome); toast(`Lembrete enviado a ${colab?.nome} (simulação).`, 'info'); }}>
+                                Lembrar
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="hidden @2xl:block w-[92px]" aria-hidden />
+                          )}
+                        </div>
                       </div>
                     </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Atividade recente */}
+          <div className="card overflow-hidden">
+            <div className="flex items-center justify-between px-5 pt-4 pb-3">
+              <h2 className="section-title">Atividade recente</h2>
+              <Link to="/documentos" className="link text-[12px] flex items-center gap-1">Documentos <ArrowRight size={12} aria-hidden /></Link>
+            </div>
+            <div className="divide-soft">
+              {activity.map((a) => (
+                <Link key={a.id} to={`/relatorios/${a.reportId}`} className="flex items-center gap-3 px-5 py-3 hover:bg-primary/[0.02] transition-colors">
+                  <Avatar nome={a.ator} size="sm" />
+                  <div className="min-w-0 flex-1">
+                    <span className="text-[13px] font-semibold text-foreground">{a.acao}</span>
+                    <span className="text-[12px] text-subtle whitespace-nowrap"> · {a.codigo}</span>
                   </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* Atalhos (compacto) */}
-        <div className="space-y-4">
-          <div className="card p-4">
-            <div className="eyebrow mb-3">Atalhos</div>
-            <div className="grid grid-cols-2 gap-2">
-              <Button size="sm" variant="outline" icon={<Table2 size={14} />} onClick={() => navigate('/operacoes')}>Operações</Button>
-              <Button size="sm" variant="outline" icon={<CalendarRange size={14} />} onClick={() => navigate('/semanal')}>Semanal</Button>
-              <Button size="sm" variant="outline" icon={<FileText size={14} />} onClick={() => navigate('/relatorios')}>Relatórios</Button>
-              <Button size="sm" variant="outline" icon={<BadgeCheck size={14} />} onClick={() => navigate('/relatorios/r_201')}>Visita técnica</Button>
-            </div>
-          </div>
-          <div className="card p-4">
-            <div className="eyebrow mb-2">Fluxo seguro</div>
-            <p className="text-[12.5px] text-subtle leading-relaxed">
-              Todo documento passa por revisão humana antes de ser liberado ao cliente. OCR e envios são simulados e auditados.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid xl:grid-cols-[1fr_1.5fr] gap-4 items-start [&>*]:min-w-0">
-        {/* Produtividade compacta */}
-        <div className="card p-5">
-          <h2 className="section-title mb-4">Indicadores de produtividade</h2>
-          <div className="space-y-4">
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[12.5px] font-semibold text-secondary flex items-center gap-2"><Timer size={14} className="text-accent" aria-hidden /> Aprovação média</span>
-                <span className="text-[14px] font-semibold text-primary tabular-nums">{productivity.avgH} h</span>
-              </div>
-              <ProgressBar value={Math.min(100, (48 - Math.min(48, productivity.avgH)) / 48 * 100)} tone="accent" />
-            </div>
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[12.5px] font-semibold text-secondary flex items-center gap-2"><CheckCircle2 size={14} className="text-success" aria-hidden /> No prazo</span>
-                <span className="text-[14px] font-semibold text-primary tabular-nums">{productivity.onTimePct}%</span>
-              </div>
-              <ProgressBar value={productivity.onTimePct} tone="green" />
-            </div>
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[12.5px] font-semibold text-secondary flex items-center gap-2"><ScanLine size={14} className="text-subtle" aria-hidden /> OCR validado</span>
-                <span className="text-[14px] font-semibold text-primary tabular-nums">{productivity.ocrPct}%</span>
-              </div>
-              <ProgressBar value={productivity.ocrPct} tone="accent" />
+                  <span className="text-[11px] text-subtle whitespace-nowrap">{timeAgo(a.em)}</span>
+                </Link>
+              ))}
             </div>
           </div>
         </div>
-
-        {/* Atividade recente */}
-        <div className="card overflow-hidden">
-          <div className="flex items-center justify-between px-5 pt-4 pb-3">
-            <h2 className="section-title">Atividade recente</h2>
-            <Link to="/documentos" className="link text-[12px] flex items-center gap-1">Documentos <ArrowRight size={12} aria-hidden /></Link>
-          </div>
-          <div className="divide-soft">
-            {activity.map((a) => (
-              <Link key={a.id} to={`/relatorios/${a.reportId}`} className="flex items-center gap-3 px-5 py-3 hover:bg-primary/[0.02] transition-colors">
-                <Avatar nome={a.ator} size="sm" />
-                <div className="min-w-0 flex-1">
-                  <span className="text-[13px] font-semibold text-foreground">{a.acao}</span>
-                  <span className="text-[12px] text-subtle whitespace-nowrap"> · {a.codigo}</span>
+        <div className="space-y-4 min-w-0">
+          {/* Atalhos (compacto) */}
+            <div className="card p-4">
+              <div className="eyebrow mb-3">Atalhos</div>
+              <div className="grid grid-cols-2 gap-2">
+                <Button size="sm" variant="outline" icon={<Table2 size={14} />} onClick={() => navigate('/operacoes')}>Operações</Button>
+                <Button size="sm" variant="outline" icon={<CalendarRange size={14} />} onClick={() => navigate('/semanal')}>Semanal</Button>
+                <Button size="sm" variant="outline" icon={<FileText size={14} />} onClick={() => navigate('/relatorios')}>Relatórios</Button>
+                <Button size="sm" variant="outline" icon={<BadgeCheck size={14} />} onClick={() => navigate('/relatorios/r_201')}>Visita técnica</Button>
+              </div>
+            </div>
+          {/* Produtividade compacta */}
+          <div className="card p-5">
+            <h2 className="section-title mb-4">Indicadores de produtividade</h2>
+            <div className="space-y-4">
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[12.5px] font-semibold text-secondary flex items-center gap-2"><Timer size={14} className="text-accent" aria-hidden /> Aprovação média</span>
+                  <span className="text-[14px] font-semibold text-primary tabular-nums">{productivity.avgH} h</span>
                 </div>
-                <span className="text-[11px] text-subtle whitespace-nowrap">{timeAgo(a.em)}</span>
-              </Link>
-            ))}
+                <ProgressBar value={Math.min(100, (48 - Math.min(48, productivity.avgH)) / 48 * 100)} tone="accent" />
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[12.5px] font-semibold text-secondary flex items-center gap-2"><CheckCircle2 size={14} className="text-success" aria-hidden /> No prazo</span>
+                  <span className="text-[14px] font-semibold text-primary tabular-nums">{productivity.onTimePct}%</span>
+                </div>
+                <ProgressBar value={productivity.onTimePct} tone="green" />
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[12.5px] font-semibold text-secondary flex items-center gap-2"><ScanLine size={14} className="text-subtle" aria-hidden /> OCR validado</span>
+                  <span className="text-[14px] font-semibold text-primary tabular-nums">{productivity.ocrPct}%</span>
+                </div>
+                <ProgressBar value={productivity.ocrPct} tone="accent" />
+              </div>
+            </div>
           </div>
+
+            <div className="card p-4">
+              <div className="eyebrow mb-2">Fluxo seguro</div>
+              <p className="text-[12.5px] text-subtle leading-relaxed">
+                Todo documento passa por revisão humana antes de ser liberado ao cliente. OCR e envios são simulados e auditados.
+              </p>
+            </div>
         </div>
       </div>
 
