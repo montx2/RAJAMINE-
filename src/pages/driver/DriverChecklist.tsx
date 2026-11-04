@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Check, AlertTriangle, X, ClipboardCheck, Send, Zap, Save, ArrowLeft } from 'lucide-react';
+import { Check, AlertTriangle, X, ClipboardCheck, Send, Info, Save, ArrowLeft } from 'lucide-react';
 import { useStore, useCurrentUser } from '../../store/useStore';
 import { Badge, Banner, Button, ProgressBar, Textarea, toast, Modal } from '../../components/ui';
 import { checklistProgress, todayISO, currentShift } from '../../lib/driver';
+import { fmtDate } from '../../lib/format';
 import { DRIVER_CHECKLIST_STATUS_LABEL, type DriverChecklistItemStatus } from '../../data/types';
 import { cn } from '../../lib/cn';
 
@@ -63,7 +64,7 @@ export default function DriverChecklist() {
     setResult({ ocorrenciasIds: res.ocorrenciasIds });
     toast(res.ocorrenciasIds.length
       ? `Checklist enviado. ${res.ocorrenciasIds.length} ocorrência(s) aberta(s) automaticamente.`
-      : 'Checklist enviado e concluído automaticamente. Bom turno!');
+      : 'Checklist enviado e concluído.');
   };
 
   return (
@@ -75,8 +76,8 @@ export default function DriverChecklist() {
       <div className="card p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <div className="eyebrow mb-1">Checklist automático · {todayISO()} · turno {currentShift()}</div>
-            <h1 data-tour="driver-checklist-title" className="text-[20px] font-extrabold text-primary mono">{truck.frota} <span className="text-subtle text-[14px]">({truck.placa})</span></h1>
+            <div className="eyebrow mb-1">Checklist automático · {fmtDate(todayISO() + 'T12:00:00')} · turno {currentShift()}</div>
+            <h1 data-tour="driver-checklist-title" className="text-[20px] font-semibold text-primary mono">{truck.frota} <span className="text-subtle text-[14px]">({truck.placa})</span></h1>
             <p className="text-[12.5px] text-subtle">{client?.nome} · {truck.marca} {truck.modelo}</p>
           </div>
           {checklist && <Badge tone={checklist.status === 'concluido' ? 'green' : checklist.status === 'em_analise' ? 'amber' : 'slate'}>{DRIVER_CHECKLIST_STATUS_LABEL[checklist.status]}</Badge>}
@@ -92,9 +93,9 @@ export default function DriverChecklist() {
         )}
       </div>
 
-      <Banner tone="info" icon={<Zap size={16} />}>
+      <Banner tone="info" icon={<Info size={16} />}>
         Itens gerados automaticamente a partir dos equipamentos instalados. <strong>Falha</strong> abre ocorrência e avisa a coordenação (simulação).
-        <strong> Atenção</strong> fica registrada para análise. Nada é aprovado automaticamente em nome da revisão.
+        <strong> Atenção</strong> fica registrada para análise. A aprovação é sempre feita pela revisão.
       </Banner>
 
       {editable && (
@@ -171,9 +172,11 @@ export default function DriverChecklist() {
         </div>
       )}
 
+      {/* Só flutua quando pode ser acionado: enquanto o checklist está incompleto,
+          fica no fluxo normal e não cobre os itens que o motorista precisa marcar. */}
       {editable && checklist && (
-        <div className="sticky bottom-20 z-10">
-          <Button variant="accent" size="lg" className="w-full shadow-lift" icon={<Send size={17} />} loading={submitting} onClick={doSubmit} disabled={progress < 100}>
+        <div className={cn('rounded-xl bg-background', progress === 100 && 'sticky bottom-20 z-10')}>
+          <Button variant="primary" size="lg" className="w-full shadow-lift" icon={<Send size={17} />} loading={submitting} onClick={doSubmit} disabled={progress < 100}>
             Enviar checklist {progress < 100 ? `(${progress}% verificado)` : ''}
           </Button>
         </div>

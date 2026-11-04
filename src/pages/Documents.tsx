@@ -83,25 +83,25 @@ export default function Documents() {
       />
 
       <div className="card p-4 my-4">
-        <div className="grid md:grid-cols-2 xl:grid-cols-5 gap-2.5">
-          <div className="relative xl:col-span-2">
+        <div className="flex flex-wrap gap-2.5">
+          <div className="relative flex-1 min-w-[240px]">
             <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-subtle" aria-hidden />
             <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar por relatório, cliente, colaborador, placa ou EQ-…" className="pl-10" aria-label="Pesquisar arquivo" />
           </div>
           {tab === 'docs' && (
-            <Select value={tipo} onChange={(e) => setTipo(e.target.value)} aria-label="Tipo de documento">
+            <Select value={tipo} onChange={(e) => setTipo(e.target.value)} aria-label="Tipo de documento" className="w-[190px] shrink-0">
               <option value="">Tipo: todos</option>
               <option value="cliente">Cliente (sem fotos)</option>
               <option value="interno">Interno (completo)</option>
             </Select>
           )}
-          <Select value={clientId} onChange={(e) => setClientId(e.target.value)} aria-label="Cliente">
+          <Select value={clientId} onChange={(e) => setClientId(e.target.value)} aria-label="Cliente" className="w-[190px] shrink-0">
             <option value="">Cliente: todos</option>
             {clients.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
           </Select>
-          <div className="flex gap-2">
-            <Input type="date" value={de} onChange={(e) => setDe(e.target.value)} aria-label="De" />
-            <Input type="date" value={ate} onChange={(e) => setAte(e.target.value)} aria-label="Até" />
+          <div className="flex gap-2 shrink-0">
+            <Input type="date" value={de} onChange={(e) => setDe(e.target.value)} aria-label="De" className="w-[152px]" />
+            <Input type="date" value={ate} onChange={(e) => setAte(e.target.value)} aria-label="Até" className="w-[152px]" />
           </div>
         </div>
       </div>
@@ -139,10 +139,10 @@ export default function Documents() {
             <Link key={photo.id} to={`/relatorios/${report.id}?tab=fotos`} className="card overflow-hidden group hover:border-accent/40 transition-colors">
               <div className="relative">
                 <PhotoImg photo={photo} className="w-full h-36 group-hover:opacity-95 transition-opacity" />
-                <Badge tone={photo.categoria === 'equipamento' ? 'blue' : 'teal'} className="absolute top-2 left-2">{photo.categoria}</Badge>
+                <Badge tone={photo.categoria === 'equipamento' ? 'blue' : 'slate'} className="absolute top-2 left-2">{photo.categoria}</Badge>
               </div>
               <div className="p-3">
-                <div className="mono text-[12.5px] font-bold text-primary">{report.codigo}</div>
+                <div className="mono text-[12.5px] font-semibold text-primary whitespace-nowrap">{report.codigo}</div>
                 <div className="text-[11.5px] text-subtle line-clamp-2 mt-0.5">{photo.legenda}</div>
               </div>
             </Link>
@@ -191,7 +191,7 @@ function DocRow({ row, onPreview, canSend }: { row: Row; onPreview: (p: { url: s
   return (
     <tr className="hover:bg-muted/30 transition-colors">
       <td className="td">
-        <Link to={`/relatorios/${report.id}?tab=documentos`} className="mono font-bold text-accent hover:underline">{report.codigo}</Link>
+        <Link to={`/relatorios/${report.id}?tab=documentos`} className="mono font-semibold text-accent hover:underline whitespace-nowrap">{report.codigo}</Link>
         <div className="mt-1"><StatusBadge status={report.status} /></div>
       </td>
       <td className="td"><Badge tone={doc.tipo === 'cliente' ? 'blue' : 'slate'}>{doc.tipo === 'cliente' ? 'Cliente · sem fotos' : 'Interno · completo'}</Badge></td>
@@ -201,7 +201,7 @@ function DocRow({ row, onPreview, canSend }: { row: Row; onPreview: (p: { url: s
       <td className="td">
         {doc.tipo === 'cliente'
           ? doc.enviadoEm
-            ? <span className="text-[12.5px] text-teal-700 font-semibold flex items-center gap-1"><Check size={13} aria-hidden /> {fmtDateTime(doc.enviadoEm)}<br />(simulado)</span>
+            ? <span className="text-[12.5px] text-success font-semibold flex items-center gap-1"><Check size={13} aria-hidden /> {fmtDateTime(doc.enviadoEm)}<br />(simulado)</span>
             : <span className="text-[12.5px] text-subtle">não enviado</span>
           : <span className="text-subtle">—</span>}
       </td>

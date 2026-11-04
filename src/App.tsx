@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useStore } from './store/useStore';
 import type { Role } from './data/types';
 import AppShell from './components/AppShell';
@@ -78,11 +78,19 @@ export function AppRoutes() {
   );
 }
 
+function ToastLayer() {
+  const { pathname } = useLocation();
+  // Portal do motorista e link de preenchimento têm barra fixa em qualquer
+  // largura; na gestão ela só existe abaixo de lg.
+  const alwaysBar = pathname.startsWith('/motorista') || pathname.startsWith('/preencher');
+  return <Toaster className={alwaysBar ? 'bottom-20' : 'bottom-20 lg:bottom-6'} />;
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <AppRoutes />
-      <Toaster />
+      <ToastLayer />
     </BrowserRouter>
   );
 }

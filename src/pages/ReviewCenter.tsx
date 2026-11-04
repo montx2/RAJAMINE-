@@ -37,15 +37,15 @@ export default function ReviewCenter() {
 
       <div className="grid grid-cols-3 gap-3">
         <div className="card p-4 text-center">
-          <div className="text-[24px] font-extrabold text-accent tabular-nums">{queue.length}</div>
+          <div className="text-[24px] font-semibold text-accent tabular-nums">{queue.length}</div>
           <div className="text-[12px] font-semibold text-subtle">na fila de revisão</div>
         </div>
         <div className="card p-4 text-center">
-          <div className="text-[24px] font-extrabold text-destructive tabular-nums">{corrections.length}</div>
+          <div className="text-[24px] font-semibold text-destructive tabular-nums">{corrections.length}</div>
           <div className="text-[12px] font-semibold text-subtle">correções solicitadas</div>
         </div>
         <div className="card p-4 text-center">
-          <div className="text-[24px] font-extrabold text-success tabular-nums">{reports.filter((r) => r.aprovadoEm).length}</div>
+          <div className="text-[24px] font-semibold text-success tabular-nums">{reports.filter((r) => r.aprovadoEm).length}</div>
           <div className="text-[12px] font-semibold text-subtle">aprovados no total</div>
         </div>
       </div>
@@ -62,7 +62,7 @@ export default function ReviewCenter() {
 
       {queue.length === 0 ? (
         <div className="card">
-          <EmptyState icon={<CheckCircle2 size={22} />} title="Fila zerada" description="Nenhum relatório aguardando revisão com os filtros atuais. Bom trabalho!" />
+          <EmptyState icon={<CheckCircle2 size={22} />} title="Fila zerada" description="Nenhum relatório aguardando revisão com os filtros atuais." />
         </div>
       ) : (
         <div className="space-y-3">
@@ -80,7 +80,7 @@ export default function ReviewCenter() {
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="mono font-bold text-[15px] text-primary">{r.codigo}</span>
                       {waitedH >= 24 && <Badge tone="amber" dot><Clock size={11} aria-hidden /> aguarda há {waitedH} h</Badge>}
-                      {pendingOcr > 0 && <Badge tone="violet"><ScanLine size={11} aria-hidden /> {pendingOcr} OCR pendente(s)</Badge>}
+                      {pendingOcr > 0 && <Badge tone="amber"><ScanLine size={11} aria-hidden /> {pendingOcr} OCR pendente(s)</Badge>}
                     </div>
                     <div className="text-[12.5px] text-subtle mt-0.5">
                       {colab?.nome} · {client?.nome} · <span className="mono">{truck?.frota}</span> · enviado {r.enviadoRevisaoEm ? timeAgo(r.enviadoRevisaoEm) : '—'}
@@ -91,7 +91,7 @@ export default function ReviewCenter() {
                       <span className="flex items-center gap-1"><CheckCircle2 size={13} aria-hidden /> {r.equipamentosIds.length} equipamento(s) confirmado(s)</span>
                     </div>
                   </div>
-                  <Button variant="accent" icon={<ClipboardCheck size={15} />} onClick={() => navigate(`/relatorios/${r.id}?tab=revisao`)}>
+                  <Button variant="primary" icon={<ClipboardCheck size={15} />} onClick={() => navigate(`/relatorios/${r.id}?tab=revisao`)}>
                     Revisar <ArrowRight size={14} aria-hidden />
                   </Button>
                 </div>

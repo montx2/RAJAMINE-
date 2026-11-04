@@ -137,14 +137,14 @@ export default function NewReport() {
         </Banner>
         <div className="flex justify-end gap-2">
           <Button variant="ghost" onClick={() => navigate('/relatorios')}>Cancelar</Button>
-          <Button variant="accent" icon={<Link2 size={16} />} onClick={submit}>Criar e gerar link individual</Button>
+          <Button variant="primary" icon={<Link2 size={16} />} onClick={submit}>Criar e gerar link individual</Button>
         </div>
       </div>
 
       <Modal open={!!created} onClose={() => navigate(`/relatorios/${createdId}`)} title="Relatório criado — link individual gerado"
         footer={<>
           <Button variant="outline" icon={<Copy size={15} />} onClick={copyLink}>Copiar link</Button>
-          <Button variant="accent" icon={<ExternalLink size={15} />} onClick={() => navigate(`/preencher/${created?.token}`)}>Abrir como colaborador</Button>
+          <Button variant="primary" icon={<ExternalLink size={15} />} onClick={() => navigate(`/preencher/${created?.token}`)}>Abrir como colaborador</Button>
         </>}>
         <div className="space-y-4">
           <p className="text-[13.5px] text-secondary">

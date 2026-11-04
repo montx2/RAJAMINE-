@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Truck, ClipboardCheck, AlertTriangle, GraduationCap, ArrowRight, CheckCircle2, Clock, Zap } from 'lucide-react';
+import { Truck, ClipboardCheck, AlertTriangle, GraduationCap, ArrowRight, CheckCircle2, Clock, Info } from 'lucide-react';
 import { useStore, useCurrentUser } from '../../store/useStore';
 import { Badge, Banner, Button, ProgressBar } from '../../components/ui';
 import { checklistProgress, todayISO, currentShift, DRIVER_TRAININGS } from '../../lib/driver';
@@ -29,9 +29,9 @@ export default function DriverHome() {
 
   return (
     <div className="space-y-5">
-      <Banner tone="info" icon={<Zap size={16} />}>
-        <strong>Automação segura:</strong> o checklist do dia é gerado sozinho com os equipamentos do seu caminhão.
-        Falhas abrem ocorrência automaticamente e avisam a coordenação (simulação). Você não aprova relatórios nem libera documentos.
+      <Banner tone="info" icon={<Info size={16} />}>
+        <strong>Como funciona:</strong> o checklist do dia é montado a partir dos equipamentos do seu caminhão.
+        Um item marcado como falha abre uma ocorrência e avisa a coordenação (simulação). Aprovar relatórios e liberar documentos cabe à coordenação.
       </Banner>
 
       <section aria-labelledby="meus-caminhoes">
@@ -46,7 +46,7 @@ export default function DriverHome() {
               <div key={t.id} className="card p-4 space-y-3">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <div className="text-[16px] font-extrabold text-primary mono">{t.frota}</div>
+                    <div className="text-[16px] font-semibold text-primary mono">{t.frota}</div>
                     <div className="text-[12px] text-subtle mono">{t.placa} · {t.marca} {t.modelo}</div>
                     <div className="text-[12px] text-subtle">{client?.nome}</div>
                   </div>
@@ -63,7 +63,7 @@ export default function DriverHome() {
                   </div>
                 )}
                 <Link to={`/motorista/checklist/${t.id}`} className="block">
-                  <Button variant={ck?.status === 'rascunho' ? 'accent' : 'outline'} className="w-full" icon={<ClipboardCheck size={16} />}>
+                  <Button variant={ck?.status === 'rascunho' ? 'primary' : 'outline'} className="w-full" icon={<ClipboardCheck size={16} />}>
                     {ck?.status === 'rascunho' ? 'Continuar checklist' : ck ? 'Ver checklist do dia' : 'Iniciar checklist'}
                   </Button>
                 </Link>

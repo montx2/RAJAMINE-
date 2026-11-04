@@ -212,8 +212,8 @@ export default function PhotosOcrPanel({ report, actorName, canUpload, canValida
               <div className="relative">
                 <PhotoImg photo={photo} className="w-full h-48" />
                 <div className="absolute top-2 left-2 flex gap-1.5">
-                  <Badge tone={photo.categoria === 'equipamento' ? 'blue' : 'teal'}>{photo.categoria}</Badge>
-                  {photo.origem === 'demo' && <Badge tone="violet">demo</Badge>}
+                  <Badge tone={photo.categoria === 'equipamento' ? 'blue' : 'slate'}>{photo.categoria}</Badge>
+                  {photo.origem === 'demo' && <Badge tone="slate">demo</Badge>}
                 </div>
                 {b && (
                   <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-2 text-white">
@@ -228,7 +228,7 @@ export default function PhotosOcrPanel({ report, actorName, canUpload, canValida
               <div className="p-4 space-y-3 flex-1 flex flex-col">
                 <p className="text-[13px] text-secondary flex-1">{photo.legenda}</p>
                 <div className="flex flex-wrap gap-2">
-                  <Button size="sm" variant="accent" icon={<ScanLine size={14} />} loading={!!b} onClick={() => execOcr(photo)} disabled={!canValidate && !canUpload}>
+                  <Button size="sm" variant="primary" icon={<ScanLine size={14} />} loading={!!b} onClick={() => execOcr(photo)} disabled={!canValidate && !canUpload}>
                     {det ? 'Reexecutar OCR' : 'Executar OCR'}
                   </Button>
                   <Button size="sm" variant="ghost" icon={<FlaskConical size={14} />} onClick={() => execOcr(photo, true)} disabled={(!canValidate && !canUpload) || !!b} title="Resultado simulado, claramente rotulado">
@@ -250,7 +250,7 @@ export default function PhotosOcrPanel({ report, actorName, canUpload, canValida
       <Modal open={synthOpen} onClose={() => setSynthOpen(false)} title="Gerar foto sintética de teste"
         footer={<>
           <Button variant="ghost" onClick={() => setSynthOpen(false)}>Cancelar</Button>
-          <Button variant="accent" icon={<FlaskConical size={15} />} onClick={addSynthetic}>Gerar e anexar</Button>
+          <Button variant="primary" icon={<FlaskConical size={15} />} onClick={addSynthetic}>Gerar e anexar</Button>
         </>}>
         <p className="text-[13.5px] text-subtle mb-4">
           Cria uma imagem de etiqueta gerada por canvas (identificada como sintética) para demonstrar o OCR real de ponta a ponta.

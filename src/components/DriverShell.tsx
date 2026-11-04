@@ -79,7 +79,10 @@ export default function DriverShell() {
           <LogoMark size={30} />
           <div className="min-w-0 flex-1">
             <Wordmark className="text-[15px] hidden min-[420px]:block" light={false} />
-            <div className="text-[9.5px] font-bold tracking-[0.18em] text-accent">PORTAL DO MOTORISTA</div>
+            <div className="text-[9.5px] font-bold tracking-[0.18em] text-accent whitespace-nowrap">
+              <span className="min-[420px]:hidden">MOTORISTA</span>
+              <span className="hidden min-[420px]:inline">PORTAL DO MOTORISTA</span>
+            </div>
           </div>
           <Badge tone={online ? 'green' : 'amber'} dot className="hidden sm:inline-flex">
             {online ? <Wifi size={11} aria-hidden /> : <WifiOff size={11} aria-hidden />}

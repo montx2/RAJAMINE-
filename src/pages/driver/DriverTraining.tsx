@@ -26,7 +26,7 @@ export default function DriverTraining() {
     setSaving(false);
     if (!res.ok) { toast(res.erro ?? 'Não foi possível confirmar.', 'error'); return; }
     if (navigator.onLine) sync();
-    toast('Ciência registrada. Obrigado!');
+    toast('Ciência registrada.');
     setOpenId(null);
     setNome('');
     setCiencia(false);
@@ -36,7 +36,7 @@ export default function DriverTraining() {
     <div className="space-y-4">
       <div>
         <div className="eyebrow mb-1">Portal do motorista</div>
-        <h1 data-tour="driver-treinamento-title" className="text-[20px] font-extrabold text-primary">Treinamentos e ciência</h1>
+        <h1 data-tour="driver-treinamento-title" className="text-[20px] font-semibold text-primary">Treinamentos e ciência</h1>
         <p className="text-[12.5px] text-subtle mt-1">Confirmação simples, digitada e auditada. Sem biometria, sem reconhecimento facial.</p>
       </div>
 
@@ -75,7 +75,7 @@ export default function DriverTraining() {
       <Modal open={!!current} onClose={() => setOpenId(null)} title={current ? `Ciência — ${current.titulo}` : ''}
         footer={<>
           <Button variant="ghost" onClick={() => setOpenId(null)}>Cancelar</Button>
-          <Button variant="accent" loading={saving} onClick={doConfirm} disabled={!ciencia || nome.trim().length < 3}>Confirmar ciência</Button>
+          <Button variant="primary" loading={saving} onClick={doConfirm} disabled={!ciencia || nome.trim().length < 3}>Confirmar ciência</Button>
         </>}>
         {current && (
           <div className="space-y-4">

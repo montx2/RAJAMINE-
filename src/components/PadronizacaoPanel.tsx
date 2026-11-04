@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Sparkles, Check, X, PencilLine, ShieldCheck, AlertTriangle, Info, AlertCircle, ArrowRight, ListChecks } from 'lucide-react';
+import { AlignLeft, Check, X, PencilLine, ShieldCheck, AlertTriangle, Info, AlertCircle, ArrowRight, ListChecks } from 'lucide-react';
 import type { Report } from '../data/types';
 import { useStore } from '../store/useStore';
 import { padronizar, temPrimeiraPessoa } from '../services/padronizacao';
@@ -67,7 +67,7 @@ export default function PadronizacaoPanel({ report, actorName, canEdit }: { repo
     <div className="space-y-4">
       <Banner tone="info" icon={<ShieldCheck size={17} />}>
         <strong>Motor local de regras (demonstrativo).</strong> A análise roda no navegador, sem enviar dados a serviços externos.
-        O texto original é sempre preservado e a IA <strong>nunca adiciona acontecimentos</strong> — apenas reescreve o que foi relatado.
+        O texto original é preservado. A sugestão <strong>não adiciona acontecimentos</strong>: apenas reescreve o que foi relatado.
         Em produção, este contrato pode ser atendido por um LLM auditável (ver documentação).
       </Banner>
 
@@ -98,7 +98,7 @@ export default function PadronizacaoPanel({ report, actorName, canEdit }: { repo
             <div className={cn('card p-4 border-accent/30', mode === 'edit' && 'ring-2 ring-accent/20')}>
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-[13px] font-bold uppercase tracking-wide text-accent flex items-center gap-1.5">
-                  <Sparkles size={14} aria-hidden /> Sugestão padronizada
+                  <AlignLeft size={14} aria-hidden /> Sugestão padronizada
                 </h3>
                 <Badge tone="blue">3ª pessoa · formal</Badge>
               </div>
@@ -134,7 +134,7 @@ export default function PadronizacaoPanel({ report, actorName, canEdit }: { repo
                 <div className="px-4 pb-4 grid sm:grid-cols-2 gap-2">
                   {result.mudancas.map((m, i) => (
                     <div key={i} className="flex items-start gap-2 rounded-lg bg-muted/50 px-3 py-2">
-                      <Badge tone={m.tipo === 'pessoa' ? 'blue' : m.tipo === 'gramatica' ? 'violet' : 'teal'} className="mt-0.5 shrink-0">
+                      <Badge tone="slate" className="mt-0.5 shrink-0">
                         {m.tipo === 'pessoa' ? 'pessoa' : m.tipo === 'gramatica' ? 'gramática' : 'estilo'}
                       </Badge>
                       <div className="min-w-0 text-[12.5px]">

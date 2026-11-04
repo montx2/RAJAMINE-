@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import {
-  ArrowLeft, FileText, Sparkles, Camera, ClipboardCheck, Archive, History,
+  ArrowLeft, FileText, AlignLeft, Camera, ClipboardCheck, Archive, History,
   Check, AlertTriangle, Lock, Download, Eye, Send, Copy, BellRing, FileCheck2, Loader2, ShieldCheck,
 } from 'lucide-react';
 import { useStore, useCurrentUser } from '../store/useStore';
@@ -129,7 +129,7 @@ export default function ReportDetail() {
 
   const tabs = [
     { id: 'dados', label: 'Dados', icon: <FileText size={15} /> },
-    { id: 'texto', label: 'Texto & IA', icon: <Sparkles size={15} /> },
+    { id: 'texto', label: 'Texto', icon: <AlignLeft size={15} /> },
     { id: 'fotos', label: 'Fotos & OCR', icon: <Camera size={15} />, count: report.deteccoes.filter((d) => d.status === 'aguardando').length },
     { id: 'revisao', label: 'Revisão', icon: <ClipboardCheck size={15} /> },
     { id: 'documentos', label: 'Documentos', icon: <Archive size={15} />, count: report.documentos.length },
@@ -147,10 +147,10 @@ export default function ReportDetail() {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="flex flex-wrap items-center gap-2.5">
-              <h1 className="text-[22px] font-extrabold tracking-tight text-primary mono">{report.codigo}</h1>
+              <h1 className="text-[22px] font-semibold tracking-tight text-primary mono">{report.codigo}</h1>
               <StatusBadge status={report.status} />
               {dl && <Badge tone={dl.tom === 'late' ? 'red' : dl.tom === 'warn' ? 'amber' : 'slate'} dot>{dl.texto}</Badge>}
-              {report.enviadoCliente && <Badge tone="teal">enviado ao cliente (simulação)</Badge>}
+              {report.enviadoCliente && <Badge tone="green">enviado ao cliente (simulação)</Badge>}
             </div>
             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-subtle">
               <span className="flex items-center gap-2"><Avatar nome={colab?.nome ?? '?'} size="sm" /> {colab?.nome}</span>
@@ -168,10 +168,10 @@ export default function ReportDetail() {
               </>
             )}
             {canFill && user.role === 'colaborador' && (
-              <Button size="sm" variant="accent" onClick={() => navigate(`/preencher/${report.token}`)}>Preencher relatório</Button>
+              <Button size="sm" variant="primary" onClick={() => navigate(`/preencher/${report.token}`)}>Preencher relatório</Button>
             )}
             {report.status === 'em_revisao' && isReviewer && (
-              <Button size="sm" variant="accent" icon={<ClipboardCheck size={14} />} onClick={() => changeTab('revisao')}>Revisar agora</Button>
+              <Button size="sm" variant="primary" icon={<ClipboardCheck size={14} />} onClick={() => changeTab('revisao')}>Revisar agora</Button>
             )}
             {report.status === 'aprovado' && isReviewer && (
               <Button size="sm" variant="success" icon={<FileCheck2 size={14} />} loading={generating} onClick={generateDocs}>Gerar os 2 PDFs</Button>
@@ -284,7 +284,7 @@ export default function ReportDetail() {
         </div>
       )}
 
-      {/* ── TEXTO & IA ── */}
+      {/* ── TEXTO ── */}
       {tab === 'texto' && (
         <div className="space-y-4">
           <PadronizacaoPanel report={report} actorName={user.nome} canEdit={canEditTexto} />
@@ -295,8 +295,8 @@ export default function ReportDetail() {
                 {[...report.versoesTexto].reverse().map((v) => (
                   <details key={v.id} className="rounded-lg border border-border">
                     <summary className="flex flex-wrap items-center gap-2 px-4 py-2.5 cursor-pointer hover:bg-muted/40">
-                      <Badge tone={v.tipo === 'original' ? 'slate' : v.tipo === 'ia' ? 'blue' : 'teal'}>
-                        {v.tipo === 'original' ? 'original' : v.tipo === 'ia' ? 'padronização IA' : 'edição manual'}
+                      <Badge tone={v.tipo === 'ia' ? 'blue' : 'slate'}>
+                        {v.tipo === 'original' ? 'original' : v.tipo === 'ia' ? 'padronização' : 'edição manual'}
                       </Badge>
                       <span className="text-[12.5px] text-subtle">{fmtDateTime(v.criadaEm)} · {v.autor}</span>
                       {v.nota && <span className="text-[12px] text-subtle italic">— {v.nota}</span>}
@@ -406,7 +406,7 @@ export default function ReportDetail() {
                 {(['cliente', 'interno'] as DocKind[]).map((kind) => (
                   <div key={kind} className="card p-5">
                     <div className="flex items-start justify-between gap-3">
-                      <div className={cn('w-11 h-11 rounded-xl flex items-center justify-center', kind === 'cliente' ? 'bg-accent-soft text-accent' : 'bg-primary text-sky-300')}>
+                      <div className={cn('w-11 h-11 rounded-xl flex items-center justify-center', kind === 'cliente' ? 'bg-accent-soft text-accent' : 'bg-primary text-primary-foreground')}>
                         <FileText size={20} aria-hidden />
                       </div>
                       <Badge tone={kind === 'cliente' ? 'blue' : 'slate'}>{kind === 'cliente' ? 'sem fotos internas' : 'completo'}</Badge>
@@ -423,7 +423,7 @@ export default function ReportDetail() {
                       <Button size="sm" variant="outline" icon={previewLoading === kind ? <Loader2 size={14} className="animate-spin" /> : <Eye size={14} />} onClick={() => openPreview(kind)} disabled={!!previewLoading}>
                         Visualizar
                       </Button>
-                      <Button size="sm" variant="accent" icon={<Download size={14} />} onClick={() => docs.download(kind).then(() => toast('PDF baixado.')).catch((e) => toast(e.message ?? 'Falha ao baixar.', 'error'))}>
+                      <Button size="sm" variant="primary" icon={<Download size={14} />} onClick={() => docs.download(kind).then(() => toast('PDF baixado.')).catch((e) => toast(e.message ?? 'Falha ao baixar.', 'error'))}>
                         Baixar PDF
                       </Button>
                       {kind === 'cliente' && report.status === 'arquivado' && !report.enviadoCliente && isReviewer && (
@@ -433,7 +433,7 @@ export default function ReportDetail() {
                       )}
                     </div>
                     {kind === 'cliente' && report.enviadoCliente && (
-                      <p className="mt-3 text-[12px] text-teal-700 font-semibold flex items-center gap-1.5"><Check size={13} aria-hidden /> Enviado (simulação) — registrado na auditoria</p>
+                      <p className="mt-3 text-[12px] text-success font-semibold flex items-center gap-1.5"><Check size={13} aria-hidden /> Enviado (simulação) — registrado na auditoria</p>
                     )}
                   </div>
                 ))}

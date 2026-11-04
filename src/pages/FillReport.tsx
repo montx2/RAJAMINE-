@@ -140,7 +140,7 @@ export default function FillReport() {
         <div className="card p-8 text-center">
           <CheckCircle2 size={34} className="mx-auto text-success mb-3" aria-hidden />
           <h1 className="text-[19px] font-bold text-primary">
-            {submitted ? 'Relatório enviado para revisão!' : 'Este relatório já foi enviado'}
+            {submitted ? 'Relatório enviado para revisão.' : 'Este relatório já foi enviado'}
           </h1>
           <p className="text-[13.5px] text-subtle mt-2 max-w-md mx-auto">
             {submitted
@@ -166,7 +166,7 @@ export default function FillReport() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <span className="mono font-extrabold text-[17px] text-primary">{report.codigo}</span>
+              <span className="mono font-semibold text-[17px] text-primary">{report.codigo}</span>
               <StatusBadge status={report.status} />
             </div>
             <p className="text-[12.5px] text-subtle mt-1">
@@ -335,7 +335,7 @@ export default function FillReport() {
       {step < 3 && (
         <div className="flex justify-between mt-5">
           <Button variant="outline" icon={<ChevronLeft size={16} />} onClick={back} disabled={step === 0}>Voltar</Button>
-          <Button variant="accent" onClick={next}>Continuar <ChevronRight size={16} aria-hidden /></Button>
+          <Button variant="primary" onClick={next}>Continuar <ChevronRight size={16} aria-hidden /></Button>
         </div>
       )}
     </Shell>

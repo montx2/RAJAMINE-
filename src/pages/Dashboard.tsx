@@ -110,7 +110,7 @@ export default function Dashboard() {
               Revisar ({stats.revisao})
             </Button>
             {user.role === 'admin' && (
-              <Button variant="accent" icon={<Plus size={15} />} onClick={() => navigate('/relatorios/novo')}>
+              <Button variant="primary" icon={<Plus size={15} />} onClick={() => navigate('/relatorios/novo')}>
                 Novo relatório
               </Button>
             )}
@@ -129,7 +129,7 @@ export default function Dashboard() {
               </span>
               <ArrowRight size={14} className="text-subtle/60" aria-hidden />
             </div>
-            <div className="text-[28px] font-extrabold tracking-tight text-primary tabular-nums leading-none">{k.value}</div>
+            <div className="text-[28px] font-semibold tracking-tight text-primary tabular-nums leading-none">{k.value}</div>
             <div className="text-[12px] font-semibold text-subtle mt-1.5 leading-tight">{k.label}</div>
           </Link>
         ))}
@@ -202,21 +202,21 @@ export default function Dashboard() {
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-[12.5px] font-semibold text-secondary flex items-center gap-2"><Timer size={14} className="text-accent" aria-hidden /> Aprovação média</span>
-                <span className="text-[14px] font-extrabold text-primary tabular-nums">{productivity.avgH} h</span>
+                <span className="text-[14px] font-semibold text-primary tabular-nums">{productivity.avgH} h</span>
               </div>
               <ProgressBar value={Math.min(100, (48 - Math.min(48, productivity.avgH)) / 48 * 100)} tone="accent" />
             </div>
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-[12.5px] font-semibold text-secondary flex items-center gap-2"><CheckCircle2 size={14} className="text-success" aria-hidden /> No prazo</span>
-                <span className="text-[14px] font-extrabold text-primary tabular-nums">{productivity.onTimePct}%</span>
+                <span className="text-[14px] font-semibold text-primary tabular-nums">{productivity.onTimePct}%</span>
               </div>
               <ProgressBar value={productivity.onTimePct} tone="green" />
             </div>
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[12.5px] font-semibold text-secondary flex items-center gap-2"><ScanLine size={14} className="text-teal-600" aria-hidden /> OCR validado</span>
-                <span className="text-[14px] font-extrabold text-primary tabular-nums">{productivity.ocrPct}%</span>
+                <span className="text-[12.5px] font-semibold text-secondary flex items-center gap-2"><ScanLine size={14} className="text-subtle" aria-hidden /> OCR validado</span>
+                <span className="text-[14px] font-semibold text-primary tabular-nums">{productivity.ocrPct}%</span>
               </div>
               <ProgressBar value={productivity.ocrPct} tone="accent" />
             </div>

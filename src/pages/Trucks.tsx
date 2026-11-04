@@ -43,7 +43,7 @@ export default function Trucks() {
         eyebrow="Frota"
         title="Caminhões"
         subtitle="Veículos, equipamentos instalados e relatórios vinculados."
-        actions={user.role === 'admin' && <Button variant="accent" icon={<Plus size={16} />} onClick={() => setOpen(true)}>Cadastrar caminhão</Button>}
+        actions={user.role === 'admin' && <Button variant="primary" icon={<Plus size={16} />} onClick={() => setOpen(true)}>Cadastrar caminhão</Button>}
       />
 
       <div className="card p-4 mb-4">
@@ -61,13 +61,13 @@ export default function Trucks() {
           return (
             <div key={t.id} className="card p-5 flex flex-col">
               <div className="flex items-start justify-between">
-                <div className="w-10 h-10 rounded-xl bg-primary text-sky-300 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center">
                   <TruckIcon size={19} aria-hidden />
                 </div>
                 <Badge tone="slate">{rels.length} relatório(s)</Badge>
               </div>
               <div className="mt-3">
-                <div className="text-[17px] font-extrabold text-primary tracking-tight">{t.frota} <span className="mono text-[13px] font-semibold text-subtle">{t.placa}</span></div>
+                <div className="text-[17px] font-semibold text-primary tracking-tight">{t.frota} <span className="mono text-[13px] font-semibold text-subtle">{t.placa}</span></div>
                 <div className="text-[13px] text-secondary">{t.marca} {t.modelo} · {t.ano}</div>
                 <div className="text-[12px] text-subtle mt-0.5">{client?.nome} — {client?.cidade}/{client?.uf}</div>
               </div>
@@ -100,7 +100,7 @@ export default function Trucks() {
       <Modal open={open} onClose={() => setOpen(false)} title="Cadastrar caminhão"
         footer={<>
           <Button variant="ghost" onClick={() => setOpen(false)}>Cancelar</Button>
-          <Button variant="accent" icon={<Plus size={15} />} onClick={save}>Cadastrar</Button>
+          <Button variant="primary" icon={<Plus size={15} />} onClick={save}>Cadastrar</Button>
         </>}>
         <div className="space-y-4">
           {err && <p className="text-[13px] text-destructive font-medium" role="alert">{err}</p>}

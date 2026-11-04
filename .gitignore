@@ -23,3 +23,6 @@ eng.traineddata
 # Pacote pendrive gerado (app buildado + zip)
 portable/app/
 Rajamine-FieldOps-Pendrive.zip
+
+# Auditoria visual local (screenshots)
+.audit/

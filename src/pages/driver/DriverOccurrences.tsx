@@ -28,9 +28,9 @@ export default function DriverOccurrences() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <div className="eyebrow mb-1">Portal do motorista</div>
-          <h1 data-tour="driver-ocorrencias-title" className="text-[20px] font-extrabold text-primary">Minhas ocorrências</h1>
+          <h1 data-tour="driver-ocorrencias-title" className="text-[20px] font-semibold text-primary">Minhas ocorrências</h1>
         </div>
-        <Link to="/motorista/ocorrencias/nova"><Button variant="accent" icon={<Plus size={16} />}>Nova ocorrência</Button></Link>
+        <Link to="/motorista/ocorrencias/nova"><Button variant="primary" icon={<Plus size={16} />}>Nova ocorrência</Button></Link>
       </div>
 
       <Tabs

@@ -55,7 +55,7 @@ export default function Registry() {
       {tab === 'colab' && (
         <div className="mt-4 space-y-4">
           <div className="flex justify-end">
-            <Button variant="accent" icon={<Plus size={16} />} onClick={() => setOpenColab(true)}>Cadastrar colaborador</Button>
+            <Button variant="primary" icon={<Plus size={16} />} onClick={() => setOpenColab(true)}>Cadastrar colaborador</Button>
           </div>
           <div className="card overflow-hidden">
             <div className="overflow-x-auto">
@@ -78,7 +78,7 @@ export default function Registry() {
                           </div>
                         </td>
                         <td className="td text-secondary">{u.cargo}</td>
-                        <td className="td"><Badge tone={u.role === 'admin' ? 'violet' : u.role === 'revisora' ? 'blue' : 'teal'}>{ROLE_LABEL[u.role]}</Badge></td>
+                        <td className="td"><Badge tone="slate">{ROLE_LABEL[u.role]}</Badge></td>
                         <td className="td tabular-nums">{count}</td>
                         <td className="td"><Badge tone={u.ativo ? 'green' : 'slate'} dot>{u.ativo ? 'Ativo' : 'Inativo'}</Badge></td>
                       </tr>
@@ -94,7 +94,7 @@ export default function Registry() {
       {tab === 'clientes' && (
         <div className="mt-4 space-y-4">
           <div className="flex justify-end">
-            <Button variant="accent" icon={<Plus size={16} />} onClick={() => setOpenClient(true)}>Cadastrar cliente</Button>
+            <Button variant="primary" icon={<Plus size={16} />} onClick={() => setOpenClient(true)}>Cadastrar cliente</Button>
           </div>
           <div className="grid md:grid-cols-2 gap-4">
             {clients.map((c) => {
@@ -122,7 +122,7 @@ export default function Registry() {
       )}
 
       <Modal open={openColab} onClose={() => setOpenColab(false)} title="Cadastrar colaborador"
-        footer={<><Button variant="ghost" onClick={() => setOpenColab(false)}>Cancelar</Button><Button variant="accent" onClick={saveColab}>Cadastrar</Button></>}>
+        footer={<><Button variant="ghost" onClick={() => setOpenColab(false)}>Cancelar</Button><Button variant="primary" onClick={saveColab}>Cadastrar</Button></>}>
         <div className="space-y-4">
           {err && <p className="text-[13px] text-destructive font-medium" role="alert">{err}</p>}
           <Field label="Nome completo" required htmlFor="cb-nome"><Input id="cb-nome" value={fc.nome} onChange={(e) => setFc((f) => ({ ...f, nome: e.target.value }))} /></Field>
@@ -133,7 +133,7 @@ export default function Registry() {
       </Modal>
 
       <Modal open={openClient} onClose={() => setOpenClient(false)} title="Cadastrar cliente"
-        footer={<><Button variant="ghost" onClick={() => setOpenClient(false)}>Cancelar</Button><Button variant="accent" onClick={saveClient}>Cadastrar</Button></>}>
+        footer={<><Button variant="ghost" onClick={() => setOpenClient(false)}>Cancelar</Button><Button variant="primary" onClick={saveClient}>Cadastrar</Button></>}>
         <div className="space-y-4">
           {err && <p className="text-[13px] text-destructive font-medium" role="alert">{err}</p>}
           <Field label="Razão social" required htmlFor="cl-nome"><Input id="cl-nome" value={fcl.nome} onChange={(e) => setFcl((f) => ({ ...f, nome: e.target.value }))} /></Field>

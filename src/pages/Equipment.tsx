@@ -71,7 +71,7 @@ export default function EquipmentPage() {
         eyebrow="Campo"
         title="Equipamentos & identificações"
         subtitle="Equipamentos do cliente e IDs embarcados. Busque por código, telemetria, Pulsus ou IMEI."
-        actions={user.role === 'admin' && <Button variant="accent" icon={<Plus size={16} />} onClick={() => setOpen(true)}>Cadastrar equipamento</Button>}
+        actions={user.role === 'admin' && <Button variant="primary" icon={<Plus size={16} />} onClick={() => setOpen(true)}>Cadastrar equipamento</Button>}
       />
 
       <div className="card p-4 mb-4">
@@ -172,7 +172,7 @@ export default function EquipmentPage() {
       <Modal open={open} onClose={() => setOpen(false)} title="Cadastrar equipamento / dispositivo"
         footer={<>
           <Button variant="ghost" onClick={() => setOpen(false)}>Cancelar</Button>
-          <Button variant="accent" icon={<Plus size={15} />} onClick={save}>Cadastrar</Button>
+          <Button variant="primary" icon={<Plus size={15} />} onClick={save}>Cadastrar</Button>
         </>}>
         <div className="space-y-4">
           {err && <p className="text-[13px] text-destructive font-medium" role="alert">{err}</p>}

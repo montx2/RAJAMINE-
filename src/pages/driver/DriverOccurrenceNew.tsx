@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Camera, Send, Zap, ImagePlus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Camera, Send, Info, AlignLeft, ImagePlus, Trash2 } from 'lucide-react';
 import { useStore, useCurrentUser } from '../../store/useStore';
 import { Badge, Banner, Button, Field, Select, Textarea, toast } from '../../components/ui';
 import PhotoImg from '../../components/PhotoImg';
@@ -79,11 +79,11 @@ export default function DriverOccurrenceNew() {
       </Link>
       <div>
         <div className="eyebrow mb-1">Nova ocorrência</div>
-        <h1 className="text-[20px] font-extrabold text-primary">Reportar problema</h1>
+        <h1 className="text-[20px] font-semibold text-primary">Reportar problema</h1>
         <p className="text-[12.5px] text-subtle mt-1">O motorista reporta; a coordenação decide. Não faça intervenção técnica por conta própria.</p>
       </div>
 
-      <Banner tone="info" icon={<Zap size={16} />}>
+      <Banner tone="info" icon={<Info size={16} />}>
         Preenchimento assistido: caminhão vinculado, equipamentos instalados, severidade sugerida e texto padrão.
         Você pode editar tudo antes de enviar. Notificação interna é <strong>simulada</strong>.
       </Banner>
@@ -119,7 +119,7 @@ export default function DriverOccurrenceNew() {
           <Textarea id="oc-desc" value={descricao} onChange={(e) => { setDescricao(e.target.value); setAutoDesc(false); }} placeholder={occurrenceTemplate(categoria, truck)} />
         </Field>
         <div className="flex flex-wrap gap-2">
-          <Button type="button" size="sm" variant="outline" icon={<Zap size={14} />} onClick={() => applyTemplate()}>Usar texto padrão</Button>
+          <Button type="button" size="sm" variant="outline" icon={<AlignLeft size={14} />} onClick={() => applyTemplate()}>Usar texto padrão</Button>
           {equipmentId && <Badge tone="blue">{equipment.find((e) => e.id === equipmentId)?.codigo}</Badge>}
         </div>
       </div>
@@ -152,7 +152,7 @@ export default function DriverOccurrenceNew() {
         <p className="text-[11.5px] text-subtle">JPEG/PNG/WebP até 8 MB. Imagens demonstrativas são sintéticas.</p>
       </div>
 
-      <Button variant="accent" size="lg" className="w-full" icon={<Send size={17} />} loading={saving} onClick={submit} disabled={!caminhaoId || descricao.trim().length < 10}>
+      <Button variant="primary" size="lg" className="w-full" icon={<Send size={17} />} loading={saving} onClick={submit} disabled={!caminhaoId || descricao.trim().length < 10}>
         Registrar ocorrência
       </Button>
     </div>

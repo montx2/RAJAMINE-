@@ -21,20 +21,18 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-[1.05fr_1fr] relative">
+    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] relative">
       <div className="absolute top-4 right-4 z-10"><ThemeToggle /></div>
       {/* Painel institucional — vidro escuro sobre ambiente */}
       <div className="hidden lg:flex flex-col justify-between glass-dark p-10 xl:p-14 relative overflow-hidden border-r border-white/10">
-        <div className="absolute -top-24 -left-24 w-[420px] h-[420px] rounded-full bg-brand/15 blur-3xl" aria-hidden />
-        <div className="absolute bottom-0 right-0 w-[360px] h-[360px] rounded-full bg-accent/20 blur-3xl" aria-hidden />
         <Logo />
         <div className="relative max-w-md">
           <Badge tone="amber" className="mb-5 bg-brand/10 text-brand border-brand/20">Protótipo funcional</Badge>
-          <h1 className="text-[34px] xl:text-[40px] font-extrabold tracking-tight text-white leading-[1.12] text-balance">
+          <h1 className="text-[34px] xl:text-[40px] font-semibold tracking-tight text-white leading-[1.12] text-balance">
             Relatórios de campo,<br />claros do início ao fim.
           </h1>
           <p className="mt-4 text-[14.5px] text-zinc-400 leading-relaxed">
-            Coleta móvel, padronização assistida, OCR local e revisão humana obrigatória — em um fluxo único e auditável.
+            Coleta em campo, padronização assistida, leitura local de fotos e revisão humana obrigatória, com histórico auditável.
           </p>
           <div className="mt-8 grid gap-3">
             {[
@@ -71,7 +69,7 @@ export default function Login() {
           </div>
 
           <div className="card p-6 sm:p-7">
-            <h2 className="text-[22px] font-extrabold tracking-tight text-primary">Acessar demonstração</h2>
+            <h2 className="text-[22px] font-semibold tracking-tight text-primary">Acessar demonstração</h2>
             <p className="mt-1.5 text-[13px] text-subtle">
               Escolha um perfil para explorar. Acesso demonstrativo — autenticação real está documentada para produção.
             </p>
@@ -86,9 +84,9 @@ export default function Login() {
                 >
                   <Avatar nome={u.nome} size="lg" />
                   <div className="flex-1 min-w-0">
-                    <div className="text-[14.5px] font-bold text-primary">{u.nome}</div>
+                    <div className="text-[14.5px] font-semibold text-primary">{u.nome}</div>
                     <div className="text-[12px] text-subtle truncate">{u.cargo}</div>
-                    <Badge tone={u.role === 'admin' ? 'violet' : u.role === 'revisora' ? 'blue' : u.role === 'motorista' ? 'green' : 'teal'} className="mt-1.5">
+                    <Badge tone="slate" className="mt-1.5">
                       {ROLE_LABEL[u.role]}
                     </Badge>
                   </div>
@@ -102,7 +100,7 @@ export default function Login() {
                 onClick={() => navigate(`/preencher/${pendingLink.token}`)}
                 className="press mt-4 w-full rounded-2xl border border-dashed border-accent/35 bg-accent-soft/40 px-4 py-3 text-left hover:bg-accent-soft/70 transition-colors cursor-pointer"
               >
-                <div className="flex items-center gap-2 text-[13px] font-bold text-accent">
+                <div className="flex items-center gap-2 text-[13px] font-semibold text-accent">
                   <ExternalLink size={14} aria-hidden /> Abrir link individual do colaborador
                 </div>
                 <p className="text-[11.5px] text-subtle mt-0.5">Simula o link enviado por e-mail/WhatsApp — preenche sem login.</p>

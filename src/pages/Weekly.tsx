@@ -75,7 +75,7 @@ export default function Weekly() {
           <div><label className="label" htmlFor="wk-ini">Início</label><Input id="wk-ini" type="date" value={inicio} onChange={(e) => setInicio(e.target.value)} /></div>
           <div><label className="label" htmlFor="wk-fim">Fim</label><Input id="wk-fim" type="date" value={fim} onChange={(e) => setFim(e.target.value)} /></div>
           <Button variant="outline" icon={busy ? <Loader2 size={15} className="animate-spin" /> : <Eye size={15} />} onClick={() => generate(true)} disabled={busy || user.role === 'colaborador'}>Visualizar</Button>
-          <Button variant="accent" icon={busy ? <Loader2 size={15} className="animate-spin" /> : <Download size={15} />} onClick={() => generate(false)} disabled={busy || user.role === 'colaborador'}>Baixar PDF</Button>
+          <Button variant="primary" icon={busy ? <Loader2 size={15} className="animate-spin" /> : <Download size={15} />} onClick={() => generate(false)} disabled={busy || user.role === 'colaborador'}>Baixar PDF</Button>
         </div>
         <p className="text-[12px] text-subtle mt-2">Somente relatórios com aprovação humana registrada podem entrar no documento enviado ao cliente.</p>
       </div>
@@ -107,7 +107,7 @@ export default function Weekly() {
           <h2 className="section-title mb-3">Prévia da estrutura</h2>
           {grouped.map(([name, list]) => (
             <div key={name} className="mb-4">
-              <h3 className="text-[14px] font-extrabold text-primary bg-brand/20 inline-block px-2 py-0.5 rounded">{name}</h3>
+              <h3 className="text-[14px] font-semibold text-primary bg-brand/20 inline-block px-2 py-0.5 rounded">{name}</h3>
               {list.map((r) => (
                 <div key={r.id} className="mt-2 text-[13px] text-secondary">
                   <strong>{fmtDate(r.dataViagem + 'T12:00:00')}</strong> · {users.find((u) => u.id === r.colaboradorId)?.nome} · {r.objetivo || '—'}

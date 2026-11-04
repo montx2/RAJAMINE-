@@ -22,7 +22,7 @@ export default function DriverHistory() {
     <div className="space-y-4">
       <div>
         <div className="eyebrow mb-1">Portal do motorista</div>
-        <h1 data-tour="driver-historico-title" className="text-[20px] font-extrabold text-primary">Histórico</h1>
+        <h1 data-tour="driver-historico-title" className="text-[20px] font-semibold text-primary">Histórico</h1>
         <p className="text-[12.5px] text-subtle mt-1">Tudo que você registrou fica aqui, com data/hora e status. Nada é apagado silenciosamente.</p>
       </div>
 

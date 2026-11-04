@@ -11,7 +11,7 @@ Protótipo funcional de alta fidelidade para a **Rajamine Inteligência em Miner
 
 ---
 
-## ▶ Como executar (desenvolvimento)
+## Como executar (desenvolvimento)
 
 Pré-requisitos: **Node.js 20+** (recomendado 22) e npm.
 
@@ -31,7 +31,7 @@ npm run test:e2e     # Playwright (requer: npx playwright install chromium)
 node scripts/ocr-smoke.mjs   # verifica o OCR real nas fotos de exemplo (Node)
 ```
 
-## 💾 Pacote pendrive (Windows, sem Node)
+## Pacote pendrive (Windows, sem Node)
 
 Para apresentar em máquinas sem Node/npm:
 
@@ -49,7 +49,7 @@ O pacote usa apenas PowerShell (já incluso no Windows 10/11). Todos os assets (
 
 > OCR: `setup:ocr` copia worker/core do `node_modules` e baixa o modelo `eng.traineddata` do repositório oficial `tesseract-ocr/tessdata_fast` (Apache-2.0). Tudo é servido localmente de `public/ocr/` — **nenhuma imagem sai do dispositivo**.
 
-## 🧭 Roteiro de demonstração (8–10 minutos)
+## Roteiro de demonstração (8–10 minutos)
 
 > **Tutorial guiado:** no primeiro acesso (e a qualquer momento pelo botão de ajuda **?**), um tour curto navega sozinho pelas telas e explica cada função principal em linguagem simples — pensado para quem nunca teve contato com o sistema. O passo de tema claro/escuro foi removido por ser óbvio; o foco é o que cada área faz. Há um tour próprio para o Portal do Motorista.
 
@@ -64,7 +64,7 @@ O pacote usa apenas PowerShell (já incluso no Windows 10/11). Todos os assets (
 9. **Consolidado semanal** (`/semanal`) — gerador de PDF semanal a partir de relatórios **aprovados**. O sistema sinaliza atividade fora do período sem alterá-la.
 10. **Portal do Motorista** (`/motorista`) — checklist automático, falha que abre ocorrência, ciência de treinamento digitada e fila offline simulada. Triagem em **Ocorrências** (`/ocorrencias`).
 
-## ✅ Real × simulado (integridade)
+## Real × simulado (integridade)
 
 | Funcionalidade | Status |
 |---|---|
@@ -81,7 +81,7 @@ O pacote usa apenas PowerShell (já incluso no Windows 10/11). Todos os assets (
 | Banco de dados / backend | **Camada demonstrativa** (localStorage + IndexedDB); arquitetura de produção documentada |
 | Dados | **Base 100% sintética realista**. Nenhuma informação real da empresa é persistida ou exibida. |
 
-## 🗂 Estrutura
+## Estrutura
 
 ```
 ├── src/
@@ -105,7 +105,7 @@ O pacote usa apenas PowerShell (já incluso no Windows 10/11). Todos os assets (
 └── docs/                # documentação técnica
 ```
 
-## 📚 Documentação técnica
+## Documentação técnica
 
 | Doc | Conteúdo |
 |---|---|
@@ -121,7 +121,7 @@ O pacote usa apenas PowerShell (já incluso no Windows 10/11). Todos os assets (
 | [10-portal-motorista.md](docs/10-portal-motorista.md) | Portal do Motorista PWA |
 | [design-system-output.md](docs/design-system-output.md) | Saída bruta do gerador UI UX Pro Max |
 
-## 🧰 Stack
+## Stack
 
 Vite 7 · React 19 · TypeScript 5.9 · Tailwind CSS 4 · React Router 7 · Zustand 5 · Recharts 3 · Lucide · **pdf-lib** (MIT) · **Tesseract.js 7** (Apache-2.0) · Zod 4 · idb-keyval · Vitest 5 · Playwright · Fontes self-hosted (Plus Jakarta Sans + JetBrains Mono, OFL).
 

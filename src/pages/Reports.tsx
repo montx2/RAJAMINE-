@@ -71,7 +71,7 @@ export default function Reports() {
         title={user.role === 'colaborador' ? 'Meus relatórios' : 'Gestão de relatórios'}
         subtitle={user.role === 'colaborador' ? 'Preencha suas viagens dentro do prazo.' : 'Busque por código, pessoa, cliente ou equipamento.'}
         actions={user.role === 'admin' && (
-          <Button variant="accent" icon={<Plus size={15} />} onClick={() => navigate('/relatorios/novo')}>Novo relatório</Button>
+          <Button variant="primary" icon={<Plus size={15} />} onClick={() => navigate('/relatorios/novo')}>Novo relatório</Button>
         )}
       />
 
@@ -153,7 +153,7 @@ export default function Reports() {
                     <td className="td">
                       <div className="flex items-center gap-2 flex-wrap">
                         <Link to={`/relatorios/${r.id}`} className="mono font-bold text-accent hover:underline">{r.codigo}</Link>
-                        {r.enviadoCliente && <Badge tone="teal">enviado</Badge>}
+                        {r.enviadoCliente && <Badge tone="green">enviado</Badge>}
                       </div>
                       <div className="text-[12px] text-subtle mt-0.5">
                         {client?.nome || '—'} · {fmtDate(r.dataViagem + 'T12:00:00')}
@@ -171,7 +171,7 @@ export default function Reports() {
                     </td>
                     <td className="td text-right">
                       {user.role === 'colaborador' && pendingFill ? (
-                        <Button size="sm" variant="accent" icon={<PenLine size={13} />} onClick={() => navigate(`/preencher/${r.token}`)}>Preencher</Button>
+                        <Button size="sm" variant="primary" icon={<PenLine size={13} />} onClick={() => navigate(`/preencher/${r.token}`)}>Preencher</Button>
                       ) : (
                         <Button size="sm" variant="ghost" icon={<Eye size={14} />} onClick={() => navigate(`/relatorios/${r.id}`)}>Abrir</Button>
                       )}
@@ -185,7 +185,7 @@ export default function Reports() {
         {filtered.length === 0 && (
           <EmptyState icon={<FileText size={22} />} title="Nenhum relatório encontrado"
             description={hasFilters ? 'Ajuste a pesquisa ou limpe os filtros.' : 'Crie o primeiro relatório para iniciar o fluxo.'}
-            action={user.role === 'admin' && !hasFilters ? <Button variant="accent" icon={<Plus size={15} />} onClick={() => navigate('/relatorios/novo')}>Novo relatório</Button> : undefined} />
+            action={user.role === 'admin' && !hasFilters ? <Button variant="primary" icon={<Plus size={15} />} onClick={() => navigate('/relatorios/novo')}>Novo relatório</Button> : undefined} />
         )}
       </div>
     </div>

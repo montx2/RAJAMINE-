@@ -24,8 +24,8 @@ const NAV: NavItem[] = [
   { to: '/semanal', label: 'Consolidado semanal', short: 'Semanal', icon: CalendarRange, roles: ['admin', 'revisora'], group: 'Campo' },
   { to: '/equipamentos', label: 'Equipamentos & IDs', short: 'Equipamentos', icon: Cpu, roles: ['admin', 'revisora'], group: 'Campo' },
   { to: '/caminhoes', label: 'Caminhões / Frota', short: 'Frota', icon: Truck, roles: ['admin', 'revisora'], group: 'Campo' },
-  { to: '/ocorrencias', label: 'Ocorrências de motoristas', short: 'Ocorrências', icon: AlertTriangle, roles: ['admin', 'revisora'], group: 'Campo' },
-  { to: '/cadastros', label: 'Colaboradores & Clientes', short: 'Cadastros', icon: Users, roles: ['admin'], group: 'Gestão' },
+  { to: '/ocorrencias', label: 'Ocorrências', short: 'Ocorrências', icon: AlertTriangle, roles: ['admin', 'revisora'], group: 'Campo' },
+  { to: '/cadastros', label: 'Equipe & clientes', short: 'Cadastros', icon: Users, roles: ['admin'], group: 'Gestão' },
   { to: '/documentos', label: 'Arquivo de Documentos', short: 'Documentos', icon: Archive, roles: ['admin', 'revisora'], group: 'Gestão' },
 ];
 
@@ -241,7 +241,7 @@ export function PageHeader({ title, subtitle, actions, eyebrow }: { title: strin
     <div className="flex flex-wrap items-end justify-between gap-3 mb-6" data-tour="page-header">
       <div className="min-w-0">
         {eyebrow && <div className="eyebrow mb-1">{eyebrow}</div>}
-        <h1 className="text-[24px] font-extrabold tracking-tight text-primary text-balance">{title}</h1>
+        <h1 className="text-[24px] font-semibold tracking-tight text-primary text-balance">{title}</h1>
         {subtitle && <p className="text-[13px] text-subtle mt-1 max-w-2xl">{subtitle}</p>}
       </div>
       {actions && <div className="flex items-center gap-2 shrink-0">{actions}</div>}

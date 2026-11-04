@@ -70,7 +70,7 @@ export default function DetectionCard({ report, detection, actorName, canValidat
           <ScanLine size={15} className="text-accent" aria-hidden /> Leitura de identificação
         </span>
         {detection.motor === 'demo' ? (
-          <Badge tone="violet"><FlaskConical size={11} aria-hidden /> Resultado simulado (demo)</Badge>
+          <Badge tone="slate"><FlaskConical size={11} aria-hidden /> Resultado simulado (demo)</Badge>
         ) : (
           <Badge tone="blue"><Cpu size={11} aria-hidden /> OCR real · Tesseract local</Badge>
         )}
@@ -96,13 +96,13 @@ export default function DetectionCard({ report, detection, actorName, canValidat
             <label key={i} className={cn('flex items-start gap-3 rounded-lg border bg-surface px-3 py-2.5 cursor-pointer transition-colors', selected === i ? 'border-accent ring-1 ring-accent/30' : 'border-border hover:border-slate-300')}>
               <input
                 type="radio" name={`cand-${detection.id}`} checked={selected === i}
-                onChange={() => setSelected(i)} className="mt-1 accent-sky-700"
+                onChange={() => setSelected(i)} className="mt-1 accent-zinc-700 dark:accent-zinc-300"
                 aria-label={`Candidato ${m.candidate.normalizado}`}
               />
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="mono font-bold text-[14px] text-primary">{m.candidate.normalizado}</span>
-                  <Badge tone={m.candidate.tipo === 'codigo' ? 'blue' : m.candidate.tipo === 'serial' || m.candidate.tipo === 'imei' ? 'teal' : 'slate'}>
+                  <Badge tone={m.candidate.tipo === 'codigo' ? 'blue' : 'slate'}>
                     {CAND_LABEL[m.candidate.tipo] ?? 'número'}
                   </Badge>
                   <span className="text-[12px] text-subtle tabular-nums">{m.candidate.confianca}%</span>

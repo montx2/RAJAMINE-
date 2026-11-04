@@ -126,3 +126,71 @@ O usuário pediu: menos informação, mais clean, animações e superfícies tra
 - Contraste testado conceitualmente contra o pior fundo (gradiente âmbar/grafite claro): texto principal `#18181B` sobre vidro `0.72` permanece > 7:1; subtítulo `#52525B` > 4.5:1.
 
 > A saída bruta do UI UX Pro Max para esta revisão está em `design-system-output.md` (seção “Revisão v3 — glass clean”).
+
+## 8. Revisão v4 — sobriedade editorial (auditoria final antes do cliente)
+
+Pedido do usuário: *“elegante, minimalista e clean, zero cara de IA”*. A revisão v3
+ainda tinha vários marcadores visuais associados a interfaces geradas
+automaticamente. Eles foram removidos e as regras abaixo viraram restrição do
+design system — não preferência de tela.
+
+### O que foi removido e por quê
+
+| Marcador removido | Onde estava | Substituição |
+| --- | --- | --- |
+| Ícone `Sparkles` | guia, aba do relatório, painel de padronização | `AlignLeft` / `Info`; aba renomeada de “Texto & IA” para “Texto” |
+| Brilho pulsante no alvo (`.tour-glow`) | guia de introdução | anel neutro de 1 px (`border-white/75`) |
+| Infográfico de 4 chips com setas | abertura do guia | um parágrafo factual |
+| Ícone âmbar por passo + barra de progresso amarela | cartão do guia | contador `N / M`; peso `semibold` |
+| Círculo verde + “Tudo pronto!” + “Bom trabalho!” | conclusão do guia | “Guia concluído” + uma frase |
+| Cores decorativas (`violet`, `teal`, `sky`) | badges, avatares, ícones, realces | tons semânticos apenas |
+| Manchas desfocadas coloridas (`blur-3xl`) | painel institucional do login | removidas |
+| Gradiente ambiente âmbar forte | fundo global | opacidade reduzida de 0.14 → 0.05 |
+| CTAs laranja-queimado (`variant="accent"`) | 26 botões | tom primário neutro (grafite / off-white) |
+| Títulos `font-extrabold` | 13 arquivos | `font-semibold` (marca mantém o wordmark) |
+| Copy publicitária e exclamações | login, revisão, motorista, guia | frases factuais, sem elogio ao usuário |
+| Emoji nos títulos do README | documentação | títulos simples |
+
+### Regras permanentes
+
+1. **Cor tem significado ou não existe.** O tipo `Tone` aceita apenas
+   `slate | blue | green | amber | red` (neutro, destaque, sucesso, alerta, erro).
+   `violet` e `teal` foram removidos do tipo, então não podem voltar por engano.
+   O status `arquivado` passou de `teal` para `slate`.
+2. **Um único CTA por tela, no tom primário.** A variante `accent` foi removida de
+   `BtnVariant`. O amarelo da marca fica no logotipo, no item de navegação ativo e
+   em realces pequenos — nunca em botões grandes.
+3. **Banner informativo é neutro.** `tone="info"` usa `bg-primary/[0.03]`; apenas
+   `warn`, `success` e `danger` carregam cor.
+4. **Texto de interface não menciona “IA”.** A automação é descrita pelo que faz
+   (“sugestão de padronização”, “leitura dos códigos nas fotos”), sempre com a
+   confirmação humana explícita.
+5. **Nada de celebração.** Conclusões de fluxo dizem o que aconteceu e onde
+   continuar. Sem exclamação, sem parabenização.
+6. **Peso de título é `semibold`.** `extrabold` fica restrito ao wordmark.
+
+### Correções estruturais decorrentes da auditoria
+
+- **`cn` agora resolve conflitos do Tailwind** (`tailwind-merge`). Antes apenas
+  concatenava: um `className="hidden sm:inline-flex"` não vencia o `inline-flex`
+  da classe base, porque no CSS vence a ordem da folha e não a das classes. Isso
+  fazia o pill “Online” aparecer em 390 px e colidir com os ícones do cabeçalho.
+- **`Modal` e `Toaster` usam portal para o `body`.** As páginas usam `.page-enter`,
+  cuja animação mantém um `transform` e cria contexto de empilhamento; o diálogo
+  em `z-50` ficava abaixo da barra fixa em `z-30` e o botão “Confirmar” era
+  inacessível no celular. O `Modal` também recebeu armadilha de foco, devolução do
+  foco ao fechar e `aria-labelledby`.
+- **Grade do login com `grid-cols-1`.** O track implícito usava o min-content de
+  341 px dos cards de perfil e estourava 49 px em 390 px de largura.
+- **Filtros do Arquivo de Documentos** passaram de grade fixa para `flex-wrap`,
+  eliminando 82 px de estouro horizontal; códigos de relatório não quebram linha.
+- **Barra de envio do checklist** só flutua quando está acionável, para não cobrir
+  os itens que o motorista ainda precisa marcar.
+
+### Verificação
+
+Auditoria em navegador real (Chromium headless, 1440×900 e 390×844, claro e
+escuro, `pt-BR`): 30 capturas, zero estouro horizontal, zero colisão no
+cabeçalho, zero texto truncado na navegação, zero jargão de IA visível e destaque
+do guia medido em −5/−5/+10/+10 px em relação ao alvo (o padding exato de 5 px).
+Os scripts ficam em `.audit/` (fora do versionamento).
