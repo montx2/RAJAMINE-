@@ -7,7 +7,7 @@
  * Executar: npm run setup:ocr
  * Os arquivos são servidos de /public/ocr e NÃO são versionados (.gitignore).
  */
-import { cpSync, mkdirSync, existsSync, readdirSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, existsSync, readdirSync, writeFileSync, renameSync, rmSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -41,17 +41,22 @@ console.log(`✓ core WASM (${n} arquivos)`);
 const langFile = join(out, 'lang', 'eng.traineddata.gz');
 if (!existsSync(langFile)) {
   console.log('Baixando eng.traineddata (tessdata_fast, Apache-2.0)…');
-  const { execSync } = await import('node:child_process');
-  const tmp = join(out, 'lang', 'eng.traineddata');
+  const { gzipSync } = await import('node:zlib');
+  const tmp = `${langFile}.tmp`;
   try {
-    // Via API de blobs do GitHub (funciona em sandboxes com hosts restritos)
-    const meta = JSON.parse(execSync(`curl -s "https://api.github.com/repos/tesseract-ocr/tessdata_fast/contents/eng.traineddata"`).toString());
-    execSync(`curl -s "https://api.github.com/repos/tesseract-ocr/tessdata_fast/git/blobs/${meta.sha}" -H "Accept: application/vnd.github.raw" -o "${tmp}"`);
-    execSync(`gzip -c "${tmp}" > "${langFile}"`);
-    execSync(`rm "${tmp}"`);
+    const response = await fetch('https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/main/eng.traineddata', {
+      signal: AbortSignal.timeout(60000),
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const model = Buffer.from(await response.arrayBuffer());
+    // Rejeita respostas de erro/HTML antes de disponibilizar o modelo ao OCR.
+    if (model.length < 1000000) throw new Error('Modelo de idioma incompleto.');
+    writeFileSync(tmp, gzipSync(model));
+    renameSync(tmp, langFile);
   } catch {
-    console.error('Falha ao baixar modelo. O OCR usará o modo demonstrativo.');
-    process.exit(0);
+    rmSync(tmp, { force: true });
+    console.error('Falha ao baixar o modelo de idioma. Execute setup:ocr novamente.');
+    process.exit(1);
   }
 }
 console.log('✓ eng.traineddata.gz');

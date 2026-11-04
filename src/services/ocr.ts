@@ -87,7 +87,7 @@ function loadImage(src: string): Promise<HTMLImageElement> {
 export function normalizeDigits(raw: string): { value: string; altered: boolean } {
   const map: Record<string, string> = { O: '0', o: '0', Q: '0', I: '1', l: '1', '|': '1', S: '5', B: '8', Z: '2', G: '6' };
   let altered = false;
-  const value = raw.replace(/[OoQIl|SBZG]/g, (c) => { altered = true; return map[c] ?? c; });
+  const value = raw.replace(/[OoQIl|SBZG]/gi, (c) => { altered = true; return map[c] ?? map[c.toUpperCase()] ?? c; });
   return { value, altered };
 }
 

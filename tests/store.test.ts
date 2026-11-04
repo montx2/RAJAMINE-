@@ -140,3 +140,33 @@ describe('Regras de negócio do fluxo de relatórios', () => {
     expect(r.historico.at(-1)?.detalhe).toContain('SIMULADO');
   });
 });
+
+describe('Proteções contra transições inválidas', () => {
+  it('bloqueia geração e envio de documentos antes da aprovação', () => {
+    const s = useStore.getState();
+    const id = s.createReport({ colaboradorId: 'u_carlos', clienteId: 'c_serra', dataViagem: '2026-01-10' }, 'Helena');
+    s.registerDocuments(id, 'Helena');
+    s.markClientSent(id, 'Helena');
+    const r = useStore.getState().reports.find((r) => r.id === id)!;
+    expect(r.status).toBe('pendente');
+    expect(r.documentos).toEqual([]);
+    expect(r.enviadoCliente).toBe(false);
+  });
+
+  it('rejeita período invertido e quilometragem negativa', () => {
+    const s = useStore.getState();
+    const id = s.createReport({ colaboradorId: 'u_carlos', clienteId: 'c_serra', dataViagem: '2026-01-10' }, 'Helena');
+    s.saveFillDraft(id, { periodoInicio: '2026-01-12', periodoFim: '2026-01-10', kmInicio: -5 }, 'Carlos');
+    const result = s.submitToReview(id, 'Carlos');
+    expect(result.ok).toBe(false);
+    expect(result.erros.some((e) => e.includes('período'))).toBe(true);
+    expect(result.erros.some((e) => e.includes('quilometragem'))).toBe(true);
+  });
+
+  it('impede reenviar relatório em revisão', () => {
+    const r = useStore.getState().reports.find((r) => r.status === 'em_revisao')!;
+    const before = r.historico.length;
+    expect(useStore.getState().submitToReview(r.id, 'Carlos').ok).toBe(false);
+    expect(useStore.getState().reports.find((x) => x.id === r.id)!.historico).toHaveLength(before);
+  });
+});

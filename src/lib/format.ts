@@ -1,24 +1,30 @@
+// Datas sem horário representam dias locais, não instantes em UTC.
+function parseDate(iso: string): Date {
+  return new Date(/^\d{4}-\d{2}-\d{2}$/.test(iso) ? `${iso}T12:00:00` : iso);
+}
+
 export function fmtDate(iso: string | undefined | null): string {
   if (!iso) return '—';
-  const d = new Date(iso);
+  const d = parseDate(iso);
   if (Number.isNaN(d.getTime())) return '—';
   return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
 export function fmtDateTime(iso: string | undefined | null): string {
   if (!iso) return '—';
-  const d = new Date(iso);
+  const d = parseDate(iso);
   if (Number.isNaN(d.getTime())) return '—';
   return `${d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })} ${d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
 }
 
 export function fmtShortDate(iso: string): string {
-  const d = new Date(iso);
+  const d = parseDate(iso);
+  if (Number.isNaN(d.getTime())) return '—';
   return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '');
 }
 
 export function timeAgo(iso: string): string {
-  const diff = Date.now() - new Date(iso).getTime();
+  const diff = Date.now() - parseDate(iso).getTime();
   const min = Math.round(diff / 60000);
   if (min < 1) return 'agora';
   if (min < 60) return `há ${min} min`;
@@ -30,7 +36,7 @@ export function timeAgo(iso: string): string {
 
 /** Prazo: retorna horas restantes (negativo = atrasado). */
 export function hoursUntil(iso: string): number {
-  return (new Date(iso).getTime() - Date.now()) / 3600000;
+  return (parseDate(iso).getTime() - Date.now()) / 3600000;
 }
 
 export function deadlineLabel(iso: string): { texto: string; tom: 'ok' | 'warn' | 'late' } {
@@ -45,7 +51,7 @@ export function deadlineLabel(iso: string): { texto: string; tom: 'ok' | 'warn' 
 
 export function initials(nome: string): string {
   const p = nome.trim().split(/\s+/);
-  return (p[0][0] + (p.length > 1 ? p[p.length - 1][0] : '')).toUpperCase();
+  return ((p[0]?.[0] ?? '') + (p.length > 1 ? p[p.length - 1][0] : '')).toUpperCase();
 }
 
 export function firstName(nome: string): string {

@@ -86,6 +86,8 @@ export default function FillReport() {
   const next = () => {
     if (step === 0) {
       const errs: string[] = [];
+      if (form.periodoInicio && form.periodoFim && form.periodoFim < form.periodoInicio) errs.push('O fim do período deve ser igual ou posterior ao início.');
+      if ([form.kmInicio, form.kmFim].some((km) => km !== '' && (!Number.isFinite(Number(km)) || Number(km) < 0))) errs.push('Informe uma quilometragem válida e não negativa.');
       if (!form.dataViagem) errs.push('Informe a data da viagem / visita.');
       if (isViagem && form.origem.trim().length < 3) errs.push('Informe a origem.');
       if (isViagem && form.destino.trim().length < 3) errs.push('Informe o destino.');

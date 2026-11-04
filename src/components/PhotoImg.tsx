@@ -10,6 +10,8 @@ export default function PhotoImg({ photo, className, alt }: { photo: Photo; clas
 
   useEffect(() => {
     let alive = true;
+    setFailed(false);
+    setUrl(photo.origem === 'demo' ? photo.src ?? null : null);
     resolvePhotoUrl(photo).then((u) => {
       if (!alive) return;
       if (u) setUrl(u);
@@ -26,5 +28,5 @@ export default function PhotoImg({ photo, className, alt }: { photo: Photo; clas
     );
   }
   if (!url) return <div className={cn('animate-pulse bg-muted', className)} aria-hidden />;
-  return <img src={url} alt={alt ?? photo.legenda ?? photo.nome} loading="lazy" className={cn('object-cover', className)} />;
+  return <img src={url} alt={alt ?? photo.legenda ?? photo.nome} loading="lazy" onError={() => setFailed(true)} className={cn('object-cover', className)} />;
 }

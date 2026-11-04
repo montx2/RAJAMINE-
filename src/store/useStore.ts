@@ -234,7 +234,10 @@ export const useStore = create<State>()(
         submitToReview: (id, ator) => {
           const r = get().reports.find((x) => x.id === id);
           if (!r) return { ok: false, erros: ['Relatório não encontrado.'] };
+          if (!['pendente', 'rascunho', 'correcao'].includes(r.status)) return { ok: false, erros: ['Este relatório já foi enviado para revisão.'] };
           const erros: string[] = [];
+          if (r.periodoInicio && r.periodoFim && r.periodoFim < r.periodoInicio) erros.push('O fim do período deve ser igual ou posterior ao início.');
+          if ([r.kmInicio, r.kmFim].some((km) => km != null && (!Number.isFinite(km) || km < 0))) erros.push('Informe uma quilometragem válida e não negativa.');
           if (!r.dataViagem) erros.push('Informe a data da viagem / período.');
           const isViagem = (r.tipo ?? 'viagem') === 'viagem';
           if (isViagem && !r.origem.trim()) erros.push('Informe a origem.');
@@ -394,6 +397,8 @@ export const useStore = create<State>()(
         },
 
         registerDocuments: (id, ator) => {
+          const report = get().reports.find((r) => r.id === id);
+          if (!report || !['aprovado', 'arquivado'].includes(report.status) || report.deteccoes.some((d) => d.status === 'aguardando')) return;
           patchReport(id, (r) => {
             const versao = r.documentos.length ? Math.max(...r.documentos.map((d) => d.versao)) + 1 : 1;
             const agora = new Date().toISOString();
@@ -415,6 +420,8 @@ export const useStore = create<State>()(
         },
 
         markClientSent: (id, ator) => {
+          const report = get().reports.find((r) => r.id === id);
+          if (!report || !['aprovado', 'arquivado'].includes(report.status) || !report.documentos.some((d) => d.tipo === 'cliente')) return;
           patchReport(id, (r) => ({
             ...r,
             enviadoCliente: true,
