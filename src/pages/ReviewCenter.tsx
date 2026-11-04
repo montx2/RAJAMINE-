@@ -83,7 +83,7 @@ export default function ReviewCenter() {
                       {pendingOcr > 0 && <Badge tone="amber"><ScanLine size={11} aria-hidden /> {pendingOcr} OCR pendente(s)</Badge>}
                     </div>
                     <div className="text-[12.5px] text-subtle mt-0.5">
-                      {colab?.nome} · {client?.nome} · <span className="mono">{truck?.frota}</span> · enviado {r.enviadoRevisaoEm ? timeAgo(r.enviadoRevisaoEm) : '—'}
+                      {colab?.nome} · {client?.nome} · {truck?.frota && <><span className="mono">{truck.frota}</span> · </>}enviado {r.enviadoRevisaoEm ? timeAgo(r.enviadoRevisaoEm) : '—'}
                     </div>
                     <div className="flex flex-wrap gap-3 mt-2 text-[12px] text-subtle">
                       <span className="flex items-center gap-1"><Camera size={13} aria-hidden /> {r.fotos.length} foto(s)</span>

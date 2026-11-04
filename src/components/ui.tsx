@@ -142,7 +142,7 @@ export function Modal({ open, onClose, title, children, wide, footer }: { open: 
 /* ── Tabs (pill glass) ── */
 export function Tabs({ tabs, active, onChange }: { tabs: Array<{ id: string; label: string; icon?: ReactNode; count?: number }>; active: string; onChange: (id: string) => void }) {
   return (
-    <div className="glass inline-flex max-w-full gap-1 rounded-2xl p-1 overflow-x-auto" role="tablist">
+    <div className="glass inline-flex flex-wrap max-w-full gap-1 rounded-2xl p-1" role="tablist">
       {tabs.map((t) => (
         <button
           key={t.id}

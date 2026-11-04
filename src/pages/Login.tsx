@@ -121,7 +121,7 @@ export default function Login() {
                     id="login-senha"
                     type={showPass ? 'text' : 'password'}
                     autoComplete="current-password"
-                    placeholder="••••••••"
+                    placeholder="Digite sua senha"
                     className="pr-11"
                     value={senha}
                     invalid={!!errors.senha}
@@ -162,11 +162,12 @@ export default function Login() {
             <button
               type="button"
               onClick={() => setDemoOpen((v) => !v)}
-              className="w-full flex items-center justify-center gap-1.5 py-2 text-[12.5px] font-medium text-subtle hover:text-primary transition-colors cursor-pointer"
+              className="w-full flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-primary/20 py-2.5 text-[13px] font-semibold text-secondary hover:text-primary hover:border-primary/35 hover:bg-surface/60 transition-colors cursor-pointer"
               aria-expanded={demoOpen}
               aria-controls="demo-panel"
             >
-              Acesso de demonstração
+              <span>Acesso de demonstração</span>
+              <span className="font-normal text-subtle">· entrar sem senha</span>
               <ChevronDown size={14} className={cn('transition-transform duration-200', demoOpen && 'rotate-180')} aria-hidden />
             </button>
 

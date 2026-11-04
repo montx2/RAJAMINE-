@@ -153,20 +153,24 @@ export default function Dashboard() {
                 const colab = users.find((u) => u.id === r.colaboradorId);
                 const client = clients.find((c) => c.id === r.clienteId);
                 return (
-                  <div key={r.id} className="flex items-center gap-3 px-5 py-3 hover:bg-primary/[0.02] transition-colors">
+                  <div key={r.id} className="flex items-start sm:items-center gap-3 px-5 py-3 hover:bg-primary/[0.02] transition-colors">
                     <Avatar nome={colab?.nome ?? '?'} size="sm" />
-                    <div className="min-w-0 flex-1">
-                      <Link to={`/relatorios/${r.id}`} className="text-[13px] font-bold text-primary hover:text-accent">{r.codigo}</Link>
-                      <div className="text-[12px] text-subtle truncate">{colab?.nome} · {client?.nome}</div>
+                    <div className="min-w-0 flex-1 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                      <div className="min-w-0 flex-1">
+                        <Link to={`/relatorios/${r.id}`} className="text-[13px] font-bold text-primary hover:text-accent whitespace-nowrap">{r.codigo}</Link>
+                        <div className="text-[12px] text-subtle truncate" title={`${colab?.nome} · ${client?.nome}`}>{colab?.nome} · {client?.nome}</div>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-2 shrink-0">
+                        <StatusBadge status={r.status} />
+                        <Badge tone={dl.tom === 'late' ? 'red' : dl.tom === 'warn' ? 'amber' : 'slate'} dot>{dl.texto}</Badge>
+                        {hoursUntil(r.prazoEm) < 24 && (
+                          <Button size="sm" variant="ghost" icon={<BellRing size={13} />}
+                            onClick={() => { sendReminder(r.id, user.nome); toast(`Lembrete enviado a ${colab?.nome} (simulação).`, 'info'); }}>
+                            Lembrar
+                          </Button>
+                        )}
+                      </div>
                     </div>
-                    <div className="hidden sm:block"><StatusBadge status={r.status} /></div>
-                    <Badge tone={dl.tom === 'late' ? 'red' : dl.tom === 'warn' ? 'amber' : 'slate'} dot>{dl.texto}</Badge>
-                    {hoursUntil(r.prazoEm) < 24 && (
-                      <Button size="sm" variant="ghost" icon={<BellRing size={13} />}
-                        onClick={() => { sendReminder(r.id, user.nome); toast(`Lembrete enviado a ${colab?.nome} (simulação).`, 'info'); }}>
-                        Lembrar
-                      </Button>
-                    )}
                   </div>
                 );
               })}
@@ -235,7 +239,7 @@ export default function Dashboard() {
                 <Avatar nome={a.ator} size="sm" />
                 <div className="min-w-0 flex-1">
                   <span className="text-[13px] font-semibold text-foreground">{a.acao}</span>
-                  <span className="text-[12px] text-subtle"> · {a.codigo}</span>
+                  <span className="text-[12px] text-subtle whitespace-nowrap"> · {a.codigo}</span>
                 </div>
                 <span className="text-[11px] text-subtle whitespace-nowrap">{timeAgo(a.em)}</span>
               </Link>

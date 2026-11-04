@@ -131,7 +131,43 @@ export default function Reports() {
 
       {/* Tabela enxuta */}
       <div className="card overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Celular: lista em cartões — a tabela exigiria rolagem lateral e escondia o status */}
+        <ul className="md:hidden divide-soft" aria-label="Relatórios">
+          {filtered.map((r) => {
+            const colab = users.find((u) => u.id === r.colaboradorId);
+            const client = clients.find((c) => c.id === r.clienteId);
+            const pendingFill = ['pendente', 'rascunho', 'correcao'].includes(r.status);
+            const dl = pendingFill ? deadlineLabel(r.prazoEm) : null;
+            const canFill = user.role === 'colaborador' && pendingFill;
+            return (
+              <li key={r.id}>
+                <Link
+                  to={canFill ? `/preencher/${r.token}` : `/relatorios/${r.id}`}
+                  className="flex items-start gap-3 px-4 py-3.5 hover:bg-primary/[0.02] active:bg-primary/[0.04] transition-colors"
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="mono font-bold text-accent">{r.codigo}</span>
+                      {r.enviadoCliente && <Badge tone="green">enviado</Badge>}
+                    </div>
+                    <div className="text-[12.5px] text-subtle mt-0.5 truncate">
+                      {client?.nome || '—'} · {fmtDate(r.dataViagem + 'T12:00:00')}
+                    </div>
+                    <div className="text-[12.5px] text-secondary mt-0.5 truncate">{colab?.nome}</div>
+                    <div className="flex items-center gap-1.5 flex-wrap mt-2">
+                      <StatusBadge status={r.status} />
+                      {dl && <Badge tone={dl.tom === 'late' ? 'red' : dl.tom === 'warn' ? 'amber' : 'slate'}>{dl.texto}</Badge>}
+                    </div>
+                  </div>
+                  <span className={cn('shrink-0 self-center text-[12.5px] font-semibold', canFill ? 'text-accent' : 'text-subtle')}>
+                    {canFill ? 'Preencher' : 'Abrir'} ›
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full min-w-[760px]">
             <thead className="border-b border-primary/8">
               <tr>
