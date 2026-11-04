@@ -31,3 +31,6 @@ Rajamine-FieldOps-Pendrive.zip
 tcc/preview_artigo/
 tcc/preview_monografia/
 __pycache__/
+
+# Capturas brutas do TCC (regeneráveis por .audit/capturas_tcc.mjs)
+tcc/figuras/
