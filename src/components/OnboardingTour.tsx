@@ -152,6 +152,12 @@ export default function OnboardingTour({ variant = 'gestao' }: { variant?: 'gest
   const isWelcome = !!step && !step.selector;
   const isLast = index === steps.length - 1;
   const spotlight = !!step?.selector && !!rect && rect.width > 0;
+  // Guarda o último retângulo válido para o card não "pular" durante a troca
+  // de passo (o spotlight some até o novo alvo ser medido, mas o card fica parado).
+  const lastRectRef = useRef<DOMRect | null>(null);
+  if (rect) lastRectRef.current = rect;
+  const anchorRect = rect ?? lastRectRef.current;
+  const hasAnchor = !!step?.selector && !!anchorRect && anchorRect.width > 0;
 
   const finish = useCallback(() => {
     try { localStorage.setItem(storageKey, 'done'); } catch { /* modo privado */ }
@@ -188,41 +194,60 @@ export default function OnboardingTour({ variant = 'gestao' }: { variant?: 'gest
     return () => { if (t) window.clearTimeout(t); window.removeEventListener('rajamine-start-tour', onStart); };
   }, [start, storageKey]);
 
-  // Navega até a página do passo e espera o elemento aparecer para destacá-lo.
+  // Enquanto o tour está aberto, congela as animações de entrada das páginas
+  // (page-enter/stagger) para que o alvo não se mova depois de medido.
+  useEffect(() => {
+    const root = document.documentElement;
+    if (active) root.classList.add('tour-active');
+    else root.classList.remove('tour-active');
+    return () => root.classList.remove('tour-active');
+  }, [active]);
+
+  // Navega até a página do passo e rastreia o alvo continuamente (rAF),
+  // mantendo o spotlight colado mesmo com scroll, resize ou layout shift.
   useEffect(() => {
     if (!active || !step) return;
-    if (!step.selector) { setRect(null); return; }
+    setRect(null); // esconde o spotlight antigo até achar o novo alvo (sem "voar")
+    if (!step.selector) return;
     if (step.route && location.pathname !== step.route) navigate(step.route);
-    let tries = 0;
-    const tick = () => {
+
+    let raf = 0;
+    let scrolled = false;
+    const startedAt = Date.now();
+    let last: { top: number; left: number; width: number; height: number } | null = null;
+
+    const loop = () => {
       const el = document.querySelector(step.selector!) as HTMLElement | null;
-      if (el && el.getBoundingClientRect().width > 0) {
-        el.scrollIntoView({ block: 'center', inline: 'nearest' });
-        setRect(el.getBoundingClientRect());
+      const box = el?.getBoundingClientRect();
+      if (el && box && box.width > 0) {
+        if (!scrolled) {
+          el.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'auto' });
+          scrolled = true;
+        }
+        const r = el.getBoundingClientRect();
+        if (!last || Math.abs(r.top - last.top) > 0.5 || Math.abs(r.left - last.left) > 0.5 ||
+            Math.abs(r.width - last.width) > 0.5 || Math.abs(r.height - last.height) > 0.5) {
+          last = { top: r.top, left: r.left, width: r.width, height: r.height };
+          setRect(r);
+        }
+        raf = requestAnimationFrame(loop);
         return;
       }
-      if (++tries > 30) { next(); return; } // alvo não existe neste perfil/página: pula o passo
-      timer = window.setTimeout(tick, 100);
+      if (Date.now() - startedAt > 3000) { next(); return; } // alvo não existe: pula o passo
+      raf = requestAnimationFrame(loop);
     };
-    let timer = window.setTimeout(tick, 80);
-    return () => window.clearTimeout(timer);
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index, active]);
 
-  // Reposiciona em resize/scroll e mede a altura real do card.
+  // Atualiza o tamanho da viewport para posicionar o card.
   useEffect(() => {
     if (!active) return;
-    const remeasure = () => {
-      setVp({ w: window.innerWidth, h: window.innerHeight });
-      if (step?.selector) {
-        const el = document.querySelector(step.selector) as HTMLElement | null;
-        if (el) setRect(el.getBoundingClientRect());
-      }
-    };
-    window.addEventListener('resize', remeasure);
-    window.addEventListener('scroll', remeasure, true);
-    return () => { window.removeEventListener('resize', remeasure); window.removeEventListener('scroll', remeasure, true); };
-  }, [active, step]);
+    const onResize = () => setVp({ w: window.innerWidth, h: window.innerHeight });
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [active]);
 
   useLayoutEffect(() => {
     if (cardRef.current) setCardH(cardRef.current.offsetHeight);
@@ -247,19 +272,19 @@ export default function OnboardingTour({ variant = 'gestao' }: { variant?: 'gest
   const mobile = vp.w < 640;
   const pad = 6;
   let cardStyle: React.CSSProperties;
-  if (!spotlight) {
+  if (!hasAnchor) {
     cardStyle = mobile
       ? { left: 12, right: 12, bottom: 16 }
       : { left: Math.max(12, (vp.w - CARD_W) / 2), top: Math.max(12, (vp.h - cardH) / 2), width: CARD_W };
   } else if (mobile) {
-    const targetMid = rect!.top + rect!.height / 2;
+    const targetMid = anchorRect!.top + anchorRect!.height / 2;
     cardStyle = targetMid > vp.h / 2
       ? { left: 12, right: 12, top: 12 }
       : { left: 12, right: 12, bottom: 12 };
   } else {
-    const below = rect!.bottom + pad + 14 + cardH < vp.h - 12;
-    const top = below ? rect!.bottom + pad + 14 : Math.max(12, rect!.top - pad - 14 - cardH);
-    const left = Math.min(Math.max(12, rect!.left + rect!.width / 2 - CARD_W / 2), vp.w - CARD_W - 12);
+    const below = anchorRect!.bottom + pad + 14 + cardH < vp.h - 12;
+    const top = below ? anchorRect!.bottom + pad + 14 : Math.max(12, anchorRect!.top - pad - 14 - cardH);
+    const left = Math.min(Math.max(12, anchorRect!.left + anchorRect!.width / 2 - CARD_W / 2), vp.w - CARD_W - 12);
     cardStyle = { top, left, width: CARD_W };
   }
 
@@ -269,7 +294,8 @@ export default function OnboardingTour({ variant = 'gestao' }: { variant?: 'gest
         <>
           <div className="absolute inset-0" onClick={finish} aria-hidden />
           <div
-            className="absolute rounded-xl border-2 border-brand shadow-[0_0_0_9999px_rgba(0,0,0,0.5)] transition-all duration-200 pointer-events-none"
+            data-tour-spotlight
+            className="absolute rounded-xl border-2 border-brand shadow-[0_0_0_9999px_rgba(0,0,0,0.5)] animate-fade-in pointer-events-none"
             style={{ top: rect!.top - pad, left: rect!.left - pad, width: rect!.width + pad * 2, height: rect!.height + pad * 2 }}
             aria-hidden
           />

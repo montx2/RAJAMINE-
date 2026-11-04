@@ -317,6 +317,14 @@ body::before {
 
 .page-enter { animation: fade-up var(--dur-page) var(--ease-out) both; }
 
+/* Tour guiado: congela as animações de entrada para o spotlight medir o alvo
+   já na posição final (sem deslocamento depois de medido). */
+.tour-active .page-enter,
+.tour-active .stagger > *,
+.tour-active .animate-fade-up {
+  animation: none !important;
+}
+
 .press { transition: transform var(--dur-fast) var(--ease-out); }
 .press:active { transform: scale(0.97); }
 

@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeAll, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, cleanup, act } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup, act, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { AppRoutes } from '../src/App';
 import { useStore } from '../src/store/useStore';
@@ -95,5 +95,24 @@ describe('Tutorial em tela', () => {
     fireEvent.click(screen.getByText('Pular tutorial'));
     expect(screen.queryByText('Bem-vindo ao Rajamine FieldOps')).toBeNull();
     expect(localStorage.getItem('rajamine-tour-v2-gestao')).toBe('done');
+  });
+
+  it('spotlight fica exatamente sobre o alvo e congela as animações da página', async () => {
+    useStore.setState({ session: { userId: 'u_helena', role: 'admin' } });
+    renderAt('/');
+    startTour();
+    fireEvent.click(screen.getByText('Começar'));
+    // aguarda o loop de rastreamento (rAF) medir o alvo
+    await waitFor(() => expect(document.querySelector('[data-tour-spotlight]')).toBeTruthy());
+    const spot = document.querySelector('[data-tour-spotlight]') as HTMLElement;
+    // rect fictício do jsdom: top 120, left 120, width 200, height 48; padding 6
+    expect(spot.style.top).toBe('114px');
+    expect(spot.style.left).toBe('114px');
+    expect(spot.style.width).toBe('212px');
+    expect(spot.style.height).toBe('60px');
+    // animações de entrada congeladas enquanto o tour está aberto
+    expect(document.documentElement.classList.contains('tour-active')).toBe(true);
+    fireEvent.click(screen.getByText('Pular'));
+    expect(document.documentElement.classList.contains('tour-active')).toBe(false);
   });
 });
