@@ -1,0 +1,24 @@
+[build]
+  # setup:ocr copia worker/WASM e baixa o modelo de idioma (public/ocr não é versionado)
+  command = "npm run setup:ocr && npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# SPA: qualquer rota cai no index.html (sem isso, F5 em /relatorios dá 404)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Service worker nunca deve ficar preso em cache
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

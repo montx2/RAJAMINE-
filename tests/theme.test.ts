@@ -26,6 +26,6 @@ describe('Tema claro/escuro', () => {
     expect(document.documentElement.style.colorScheme).toBe('dark');
     expect(meta.getAttribute('content')).toBe('#0b0d10');
     applyTheme('light');
-    expect(meta.getAttribute('content')).toBe('#f5f6f8');
+    expect(meta.getAttribute('content')).toBe('#eeede9');
   });
 });

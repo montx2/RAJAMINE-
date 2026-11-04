@@ -14,7 +14,7 @@ export function Wordmark({ className = '', light = true }: { className?: string;
   return (
     <span className={`font-extrabold italic tracking-tight leading-none ${className}`} aria-label="Rajamine">
       <span className={light ? 'text-white' : 'text-primary'}>Raja</span>
-      <span className="text-brand">Mine</span>
+      <span className={light ? 'text-brand' : 'text-brand-ink'}>Mine</span>
     </span>
   );
 }
