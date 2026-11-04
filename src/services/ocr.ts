@@ -116,7 +116,7 @@ export function extractCandidates(text: string, baseConfidence: number): OcrCand
       push(m[0], `EQ-${value}`, baseConfidence - 15 - (altered ? 8 : 0), 'codigo');
     }
   }
-  // Códigos reais de equipamentos de cliente: CP-101, TYE-9A00, RUU-1G56, ESC-49…
+  // Códigos de equipamentos de cliente: SA-101, VA-205, SR-305, HZ-401…
   for (const m of text.matchAll(/\b([A-Z]{2,4})[\s\-–]([A-Z0-9]{2,6})\b/gi)) {
     const prefix = m[1].toUpperCase();
     if (['SN', 'ID', 'NO', 'IMEI', 'EQ'].includes(prefix)) continue;
@@ -378,9 +378,9 @@ export function demoOcrResult(photoSrc: string): OcrRunResult {
     { keys: ['camera-externa'], codigo: 'EQ-4520', serial: '60415', conf: 86 },
     { keys: ['sensor-carga'], codigo: 'EQ-2988', serial: '33078', conf: 84 },
     { keys: ['checklist-campo'], codigo: 'EQ-5102', serial: '90233', conf: 79 },
-    { keys: ['painel-cp101'], codigo: 'CP-101', serial: '0987', conf: 90 },
-    { keys: ['tablet-pulsus'], codigo: 'CP-101', serial: '2758', conf: 82 },
-    { keys: ['galileo-rotograma'], codigo: 'MOBI', imei: '867782071392430', conf: 76 },
+    { keys: ['painel-sa101'], codigo: 'SA-101', serial: '0187', conf: 90 },
+    { keys: ['tablet-pulsus'], codigo: 'SA-101', serial: '2741', conf: 82 },
+    { keys: ['galileo-rotograma'], codigo: 'HZ-410', imei: '867782071392430', conf: 76 },
   ];
   const src = photoSrc.toLowerCase();
   const hit = known.find((k) => k.keys.some((key) => src.includes(key)));

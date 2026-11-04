@@ -100,36 +100,27 @@ describe('Renderização das telas', () => {
     expect(screen.getAllByText('EQ-2041').length).toBeGreaterThan(0);
   });
 
-  it('operações de campo reproduz a planilha real da Rajamine', () => {
+  it('operações de campo lista a base sintética', () => {
     useStore.setState({ session: { userId: 'u_helena', role: 'admin' } });
     renderAt('/operacoes');
     expect(screen.getAllByText('Operações de campo').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('TYE-9A00').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('864993060369890').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('SA-101').length).toBeGreaterThan(0);
   });
 
-  it('consolidado semanal mostra a referência real e o gerador', () => {
+  it('consolidado semanal mostra o gerador', () => {
     useStore.setState({ session: { userId: 'u_helena', role: 'admin' } });
     renderAt('/semanal');
     expect(screen.getByText('Consolidado semanal de viagens')).toBeTruthy();
     expect(screen.getByText('Gerar consolidado a partir de relatórios aprovados')).toBeTruthy();
-    expect(screen.getAllByText('RUU-1G56').length).toBeGreaterThan(0);
   });
 
-  it('relatório de referência real mostra atividades por equipamento', () => {
+  it('relatório de visita técnica mostra atividades por equipamento', () => {
     useStore.setState({ session: { userId: 'u_marta', role: 'revisora' } });
     renderAt('/relatorios/r_201');
-    expect(screen.getByText('referência real da empresa')).toBeTruthy();
-    expect(screen.getAllByText('CP-101').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('0987').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('SA-101').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('0187').length).toBeGreaterThan(0);
   });
 
-  it('página de conformidade lista medidas e limitações', () => {
-    useStore.setState({ session: { userId: 'u_helena', role: 'admin' } });
-    renderAt('/conformidade');
-    expect(screen.getByText('Implementado no protótipo')).toBeTruthy();
-    expect(screen.getByText('Obrigatório na versão de produção')).toBeTruthy();
-  });
 });
 
 void vi;

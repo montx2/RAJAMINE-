@@ -259,7 +259,7 @@ export function padronizar(texto: string, ctx: ReportContext = {}): Padronizacao
   if (/\bequipamento|sensor|rastreador|telemetria|câmera\b/i.test(t) && !codigoReal && (ctx.equipamentosConfirmados?.length ?? 0) === 0) {
     alertas.push({ nivel: 'info', mensagem: 'O texto cita equipamento sem código de identificação. Confirmar o número via foto/OCR ou informar manualmente.' });
   }
-  // Consistência de dispositivos e período (referências reais da Rajamine)
+  // Consistência de dispositivos e período
   if (ctx.atividades?.length) {
     for (const a of validateActivities(ctx.atividades, { inicio: ctx.periodoInicio, fim: ctx.periodoFim })) {
       alertas.push(a);

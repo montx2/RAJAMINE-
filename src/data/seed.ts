@@ -1,15 +1,15 @@
 /*
-  BASE DEMONSTRATIVA MISTA:
-  · Registros sintéticos (datas relativas) para exercitar o fluxo completo.
-  · Referências reais fornecidas pela Rajamine (set/2026), marcadas com
-    origemDados: 'referencia_empresa' — ver src/data/referencias.ts.
-  Nenhum dado real é tratado como aprovação/envio já realizado.
+  Base demonstrativa 100% sintética.
+  Datas relativas para exercitar o fluxo completo; nenhum dado real de cliente,
+  colaborador ou planilha da empresa é utilizado. Aprovações/envios simulados
+  são rotulados como tal na interface e na auditoria.
 */
 import type {
   User, Client, Truck, Equipment, Report, Notification, Photo, Detection, AuditEvent, TextVersion,
   DriverChecklist, DriverOccurrence, DriverTraining, DriverSyncItem,
 } from './types';
-import { realClients, realUsers, realEquipment, realReports } from './referencias';
+import { demoClientEquipment } from './demoOperations';
+import { demoStructuredReports } from './demoReports';
 import { buildChecklistItems } from '../lib/driver';
 
 const now = Date.now();
@@ -34,7 +34,6 @@ export const seedUsers: User[] = [
   { id: 'u_mot_joao', nome: 'João Batista', email: 'joao.batista@rajamine.demo', role: 'motorista', cargo: 'Motorista de caminhão fora de estrada', ativo: true, truckIds: ['t101'] },
   { id: 'u_mot_antonio', nome: 'Antônio Ferreira', email: 'antonio.ferreira@rajamine.demo', role: 'motorista', cargo: 'Motorista de caminhão fora de estrada', ativo: true, truckIds: ['t103'] },
   { id: 'u_mot_marcos', nome: 'Marcos Paulo', email: 'marcos.paulo@rajamine.demo', role: 'motorista', cargo: 'Motorista de caminhão fora de estrada', ativo: true, truckIds: ['t105'] },
-  ...realUsers,
 ];
 
 export const seedClients: Client[] = [
@@ -42,7 +41,6 @@ export const seedClients: Client[] = [
   { id: 'c_aco', nome: 'Vale do Aço Mineração Ltda.', cnpj: '23.456.789/0001-01', cidade: 'Ipatinga', uf: 'MG', contato: 'Paula Ribeiro', email: 'frota@valedoaco.demo' },
   { id: 'c_rita', nome: 'Pedreira Santa Rita Ltda.', cnpj: '34.567.890/0001-12', cidade: 'Sete Lagoas', uf: 'MG', contato: 'Marcos Vinícius', email: 'manutencao@santarita.demo' },
   { id: 'c_horizonte', nome: 'Mineração Horizonte S.A.', cnpj: '45.678.901/0001-23', cidade: 'Nova Lima', uf: 'MG', contato: 'Sônia Prado', email: 'tecnica@horizonte.demo' },
-  ...realClients,
 ];
 
 export const seedTrucks: Truck[] = [
@@ -64,7 +62,7 @@ export const seedEquipment: Equipment[] = [
   { id: 'e6034', codigo: 'EQ-6034', tipo: 'Rastreador GPS', serial: '12874', status: 'manutencao', truckId: null },
   { id: 'e7761', codigo: 'EQ-7761', tipo: 'Câmera embarcada', serial: '55681', status: 'estoque', truckId: null },
   { id: 'e8123', codigo: 'EQ-8123', tipo: 'Sensor de fadiga', serial: '40921', status: 'instalado', truckId: 't106', instaladoEm: iso(-16 * D) },
-  ...realEquipment,
+  ...demoClientEquipment,
 ];
 
 let evSeq = 0;
@@ -418,7 +416,7 @@ export const seedReports: Report[] = [
     fotos: [fotoCaminhaoMina('ph_131a', -51 * D), fotoAtividade('ph_131b', -51 * D)],
     aprovadoAgoMs: 50 * D, docs: docsPadrao(50 * D - 2 * H, 49 * D), enviadoCliente: true,
   }),
-  ...realReports,
+  ...demoStructuredReports,
 ];
 
 export const seedNotifications: Notification[] = [

@@ -84,7 +84,7 @@ export default function DriverOccurrences() {
               </div>
             )}
             {detail.resposta && (
-              <div className="rounded-xl bg-success-soft/60 border border-success/20 p-3 text-[13px] text-green-900">
+              <div className="rounded-xl bg-success-soft/60 border border-success/20 p-3 text-[13px] text-success">
                 <strong>Resposta da coordenação:</strong> {detail.resposta}
                 {detail.resolvidaPor && <div className="text-[11.5px] mt-1 opacity-80">{detail.resolvidaPor} · {detail.resolvidaEm ? fmtDateTime(detail.resolvidaEm) : ''}</div>}
               </div>

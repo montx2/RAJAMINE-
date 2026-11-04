@@ -1,4 +1,4 @@
-/* Regras de consistência aprendidas com as referências reais da Rajamine.
+/* Regras de consistência operacional.
    Nunca corrigimos silenciosamente: apenas sinalizamos para conferência humana. */
 import type { ActivityEntry, OperationRow, Report } from '../data/types';
 import { ACTIVITY_KIND_LABEL } from '../data/types';
@@ -109,7 +109,11 @@ export function reportPeriod(r: Report): { inicio?: string; fim?: string } {
 
 export function toCsv(rows: OperationRow[]): string {
   const header = ['Data', 'Empresa', 'Técnico', 'Equipamento', 'Telemetria', 'Pulsus', 'Câmera de fadiga', 'Atividade', 'Observação', 'Situação Telemetria', 'Fotos'];
-  const esc = (v: string) => `"${(v ?? '').replace(/"/g, '""')}"`;
+  const esc = (v: string) => {
+    const raw = v ?? '';
+    const safe = /^[=+\-@\t\r]/.test(raw) ? `'${raw}` : raw;
+    return `"${safe.replace(/"/g, '""')}"`;
+  };
   const lines = rows.map((r) => [r.data, r.empresa, r.tecnico, r.equipamento, r.telemetria ?? '', r.pulsus ?? '', r.cameraFadiga ?? '', r.atividade, r.observacao, r.situacaoTelemetria, r.fotos].map(esc).join(';'));
   return [header.map(esc).join(';'), ...lines].join('\n');
 }

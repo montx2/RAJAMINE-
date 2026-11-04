@@ -17,12 +17,12 @@ interface BtnProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export function Button({ variant = 'primary', size = 'md', loading, icon, className, children, disabled, ...rest }: BtnProps) {
   const base = 'press inline-flex items-center justify-center gap-2 font-semibold rounded-xl cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap transition-[background-color,border-color,color,box-shadow,transform] duration-150 ease-out';
   const variants: Record<BtnVariant, string> = {
-    primary: 'bg-primary text-primary-foreground hover:bg-navy-800 shadow-[0_6px_16px_-8px_rgb(24_24_27/0.5)]',
+    primary: 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_6px_16px_-8px_rgb(24_24_27/0.5)]',
     accent: 'bg-accent text-accent-foreground hover:bg-accent-hover shadow-[0_6px_16px_-8px_rgb(180_83_9/0.6)]',
     outline: 'glass text-secondary hover:border-accent/30 hover:text-primary',
     ghost: 'text-secondary hover:bg-primary/5',
-    danger: 'bg-destructive text-white hover:bg-red-700',
-    success: 'bg-success text-white hover:bg-green-800',
+    danger: 'bg-destructive text-white dark:text-[#18181b] hover:bg-destructive/90',
+    success: 'bg-success text-white dark:text-[#18181b] hover:bg-success/90',
   };
   const sizes = { sm: 'text-[12.5px] px-3 py-1.5 min-h-[34px]', md: 'text-[13.5px] px-4 py-2.5 min-h-[42px]', lg: 'text-[14.5px] px-5 py-3 min-h-[48px]' };
   return (
@@ -42,8 +42,8 @@ export function Badge({ tone = 'slate', children, className, dot }: { tone?: Ton
     green: 'bg-success-soft/70 text-success border-success/20',
     amber: 'bg-warning-soft/70 text-warning border-warning/20',
     red: 'bg-destructive-soft/70 text-destructive border-destructive/20',
-    teal: 'bg-teal-50/80 text-teal-700 border-teal-200/70',
-    violet: 'bg-violet-50/80 text-violet-700 border-violet-200/70',
+    teal: 'bg-teal-500/10 text-teal-700 dark:text-teal-300 border-teal-500/20',
+    violet: 'bg-violet-500/10 text-violet-700 dark:text-violet-300 border-violet-500/20',
   };
   return (
     <span className={cn('inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11.5px] font-semibold whitespace-nowrap', tones[tone], className)}>
@@ -78,7 +78,7 @@ export function Input({ className, invalid, ...rest }: InputHTMLAttributes<HTMLI
   return <input className={cn('input', invalid && 'input-error', className)} {...rest} />;
 }
 export function Select({ className, invalid, children, ...rest }: SelectHTMLAttributes<HTMLSelectElement> & { invalid?: boolean }) {
-  return <select className={cn('input appearance-none bg-[url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23475569%22%20stroke-width%3D%222.5%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E")] bg-no-repeat bg-[right_12px_center] pr-9', invalid && 'input-error', className)} {...rest}>{children}</select>;
+  return <select className={cn('input appearance-none bg-[url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2371717a%22%20stroke-width%3D%222.5%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E")] bg-no-repeat bg-[right_12px_center] pr-9', invalid && 'input-error', className)} {...rest}>{children}</select>;
 }
 export function Textarea({ className, invalid, ...rest }: TextareaHTMLAttributes<HTMLTextAreaElement> & { invalid?: boolean }) {
   return <textarea className={cn('input min-h-[120px] leading-relaxed', invalid && 'input-error', className)} {...rest} />;
@@ -98,7 +98,7 @@ export function Modal({ open, onClose, title, children, wide, footer }: { open: 
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6" role="dialog" aria-modal="true" aria-label={title}>
-      <div className="absolute inset-0 bg-primary/40 animate-fade-in" style={{ backdropFilter: 'blur(var(--blur-overlay))', WebkitBackdropFilter: 'blur(var(--blur-overlay))' }} onClick={onClose} aria-hidden />
+      <div className="absolute inset-0 bg-black/40 animate-fade-in" style={{ backdropFilter: 'blur(var(--blur-overlay))', WebkitBackdropFilter: 'blur(var(--blur-overlay))' }} onClick={onClose} aria-hidden />
       <div ref={ref} tabIndex={-1} className={cn('relative glass-strong w-full rounded-t-3xl sm:rounded-3xl max-h-[92vh] flex flex-col animate-scale-in outline-none', wide ? 'sm:max-w-4xl' : 'sm:max-w-lg')}>
         <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-primary/8 shrink-0">
           <h2 className="text-[16px] font-bold text-primary tracking-tight">{title}</h2>
@@ -125,13 +125,13 @@ export function Tabs({ tabs, active, onChange }: { tabs: Array<{ id: string; lab
           onClick={() => onChange(t.id)}
           className={cn(
             'press flex items-center gap-2 rounded-xl px-3.5 py-2 text-[13px] font-semibold whitespace-nowrap cursor-pointer transition-[background-color,color,box-shadow] duration-150',
-            active === t.id ? 'bg-primary text-white shadow-[0_6px_16px_-8px_rgb(24_24_27/0.5)]' : 'text-subtle hover:text-primary hover:bg-primary/5',
+            active === t.id ? 'bg-primary text-primary-foreground shadow-[0_6px_16px_-8px_rgb(24_24_27/0.5)]' : 'text-subtle hover:text-primary hover:bg-primary/5',
           )}
         >
           {t.icon}
           {t.label}
           {t.count != null && t.count > 0 && (
-            <span className={cn('rounded-full px-1.5 py-0.5 text-[10.5px] font-bold min-w-[20px] text-center', active === t.id ? 'bg-white/15 text-white' : 'bg-primary/8 text-subtle')}>{t.count}</span>
+            <span className={cn('rounded-full px-1.5 py-0.5 text-[10.5px] font-bold min-w-[20px] text-center', active === t.id ? 'bg-primary-foreground/15 text-primary-foreground' : 'bg-primary/8 text-subtle')}>{t.count}</span>
           )}
         </button>
       ))}
@@ -184,7 +184,7 @@ export function Avatar({ nome, size = 'md' }: { nome: string; size?: 'sm' | 'md'
   const idx = nome.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % AVATAR_COLORS.length;
   const sizes = { sm: 'w-7 h-7 text-[10px]', md: 'w-9 h-9 text-[12px]', lg: 'w-12 h-12 text-[15px]' };
   return (
-    <span className={cn('inline-flex items-center justify-center rounded-full text-white font-bold shrink-0 ring-2 ring-white/60', AVATAR_COLORS[idx], sizes[size])} aria-hidden>
+    <span className={cn('inline-flex items-center justify-center rounded-full text-white font-bold shrink-0 ring-2 ring-surface/60', AVATAR_COLORS[idx], sizes[size])} aria-hidden>
       {initials(nome)}
     </span>
   );
@@ -238,10 +238,10 @@ export function Toaster() {
 /* ── Banner ─ */
 export function Banner({ tone = 'info', icon, children, className }: { tone?: 'info' | 'warn' | 'success' | 'danger'; icon?: ReactNode; children: ReactNode; className?: string }) {
   const tones = {
-    info: 'bg-accent-soft/50 border-accent/20 text-amber-950',
-    warn: 'bg-warning-soft/60 border-warning/20 text-amber-900',
-    success: 'bg-success-soft/60 border-success/20 text-green-900',
-    danger: 'bg-destructive-soft/60 border-destructive/20 text-red-900',
+    info: 'bg-accent-soft/50 border-accent/20 text-foreground',
+    warn: 'bg-warning-soft/60 border-warning/20 text-warning',
+    success: 'bg-success-soft/60 border-success/20 text-success',
+    danger: 'bg-destructive-soft/60 border-destructive/20 text-destructive',
   };
   return (
     <div className={cn('flex items-start gap-3 rounded-2xl border px-4 py-3 text-[13px] leading-relaxed animate-fade-in', tones[tone], className)}

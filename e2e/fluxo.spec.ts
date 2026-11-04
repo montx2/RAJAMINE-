@@ -61,15 +61,15 @@ test('arquivo de documentos lista PDFs gerados', async ({ page }) => {
   await expect(page.getByText('Cliente · sem fotos').first()).toBeVisible();
 });
 
-test('operações de campo mostram a planilha real e o consolidado semanal exige aprovação', async ({ page }) => {
+test('operações de campo mostram a base sintética e o consolidado semanal exige aprovação', async ({ page }) => {
   await page.goto('/login');
   await page.getByRole('button', { name: /Helena Duarte/ }).click();
   await page.goto('/operacoes');
-  await expect(page.getByText('TYE-9A00').first()).toBeVisible();
-  await expect(page.getByText('864993060369890').first()).toBeVisible();
+  await expect(page.getByText('SA-101').first()).toBeVisible();
+  await expect(page.getByText('VA-205').first()).toBeVisible();
   await page.goto('/semanal');
   await expect(page.getByText('Consolidado semanal de viagens')).toBeVisible();
-  await expect(page.getByText('RUU-1G56').first()).toBeVisible();
+  await expect(page.getByText('Gerar consolidado a partir de relatórios aprovados')).toBeVisible();
 });
 
 test('perfil colaborador tem escopo restrito (menor privilégio)', async ({ page }) => {

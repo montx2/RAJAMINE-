@@ -13,7 +13,6 @@ import { PageHeader } from '../components/AppShell';
 import { Badge, Button, StatusBadge, Avatar, ProgressBar, EmptyState, Disclosure, toast } from '../components/ui';
 import { STATUS_LABEL, type ReportStatus } from '../data/types';
 import { deadlineLabel, hoursUntil, timeAgo, fmtShortDate, firstName } from '../lib/format';
-import { realOperations } from '../data/referencias';
 
 const STATUS_COLORS: Record<ReportStatus, string> = {
   pendente: '#d97706', rascunho: '#71717a', em_revisao: '#b45309', correcao: '#dc2626', aprovado: '#15803d', arquivado: '#0f766e',
@@ -65,7 +64,7 @@ export default function Dashboard() {
 
   const deadlines = useMemo(() =>
     reports
-      .filter((r) => ['pendente', 'rascunho', 'correcao'].includes(r.status) && r.origemDados !== 'referencia_empresa')
+      .filter((r) => ['pendente', 'rascunho', 'correcao'].includes(r.status))
       .sort((a, b) => a.prazoEm.localeCompare(b.prazoEm)),
   [reports]);
 
@@ -175,7 +174,7 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* Atalhos + referências (compacto) */}
+        {/* Atalhos (compacto) */}
         <div className="space-y-4">
           <div className="card p-4">
             <div className="eyebrow mb-3">Atalhos</div>
@@ -183,21 +182,14 @@ export default function Dashboard() {
               <Button size="sm" variant="outline" icon={<Table2 size={14} />} onClick={() => navigate('/operacoes')}>Operações</Button>
               <Button size="sm" variant="outline" icon={<CalendarRange size={14} />} onClick={() => navigate('/semanal')}>Semanal</Button>
               <Button size="sm" variant="outline" icon={<FileText size={14} />} onClick={() => navigate('/relatorios')}>Relatórios</Button>
-              <Button size="sm" variant="outline" icon={<BadgeCheck size={14} />} onClick={() => navigate('/relatorios/r_201')}>Visita real</Button>
+              <Button size="sm" variant="outline" icon={<BadgeCheck size={14} />} onClick={() => navigate('/relatorios/r_201')}>Visita técnica</Button>
             </div>
           </div>
-          <div className="card p-4 border-brand/30">
-            <div className="flex items-start gap-3">
-              <span className="w-8 h-8 rounded-xl bg-brand/15 flex items-center justify-center text-accent shrink-0">
-                <BadgeCheck size={16} aria-hidden />
-              </span>
-              <div className="min-w-0">
-                <div className="text-[13px] font-bold text-primary">Referências reais integradas</div>
-                <p className="text-[12px] text-subtle mt-0.5 leading-relaxed">
-                  {realOperations.length} operações MFS, visita técnica Cedro e consolidado semanal — marcados como referência, sem aprovações presumidas.
-                </p>
-              </div>
-            </div>
+          <div className="card p-4">
+            <div className="eyebrow mb-2">Fluxo seguro</div>
+            <p className="text-[12.5px] text-subtle leading-relaxed">
+              Todo documento passa por revisão humana antes de ser liberado ao cliente. OCR e envios são simulados e auditados.
+            </p>
           </div>
         </div>
       </div>
@@ -255,7 +247,7 @@ export default function Dashboard() {
       {/* Análises sob demanda (progressive disclosure) */}
       <Disclosure title="Análises detalhadas" subtitle="Gráficos de período e distribuição por status — abra quando precisar." defaultOpen={false}>
         <div className="grid lg:grid-cols-[1.6fr_1fr] gap-4 pt-2">
-          <div className="rounded-2xl border border-primary/8 bg-white/50 p-4">
+          <div className="rounded-2xl border border-primary/8 bg-surface/50 p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-[13px] font-bold text-primary flex items-center gap-2"><TrendingUp size={14} className="text-accent" aria-hidden /> Relatórios por período</h3>
               <Badge tone="blue">{weekly.reduce((a, w) => a + w.total, 0)} em 8 semanas</Badge>
@@ -265,23 +257,23 @@ export default function Dashboard() {
                 <AreaChart data={weekly} margin={{ top: 4, right: 4, left: -22, bottom: 0 }}>
                   <defs>
                     <linearGradient id="gTotal" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#B45309" stopOpacity={0.18} />
-                      <stop offset="100%" stopColor="#B45309" stopOpacity={0.01} />
+                      <stop offset="0%" stopColor="var(--color-accent)" stopOpacity={0.18} />
+                      <stop offset="100%" stopColor="var(--color-accent)" stopOpacity={0.01} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" vertical={false} />
-                  <XAxis dataKey="label" tick={{ fontSize: 11, fill: '#71717a' }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 11, fill: '#71717a' }} axisLine={false} tickLine={false} allowDecimals={false} />
-                  <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid #e4e4e7', fontSize: 12.5, fontFamily: 'inherit', background: 'rgba(255,255,255,0.95)' }}
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
+                  <XAxis dataKey="label" tick={{ fontSize: 11, fill: 'var(--color-subtle)' }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 11, fill: 'var(--color-subtle)' }} axisLine={false} tickLine={false} allowDecimals={false} />
+                  <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid var(--color-border)', fontSize: 12.5, fontFamily: 'inherit', background: 'var(--glass-bg-strong)', color: 'var(--color-foreground)' }}
                     formatter={(v, name) => [v ?? 0, name === 'total' ? 'Criados' : 'Aprovados']}
                     labelFormatter={(l) => `Semana de ${l}`} />
-                  <Area type="monotone" dataKey="total" stroke="#B45309" strokeWidth={2.2} fill="url(#gTotal)" name="total" />
-                  <Area type="monotone" dataKey="aprovados" stroke="#15803d" strokeWidth={2} fill="transparent" name="aprovados" />
+                  <Area type="monotone" dataKey="total" stroke="var(--color-accent)" strokeWidth={2.2} fill="url(#gTotal)" name="total" />
+                  <Area type="monotone" dataKey="aprovados" stroke="var(--color-success)" strokeWidth={2} fill="transparent" name="aprovados" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
-          <div className="rounded-2xl border border-primary/8 bg-white/50 p-4">
+          <div className="rounded-2xl border border-primary/8 bg-surface/50 p-4">
             <h3 className="text-[13px] font-bold text-primary mb-3">Distribuição por status</h3>
             <div className="h-[220px]" role="img" aria-label={`Distribuição: ${byStatus.map((s) => `${s.name}: ${s.value}`).join(', ')}`}>
               <ResponsiveContainer width="100%" height="100%">
@@ -289,8 +281,8 @@ export default function Dashboard() {
                   <Pie data={byStatus} dataKey="value" nameKey="name" innerRadius={50} outerRadius={76} paddingAngle={2} strokeWidth={0}>
                     {byStatus.map((s) => <Cell key={s.name} fill={s.color} />)}
                   </Pie>
-                  <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid #e4e4e7', fontSize: 12.5, background: 'rgba(255,255,255,0.95)' }} />
-                  <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11.5 }} />
+                  <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid var(--color-border)', fontSize: 12.5, background: 'var(--glass-bg-strong)', color: 'var(--color-foreground)' }} />
+                  <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11.5, color: 'var(--color-subtle)' }} />
                 </PieChart>
               </ResponsiveContainer>
             </div>

@@ -50,7 +50,7 @@ export default function DetectionCard({ report, detection, actorName, canValidat
     const code = manualCode.toUpperCase().trim();
     const normalized = CODE_RE.test(code) ? code : (/^\d{3,6}$/.test(code) ? `EQ-${code}` : code);
     if (!CODE_RE.test(normalized)) {
-      toast('Informe um código válido, ex.: CP-101, TYE-9A00 ou EQ-2041.', 'error');
+      toast('Informe um código válido, ex.: SA-101, VA-205 ou EQ-2041.', 'error');
       return;
     }
     const res = resolveDetection(report.id, detection.id, 'corrigir', { codigo: normalized, tipo: manualType }, actorName);
@@ -166,7 +166,7 @@ export default function DetectionCard({ report, detection, actorName, canValidat
             <div className="rounded-lg border border-border bg-surface p-3 space-y-3">
               <p className="text-[12.5px] text-subtle">Digite o código correto conforme a etiqueta física. A correção fica registrada no histórico com seu nome.</p>
               <div className="grid sm:grid-cols-2 gap-3">
-                <Input value={manualCode} onChange={(e) => setManualCode(e.target.value)} placeholder="CP-101 / EQ-0000" aria-label="Código correto" />
+                <Input value={manualCode} onChange={(e) => setManualCode(e.target.value)} placeholder="SA-101 / EQ-0000" aria-label="Código correto" />
                 <Select value={manualType} onChange={(e) => setManualType(e.target.value as EquipmentType)} aria-label="Tipo de equipamento">
                   {TIPOS.map((t) => <option key={t} value={t}>{t}</option>)}
                 </Select>

@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, ScanLine, ClipboardCheck, ArrowRight, ExternalLink } from 'lucide-react';
+import ThemeToggle from '../components/ThemeToggle';
 import { useStore } from '../store/useStore';
 import { Avatar, Badge } from '../components/ui';
 import { Logo, LogoMark, Wordmark } from '../components/Logo';
@@ -11,7 +12,7 @@ export default function Login() {
   const users = useStore((s) => s.users);
   const reports = useStore((s) => s.reports);
 
-  const profiles = ['u_helena', 'u_marta', 'u_glauber', 'u_carlos', 'u_mot_joao'].map((id) => users.find((u) => u.id === id)!).filter(Boolean);
+  const profiles = ['u_helena', 'u_marta', 'u_carlos', 'u_andre', 'u_mot_joao'].map((id) => users.find((u) => u.id === id)!).filter(Boolean);
   const pendingLink = reports.find((r) => r.status === 'pendente' || r.status === 'correcao');
 
   const enter = (userId: string, role: string) => {
@@ -20,14 +21,15 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-[1.05fr_1fr]">
+    <div className="min-h-screen grid lg:grid-cols-[1.05fr_1fr] relative">
+      <div className="absolute top-4 right-4 z-10"><ThemeToggle /></div>
       {/* Painel institucional — vidro escuro sobre ambiente */}
       <div className="hidden lg:flex flex-col justify-between glass-dark p-10 xl:p-14 relative overflow-hidden border-r border-white/10">
         <div className="absolute -top-24 -left-24 w-[420px] h-[420px] rounded-full bg-brand/15 blur-3xl" aria-hidden />
         <div className="absolute bottom-0 right-0 w-[360px] h-[360px] rounded-full bg-accent/20 blur-3xl" aria-hidden />
         <Logo />
         <div className="relative max-w-md">
-          <Badge tone="amber" className="mb-5 bg-brand/10 text-brand border-brand/20">Protótipo SENAI · referências reais</Badge>
+          <Badge tone="amber" className="mb-5 bg-brand/10 text-brand border-brand/20">Protótipo funcional</Badge>
           <h1 className="text-[34px] xl:text-[40px] font-extrabold tracking-tight text-white leading-[1.12] text-balance">
             Relatórios de campo,<br />claros do início ao fim.
           </h1>
@@ -38,7 +40,7 @@ export default function Login() {
             {[
               { icon: ScanLine, t: 'OCR local de equipamentos', d: 'Etiquetas e IMEI lidos no navegador, com confirmação humana.' },
               { icon: ClipboardCheck, t: 'Revisão antes do cliente', d: 'Nenhum documento é liberado sem aprovação da responsável.' },
-              { icon: ShieldCheck, t: 'Auditoria e LGPD', d: 'Perfis, trilha de alterações e minimização de dados.' },
+              { icon: ShieldCheck, t: 'Auditoria e permissões', d: 'Perfis, trilha de alterações e minimização de dados.' },
             ].map((f) => (
               <div key={f.t} className="flex items-start gap-3 rounded-2xl bg-white/5 border border-white/10 px-4 py-3">
                 <span className="w-8 h-8 rounded-xl bg-brand/15 flex items-center justify-center text-brand shrink-0">
@@ -53,7 +55,7 @@ export default function Login() {
           </div>
         </div>
         <p className="relative text-[11px] text-zinc-500">
-          Rajamine Inteligência em Mineração LTDA · Base mista (referências + exemplos sintéticos) · Envios simulados
+          Rajamine Inteligência em Mineração LTDA · Base demonstrativa sintética · Envios simulados
         </p>
       </div>
 
@@ -80,7 +82,7 @@ export default function Login() {
                   key={u.id}
                   onClick={() => enter(u.id, u.role)}
                   style={{ '--i': i } as React.CSSProperties}
-                  className="press w-full rounded-2xl border border-primary/8 bg-white/55 p-3.5 flex items-center gap-3.5 hover:border-accent/30 hover:bg-white/80 hover:shadow-[0_10px_30px_-16px_rgb(24_24_27/0.25)] transition-[background-color,border-color,box-shadow,transform] duration-150 cursor-pointer text-left group"
+                  className="press w-full rounded-2xl border border-primary/8 bg-surface/60 p-3.5 flex items-center gap-3.5 hover:border-accent/30 hover:bg-surface hover:shadow-[0_10px_30px_-16px_rgb(24_24_27/0.25)] transition-[background-color,border-color,box-shadow,transform] duration-150 cursor-pointer text-left group"
                 >
                   <Avatar nome={u.nome} size="lg" />
                   <div className="flex-1 min-w-0">
@@ -109,7 +111,7 @@ export default function Login() {
           </div>
 
           <p className="mt-4 text-[11px] text-subtle leading-relaxed px-1">
-            Ambiente de demonstração com referências reais da empresa e exemplos sintéticos. Envios e notificações são simulados e auditados.
+            Ambiente de demonstração com dados sintéticos realistas. Envios e notificações são simulados e auditados.
           </p>
         </div>
       </div>

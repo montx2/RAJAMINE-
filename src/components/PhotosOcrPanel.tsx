@@ -24,8 +24,8 @@ export default function PhotosOcrPanel({ report, actorName, canUpload, canValida
   const availableDemo = DEMO_PHOTOS.filter((d) => !attachedSrcs.has(d.src));
   const [demoPick, setDemoPick] = useState(DEMO_PHOTOS[0].src);
   const [synthOpen, setSynthOpen] = useState(false);
-  const [synthCode, setSynthCode] = useState('CP-101');
-  const [synthSerial, setSynthSerial] = useState('0987');
+  const [synthCode, setSynthCode] = useState('SA-101');
+  const [synthSerial, setSynthSerial] = useState('0187');
   const [dragOver, setDragOver] = useState(false);
 
   const handleFiles = async (files: FileList | File[]) => {
@@ -68,7 +68,7 @@ export default function PhotosOcrPanel({ report, actorName, canUpload, canValida
 
   const addSynthetic = async () => {
     const code = synthCode.toUpperCase().trim();
-    if (!/^(EQ-\d{3,6}|[A-Z]{2,4}-[A-Z0-9]{2,6})$/i.test(code)) { toast('Use um código real, ex.: CP-101, TYE-9A00 ou EQ-2041.', 'error'); return; }
+    if (!/^(EQ-\d{3,6}|[A-Z]{2,4}-[A-Z0-9]{2,6})$/i.test(code)) { toast('Use um código válido, ex.: SA-101, VA-205 ou EQ-2041.', 'error'); return; }
     const dataUrl = await generateSyntheticPhoto(code, synthSerial || '00000');
     const blob = await (await fetch(dataUrl)).blob();
     const id = uid('ph');
@@ -185,7 +185,7 @@ export default function PhotosOcrPanel({ report, actorName, canUpload, canValida
                   >
                     <img src={d.src} alt="" loading="lazy" decoding="async" className="h-16 w-full object-cover" />
                     <span className="block px-1.5 py-1 text-[10px] leading-tight text-secondary bg-surface/95 line-clamp-2">{d.legenda}</span>
-                    {used && <span className="absolute top-1 right-1 rounded bg-primary/80 px-1 text-[9px] font-bold text-white">anexada</span>}
+                    {used && <span className="absolute top-1 right-1 rounded bg-black/70 px-1 text-[9px] font-bold text-white">anexada</span>}
                   </button>
                 );
               })}
@@ -216,7 +216,7 @@ export default function PhotosOcrPanel({ report, actorName, canUpload, canValida
                   {photo.origem === 'demo' && <Badge tone="violet">demo</Badge>}
                 </div>
                 {b && (
-                  <div className="absolute inset-0 bg-primary/70 flex flex-col items-center justify-center gap-2 text-white">
+                  <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-2 text-white">
                     <Loader2 size={22} className="animate-spin" aria-hidden />
                     <span className="text-[12.5px] font-semibold">{b.status === 'recognizing text' ? 'Reconhecendo texto…' : 'Preparando OCR…'}</span>
                     <div className="w-40 h-1.5 rounded-full bg-white/20 overflow-hidden">
@@ -259,7 +259,7 @@ export default function PhotosOcrPanel({ report, actorName, canUpload, canValida
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="label" htmlFor="synth-code">Código na etiqueta</label>
-            <Input id="synth-code" value={synthCode} onChange={(e) => setSynthCode(e.target.value)} placeholder="CP-101 / EQ-2988" />
+            <Input id="synth-code" value={synthCode} onChange={(e) => setSynthCode(e.target.value)} placeholder="SA-101 / EQ-2988" />
           </div>
           <div>
             <label className="label" htmlFor="synth-serial">Nº de série</label>
@@ -267,7 +267,7 @@ export default function PhotosOcrPanel({ report, actorName, canUpload, canValida
           </div>
         </div>
         <div className="mt-3 flex flex-wrap gap-1.5">
-          {[...equipment].sort((a, b) => (a.origemDados === 'referencia_empresa' ? -1 : 1) - (b.origemDados === 'referencia_empresa' ? -1 : 1)).slice(0, 6).map((e) => (
+          {[...equipment].slice(0, 6).map((e) => (
             <button key={e.id} className="rounded-full border border-border px-2.5 py-1 text-[12px] mono hover:border-accent hover:text-accent cursor-pointer"
               onClick={() => { setSynthCode(e.codigo); setSynthSerial(e.serial); }}>
               {e.codigo}

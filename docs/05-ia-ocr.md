@@ -80,9 +80,9 @@ Se o WASM não carregar (dispositivo sem suporte), o botão "Simular leitura" ge
 
 | Tipo | Exemplo real | Tratamento |
 |---|---|---|
-| Equipamento de cliente | `CP-101`, `TYE-9A00`, `RUU-1G56`, `ESC-49` | Regex `[A-Z]{2,4}-[A-Z0-9]{2,6}`; matching por código |
-| Telemetria | `0987`, `0035`, `1438` | Texto com zeros à esquerda; 4 dígitos; alerta se fora do padrão |
-| Tablet Pulsus | `2758`, `2296` | Texto; 4 dígitos; histórico de “tablet antigo” |
+| Equipamento de cliente | `SA-101`, `VA-205`, `SR-305` | Regex `[A-Z]{2,4}-[A-Z0-9]{2,6}`; matching por código |
+| Telemetria | `0187`, `0035`, `1438` | Texto com zeros à esquerda; 4 dígitos; alerta se fora do padrão |
+| Tablet Pulsus | `2741`, `2296` | Texto; 4 dígitos; histórico de “tablet antigo” |
 | Câmera de fadiga (IMEI) | `864993060408250` | 15 dígitos; candidato OCR tipo `imei`; alerta se tamanho ≠ 15 |
 | Galileo / rotograma | `867782071392430` | 15 dígitos; extraído de observação “ID Galileo: …” |
 

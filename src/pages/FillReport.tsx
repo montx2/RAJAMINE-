@@ -168,7 +168,6 @@ export default function FillReport() {
             <div className="flex items-center gap-2">
               <span className="mono font-extrabold text-[17px] text-primary">{report.codigo}</span>
               <StatusBadge status={report.status} />
-              {report.origemDados === 'referencia_empresa' && <Badge tone="amber">referência da empresa</Badge>}
             </div>
             <p className="text-[12.5px] text-subtle mt-1">
               {colab?.nome} · {client?.nome ?? 'Consolidado'} {truck ? <>· <span className="mono">{truck.frota} ({truck.placa})</span></> : null}
@@ -197,7 +196,7 @@ export default function FillReport() {
               aria-current={i === step ? 'step' : undefined}
             >
               <span className={cn('w-9 h-9 rounded-full flex items-center justify-center border-2 transition-colors',
-                i < step ? 'bg-success border-success text-white' : i === step ? 'border-accent bg-accent-soft text-accent' : 'border-border bg-surface text-subtle')}>
+                i < step ? 'bg-success border-success text-primary-foreground' : i === step ? 'border-accent bg-accent-soft text-accent' : 'border-border bg-surface text-subtle')}>
                 {i < step ? <Check size={15} /> : <s.icon size={15} aria-hidden />}
               </span>
               <span className={cn('text-[10.5px] sm:text-[11.5px] font-bold text-center leading-tight', i === step ? 'text-accent' : 'text-subtle')}>
@@ -210,7 +209,7 @@ export default function FillReport() {
 
       {errors.length > 0 && (
         <div className="mb-4 rounded-xl border border-red-200 bg-destructive-soft/60 p-4" role="alert" tabIndex={-1}>
-          <h2 className="text-[13.5px] font-bold text-red-900 mb-1.5">Há pendências para resolver:</h2>
+          <h2 className="text-[13.5px] font-bold text-destructive mb-1.5">Há pendências para resolver:</h2>
           <ul className="list-disc pl-5 space-y-0.5 text-[13px] text-red-800">{errors.map((e, i) => <li key={i}>{e}</li>)}</ul>
         </div>
       )}
@@ -259,7 +258,7 @@ export default function FillReport() {
               {atividades.map((a) => (
                 <div key={a.id} className="rounded-xl border border-border p-3.5 space-y-3">
                   <div className="grid sm:grid-cols-[1fr_180px_auto] gap-2.5">
-                    <Field label="Equipamento" htmlFor={`eq-${a.id}`}><Input id={`eq-${a.id}`} value={a.equipamentoCodigo} onChange={(e) => updateActivity(a.id, { equipamentoCodigo: e.target.value.toUpperCase() })} placeholder="CP-101 / TYE-9A00" /></Field>
+                    <Field label="Equipamento" htmlFor={`eq-${a.id}`}><Input id={`eq-${a.id}`} value={a.equipamentoCodigo} onChange={(e) => updateActivity(a.id, { equipamentoCodigo: e.target.value.toUpperCase() })} placeholder="SA-101 / VA-205" /></Field>
                     <Field label="Tipo" htmlFor={`tp-${a.id}`}>
                       <Select id={`tp-${a.id}`} value={a.tipo} onChange={(e) => updateActivity(a.id, { tipo: e.target.value as ActivityKind })}>
                         {(Object.keys(ACTIVITY_KIND_LABEL) as ActivityKind[]).map((k) => <option key={k} value={k}>{ACTIVITY_KIND_LABEL[k]}</option>)}
@@ -268,8 +267,8 @@ export default function FillReport() {
                     <div className="flex items-end"><Button size="sm" variant="ghost" icon={<Trash2 size={14} />} onClick={() => setAtividades((l) => l.filter((x) => x.id !== a.id))} aria-label="Remover atividade">Remover</Button></div>
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                    <Field label="Telemetria" htmlFor={`tel-${a.id}`}><Input id={`tel-${a.id}`} value={a.telemetria ?? ''} onChange={(e) => updateActivity(a.id, { telemetria: e.target.value })} placeholder="0987" inputMode="numeric" /></Field>
-                    <Field label="Pulsus" htmlFor={`pul-${a.id}`}><Input id={`pul-${a.id}`} value={a.pulsus ?? ''} onChange={(e) => updateActivity(a.id, { pulsus: e.target.value })} placeholder="2758" inputMode="numeric" /></Field>
+                    <Field label="Telemetria" htmlFor={`tel-${a.id}`}><Input id={`tel-${a.id}`} value={a.telemetria ?? ''} onChange={(e) => updateActivity(a.id, { telemetria: e.target.value })} placeholder="0187" inputMode="numeric" /></Field>
+                    <Field label="Pulsus" htmlFor={`pul-${a.id}`}><Input id={`pul-${a.id}`} value={a.pulsus ?? ''} onChange={(e) => updateActivity(a.id, { pulsus: e.target.value })} placeholder="2741" inputMode="numeric" /></Field>
                     <Field label="Câmera (IMEI)" htmlFor={`cam-${a.id}`}><Input id={`cam-${a.id}`} value={a.cameraFadiga ?? ''} onChange={(e) => updateActivity(a.id, { cameraFadiga: e.target.value })} placeholder="864993060408250" inputMode="numeric" /></Field>
                     <Field label="Galileo" htmlFor={`gal-${a.id}`}><Input id={`gal-${a.id}`} value={a.galileo ?? ''} onChange={(e) => updateActivity(a.id, { galileo: e.target.value })} placeholder="867782071392430" inputMode="numeric" /></Field>
                   </div>
@@ -292,7 +291,7 @@ export default function FillReport() {
             <h2 className="section-title">Relato livre</h2>
             <p className="text-[12.5px] text-subtle">Escreva no seu estilo. O sistema sugere a padronização para 3ª pessoa sem alterar os fatos — e você decide se aceita.</p>
             <Textarea value={form.descricao} onChange={(e) => setForm((f) => ({ ...f, descricao: e.target.value }))} onBlur={persist}
-              placeholder="Ex.: Foi realizado instalação do equipamento CP-101, telemetria numero 0987…" className="min-h-[150px]" aria-label="Descrição das atividades" />
+              placeholder="Ex.: Foi realizado instalação do equipamento SA-101, telemetria numero 0187…" className="min-h-[150px]" aria-label="Descrição das atividades" />
             <div className="text-[11.5px] text-subtle text-right">{form.descricao.trim().length} caracteres</div>
           </div>
           {(form.descricao.trim().length >= 20 || atividades.length > 0) && (
@@ -346,21 +345,21 @@ export default function FillReport() {
 function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-primary">
+      <header className="glass-dark border-b border-white/10">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <LogoMark size={32} />
             <div className="leading-none">
               <Wordmark className="text-[16px]" />
-              <div className="text-[10.5px] text-zinc-400 mt-0.5">Preenchimento de relatório de campo</div>
+              <div className="text-[10.5px] text-subtle mt-0.5">Preenchimento de relatório de campo</div>
             </div>
           </div>
-          <Badge tone="amber" className="bg-brand/10 text-brand">link individual · demo</Badge>
+          <Badge tone="amber" className="bg-brand/10 text-brand">link individual</Badge>
         </div>
       </header>
       <main className="max-w-2xl mx-auto px-4 py-6">{children}</main>
       <footer className="max-w-2xl mx-auto px-4 pb-8 text-center text-[11px] text-subtle">
-        Protótipo · referências da empresa + exemplos sintéticos · processamento local (OCR e padronização)
+        Protótipo · dados sintéticos · processamento local (OCR e padronização)
       </footer>
     </div>
   );

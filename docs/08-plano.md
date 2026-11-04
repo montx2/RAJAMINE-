@@ -65,7 +65,7 @@
 4. Fotos: anexar exemplo **EQ-3315 (suja)** → OCR real → confiança baixa → corrigir/confirmar; anexar **foto sintética** → OCR alta confiança → confirmar e ver associação ao caminhão.
 5. Enviar → login Marta → Central de Revisão → tentar aprovar com OCR pendente (**bloqueio**) → conferir → aprovar.
 6. Gerar os **2 PDFs** → abrir o do cliente (sem fotos, com aprovação) e o interno (fotos + OCR + original + histórico) → enviar ao cliente (simulado).
-7. Equipamentos: buscar EQ-2041 → histórico e relatórios. Arquivo: filtros. Conformidade: exportar JSON + mapa LGPD.
+7. Equipamentos: buscar EQ-2041 → histórico e relatórios. Arquivo: filtros.
 8. Fechar com o slide mental: **custo ≈ R$ 50/mês, dados no dispositivo, humano no controle**.
 
 ## 7. Papéis da equipe (sugestão para o curso)

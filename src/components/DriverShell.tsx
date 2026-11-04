@@ -9,6 +9,7 @@ import { cn } from '../lib/cn';
 import { timeAgo } from '../lib/format';
 import { Avatar, Badge, toast } from './ui';
 import { LogoMark, Wordmark } from './Logo';
+import ThemeToggle from './ThemeToggle';
 
 const NAV = [
   { to: '/motorista', label: 'Início', icon: Home, end: true },
@@ -68,7 +69,7 @@ export default function DriverShell() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <a href="#driver-main" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-xl focus:bg-primary focus:px-4 focus:py-2 focus:text-white">
+      <a href="#driver-main" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-xl focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground">
         Pular para o conteúdo
       </a>
 
@@ -91,7 +92,7 @@ export default function DriverShell() {
             title="Sincronização simulada"
           >
             <RefreshCw size={17} className={cn(syncing && 'animate-spin')} />
-            {pending > 0 && <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] px-1 rounded-full bg-accent text-white text-[10px] font-bold flex items-center justify-center">{pending}</span>}
+            {pending > 0 && <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] px-1 rounded-full bg-accent text-accent-foreground text-[10px] font-bold flex items-center justify-center">{pending}</span>}
           </button>
           <div className="relative">
             <button
@@ -101,7 +102,7 @@ export default function DriverShell() {
               aria-label={`Notificações${unread ? ` (${unread} não lidas)` : ''}`}
             >
               <Bell size={17} />
-              {unread > 0 && <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] px-1 rounded-full bg-destructive text-white text-[10px] font-bold flex items-center justify-center">{unread}</span>}
+              {unread > 0 && <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] px-1 rounded-full bg-destructive text-white dark:text-[#18181b] text-[10px] font-bold flex items-center justify-center">{unread}</span>}
             </button>
             {notifOpen && (
               <>
@@ -132,6 +133,7 @@ export default function DriverShell() {
               </>
             )}
           </div>
+          <ThemeToggle />
           <button
             type="button"
             onClick={() => { logout(); navigate('/login'); }}
@@ -161,13 +163,11 @@ export default function DriverShell() {
             <div className="text-[14px] font-bold text-primary truncate">{user.nome}</div>
             <div className="text-[11.5px] text-subtle truncate">{user.cargo}</div>
           </div>
-          <Badge tone="amber">demo</Badge>
         </div>
         <Outlet />
         <p className="mt-8 flex items-start gap-2 text-[11px] text-subtle leading-relaxed">
           <ShieldCheck size={13} className="mt-0.5 shrink-0" aria-hidden />
-          Protótipo: notificações e sincronização são simuladas. Não há GPS contínuo, biometria ou score de fadiga.
-          O motorista reporta; a coordenação/revisão humana decide. Nenhum documento de cliente é liberado automaticamente.
+          Protótipo: notificações e sincronização são simuladas. O motorista reporta; a coordenação humana decide. Nenhum documento de cliente é liberado automaticamente.
         </p>
       </main>
 

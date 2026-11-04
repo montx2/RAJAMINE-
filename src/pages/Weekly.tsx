@@ -1,12 +1,11 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CalendarRange, Download, Eye, AlertTriangle, FileText, Loader2 } from 'lucide-react';
+import { CalendarRange, Download, Eye, Loader2 } from 'lucide-react';
 import { useStore, useCurrentUser } from '../store/useStore';
 import { PageHeader } from '../components/AppShell';
-import { Button, Input, Badge, Banner, Modal, StatusBadge, toast, EmptyState } from '../components/ui';
+import { Button, Input, Badge, Modal, StatusBadge, toast, EmptyState } from '../components/ui';
 import { buildWeeklyPdf, downloadBytes, pdfBlobUrl, type PdfRefs } from '../services/pdf';
-import { validateActivities } from '../lib/operations';
-import { weeklyReference } from '../data/referencias';
+import { demoWeeklyPeriod } from '../data/demoReports';
 import { fmtDate } from '../lib/format';
 import { ACTIVITY_KIND_LABEL, type Report } from '../data/types';
 
@@ -18,16 +17,14 @@ export default function Weekly() {
   const equipment = useStore((s) => s.equipment);
   const trucks = useStore((s) => s.trucks);
 
-  const [inicio, setInicio] = useState(weeklyReference.periodoInicio);
-  const [fim, setFim] = useState(weeklyReference.periodoFim);
+  const [inicio, setInicio] = useState(demoWeeklyPeriod.inicio);
+  const [fim, setFim] = useState(demoWeeklyPeriod.fim);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [busy, setBusy] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
 
-  const reference = reports.find((r) => r.id === weeklyReference.reportId);
-  const refAlerts = useMemo(() => reference ? validateActivities(reference.atividades ?? [], { inicio: reference.periodoInicio, fim: reference.periodoFim }) : [], [reference]);
-
   const inRange = useMemo(() => reports.filter((r) => {
+    if (r.tipo === 'semanal_viagens') return false;
     const acts = r.atividades ?? [];
     const dates = [r.dataViagem, ...acts.map((a) => a.data)];
     return dates.some((d) => d >= inicio && d <= fim);
@@ -69,36 +66,8 @@ export default function Weekly() {
       <PageHeader
         eyebrow="Campo"
         title="Consolidado semanal de viagens"
-        subtitle="Relatórios aprovados agrupados por cliente e período, no formato real da Rajamine."
+        subtitle="Relatórios aprovados agrupados por cliente e período."
       />
-
-      {reference && (
-        <div className="card p-5 mb-4">
-          <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-            <h2 className="section-title flex items-center gap-2"><FileText size={16} className="text-accent" aria-hidden /> Referência real: {fmtDate(reference.periodoInicio! + 'T12:00:00')} a {fmtDate(reference.periodoFim! + 'T12:00:00')}</h2>
-            <Link to={`/relatorios/${reference.id}`} className="link text-[12.5px]">Abrir relatório de referência</Link>
-          </div>
-          <p className="text-[13px] text-secondary mb-3">{reference.descricaoOriginal}</p>
-          <div className="space-y-2">
-            {(reference.atividades ?? []).map((a) => (
-              <div key={a.id} className="rounded-lg border border-border px-3.5 py-2.5 text-[13px]">
-                <div className="flex flex-wrap items-center gap-2 font-semibold text-primary">
-                  <span>{clients.find((c) => c.id === a.clienteId)?.nome ?? 'Cliente'}</span>
-                  <Badge tone="slate">{fmtDate(a.data + 'T12:00:00')}</Badge>
-                  <span className="mono">{a.equipamentoCodigo}</span>
-                  <Badge tone="blue">{ACTIVITY_KIND_LABEL[a.tipo]}</Badge>
-                </div>
-                <p className="text-secondary mt-1">{a.descricao}</p>
-              </div>
-            ))}
-          </div>
-          {refAlerts.length > 0 && (
-            <Banner tone="warn" className="mt-3" icon={<AlertTriangle size={16} />}>
-              <strong>Consistência:</strong> {refAlerts[0].mensagem} O sistema não altera as datas automaticamente — sinaliza para conferência humana.
-            </Banner>
-          )}
-        </div>
-      )}
 
       <div className="card p-5 mb-4">
         <h2 className="section-title mb-3">Gerar consolidado a partir de relatórios aprovados</h2>

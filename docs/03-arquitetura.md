@@ -107,11 +107,11 @@ notifications(id, tipo, titulo, mensagem, criada_em, lida, report_id FK, para)
 - **Produção**: domínio próprio, TLS, backups, monitoramento; **nunca** dados demo.
 - Credenciais apenas em variáveis de ambiente/cofre — o repositório não contém segredos (`.env` ignorado).
 
-## 7. Extensões de schema pelas referências reais
+## 7. Extensões de schema para operação por equipamento
 
 ```sql
 -- Identificadores de dispositivos embarcados (em equipment e activities)
-telemetria      VARCHAR(8),   -- preservar zeros à esquerda: '0987'
+telemetria      VARCHAR(8),   -- preservar zeros à esquerda: '0187'
 pulsus          VARCHAR(8),
 camera_fadiga   VARCHAR(20),  -- IMEI 15 dígitos
 galileo         VARCHAR(20),

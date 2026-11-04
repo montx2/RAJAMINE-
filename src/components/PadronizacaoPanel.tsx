@@ -155,8 +155,8 @@ export default function PadronizacaoPanel({ report, actorName, canEdit }: { repo
             <div className="space-y-2">
               {result.alertas.map((a, i) => (
                 <div key={i} className={cn('flex items-start gap-2.5 rounded-lg border px-3.5 py-2.5 text-[13px]',
-                  a.nivel === 'erro' && 'border-red-200 bg-destructive-soft/50 text-red-900',
-                  a.nivel === 'atencao' && 'border-amber-200 bg-warning-soft/50 text-amber-900',
+                  a.nivel === 'erro' && 'border-destructive/20 bg-destructive-soft/50 text-destructive',
+                  a.nivel === 'atencao' && 'border-warning/20 bg-warning-soft/50 text-warning',
                   a.nivel === 'info' && 'border-border bg-muted/40 text-secondary')}>
                   {a.nivel === 'erro' ? <AlertCircle size={16} className="shrink-0 mt-0.5" /> : a.nivel === 'atencao' ? <AlertTriangle size={16} className="shrink-0 mt-0.5" /> : <Info size={16} className="shrink-0 mt-0.5" />}
                   {a.mensagem}

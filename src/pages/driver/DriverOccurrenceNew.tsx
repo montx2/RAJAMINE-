@@ -142,7 +142,7 @@ export default function DriverOccurrenceNew() {
             {fotos.map((f) => (
               <div key={f.id} className="relative">
                 <PhotoImg photo={f} className="h-20 w-full rounded-lg" />
-                <button type="button" onClick={() => setFotos((x) => x.filter((y) => y.id !== f.id))} className="absolute top-1 right-1 rounded-lg bg-primary/70 p-1 text-white cursor-pointer" aria-label={`Remover ${f.nome}`}>
+                <button type="button" onClick={() => setFotos((x) => x.filter((y) => y.id !== f.id))} className="absolute top-1 right-1 rounded-lg bg-black/60 p-1 text-white cursor-pointer" aria-label={`Remover ${f.nome}`}>
                   <Trash2 size={12} />
                 </button>
               </div>

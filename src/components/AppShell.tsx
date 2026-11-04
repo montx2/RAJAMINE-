@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
-import { NavLink, Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, FileText, ClipboardCheck, Cpu, Truck, Users, Archive,
-  Bell, ShieldCheck, LogOut, Menu, X, ChevronRight, PenLine, Table2, CalendarRange, AlertTriangle,
+  Bell, LogOut, Menu, X, ChevronRight, PenLine, Table2, CalendarRange, AlertTriangle, CircleHelp,
 } from 'lucide-react';
 import { useStore, useCurrentUser } from '../store/useStore';
 import { ROLE_LABEL } from '../data/types';
@@ -11,6 +11,8 @@ import { cn } from '../lib/cn';
 import { timeAgo } from '../lib/format';
 import { Avatar } from './ui';
 import { Logo } from './Logo';
+import ThemeToggle from './ThemeToggle';
+import OnboardingTour from './OnboardingTour';
 
 interface NavItem { to: string; label: string; short: string; icon: typeof LayoutDashboard; roles: Role[]; group: string }
 
@@ -25,7 +27,6 @@ const NAV: NavItem[] = [
   { to: '/ocorrencias', label: 'Ocorrências de motoristas', short: 'Ocorrências', icon: AlertTriangle, roles: ['admin', 'revisora'], group: 'Campo' },
   { to: '/cadastros', label: 'Colaboradores & Clientes', short: 'Cadastros', icon: Users, roles: ['admin'], group: 'Gestão' },
   { to: '/documentos', label: 'Arquivo de Documentos', short: 'Documentos', icon: Archive, roles: ['admin', 'revisora'], group: 'Gestão' },
-  { to: '/conformidade', label: 'Segurança & LGPD', short: 'LGPD', icon: ShieldCheck, roles: ['admin', 'revisora', 'colaborador'], group: 'Gestão' },
 ];
 
 export default function AppShell() {
@@ -72,6 +73,7 @@ export default function AppShell() {
                   to={item.to}
                   end={item.to === '/'}
                   onClick={() => setMobileOpen(false)}
+                  data-tour={item.to === '/relatorios' ? 'nav-relatorios' : item.to === '/revisao' ? 'nav-revisao' : undefined}
                   className={({ isActive }) => cn(
                     'group flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-semibold transition-[background-color,color,transform] duration-150 ease-out',
                     isActive
@@ -81,7 +83,7 @@ export default function AppShell() {
                 >
                   {({ isActive }) => (
                     <>
-                      <span className={cn('flex items-center justify-center w-7 h-7 rounded-lg transition-colors', isActive ? 'bg-brand text-primary' : 'bg-white/5 text-zinc-400 group-hover:text-zinc-100')}>
+                      <span className={cn('flex items-center justify-center w-7 h-7 rounded-lg transition-colors', isActive ? 'bg-brand text-[#18181b]' : 'bg-white/5 text-zinc-400 group-hover:text-zinc-100')}>
                         <item.icon size={15} aria-hidden />
                       </span>
                       <span className="truncate">{item.label}</span>
@@ -123,7 +125,7 @@ export default function AppShell() {
       {/* Sidebar mobile */}
       {mobileOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
-          <div className="absolute inset-0 bg-primary/50 animate-fade-in" style={{ backdropFilter: 'blur(4px)' }} onClick={() => setMobileOpen(false)} aria-hidden />
+          <div className="absolute inset-0 bg-black/40 animate-fade-in" style={{ backdropFilter: 'blur(4px)' }} onClick={() => setMobileOpen(false)} aria-hidden />
           <aside className="absolute inset-y-0 left-0 w-[272px] glass-dark animate-slide-in-right border-r border-white/10">
             <button onClick={() => setMobileOpen(false)} className="absolute top-4 right-3 p-2 text-zinc-400 hover:text-white cursor-pointer z-10" aria-label="Fechar menu">
               <X size={18} />
@@ -133,6 +135,7 @@ export default function AppShell() {
         </div>
       )}
 
+      <OnboardingTour />
       <div className="flex-1 lg:ml-[248px] flex flex-col min-w-0">
         {/* Topbar — vidro claro, mínima */}
         <header className="sticky top-0 z-20 glass border-b border-primary/8">
@@ -141,20 +144,18 @@ export default function AppShell() {
               <Menu size={20} />
             </button>
             <div className="lg:hidden"><Logo compact /></div>
-            <div className="hidden lg:flex items-center gap-2 text-[12.5px] text-subtle">
-              <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse-dot" aria-hidden />
-              Ambiente de demonstração
-            </div>
+
             <div className="flex-1" />
             <div className="relative">
               <button
                 onClick={() => setNotifOpen((v) => !v)}
+                data-tour="notifications"
                 className="press relative p-2.5 rounded-xl text-secondary hover:bg-primary/5 cursor-pointer"
                 aria-label={`Notificações${unread ? ` (${unread} não lidas)` : ''}`}
               >
                 <Bell size={18} />
                 {unread > 0 && (
-                  <span className="absolute top-1 right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-destructive text-white text-[10px] font-bold flex items-center justify-center">
+                  <span className="absolute top-1 right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-destructive text-white dark:text-[#18181b] text-[10px] font-bold flex items-center justify-center">
                     {unread}
                   </span>
                 )}
@@ -195,9 +196,16 @@ export default function AppShell() {
                 </>
               )}
             </div>
-            <Link to="/conformidade" className="hidden sm:flex press items-center gap-1.5 rounded-xl px-3 py-2 text-[12px] font-semibold text-subtle hover:text-accent hover:bg-primary/5 cursor-pointer">
-              <ShieldCheck size={15} /> LGPD
-            </Link>
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent('rajamine-start-tour'))}
+              className="press p-2.5 rounded-xl text-secondary hover:bg-primary/5 cursor-pointer"
+              aria-label="Abrir tutorial"
+              title="Tutorial rápido"
+            >
+              <CircleHelp size={18} />
+            </button>
+            <ThemeToggle />
           </div>
         </header>
 

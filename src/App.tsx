@@ -14,7 +14,6 @@ import Equipment from './pages/Equipment';
 import Trucks from './pages/Trucks';
 import Registry from './pages/Registry';
 import Documents from './pages/Documents';
-import Compliance from './pages/Compliance';
 import Weekly from './pages/Weekly';
 import Operations from './pages/Operations';
 import DriverOps from './pages/DriverOps';
@@ -72,7 +71,6 @@ export function AppRoutes() {
         <Route path="/ocorrencias" element={<RequireAuth roles={['admin', 'revisora']}><DriverOps /></RequireAuth>} />
         <Route path="/cadastros" element={<RequireAuth roles={['admin']}><Registry /></RequireAuth>} />
         <Route path="/documentos" element={<RequireAuth roles={['admin', 'revisora']}><Documents /></RequireAuth>} />
-        <Route path="/conformidade" element={<RequireAuth roles={['admin', 'revisora']}><Compliance /></RequireAuth>} />
       </Route>
 
       <Route path="*" element={<Navigate to={session ? homeFor(session.role) : '/login'} replace />} />

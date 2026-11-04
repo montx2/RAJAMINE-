@@ -29,7 +29,7 @@ describe('Galeria de fotos demonstrativas', () => {
 
   it('OCR simulado reconhece as novas imagens da galeria com candidatos coerentes', () => {
     expect(demoOcrResult('/demo/foto-camera-externa.jpg').candidatos[0].normalizado).toBe('EQ-4520');
-    expect(demoOcrResult('/demo/foto-painel-cp101.jpg').candidatos[0].normalizado).toBe('CP-101');
+    expect(demoOcrResult('/demo/foto-painel-sa101.jpg').candidatos[0].normalizado).toBe('SA-101');
     const galileo = demoOcrResult('/demo/foto-galileo-rotograma.jpg');
     expect(galileo.candidatos.some((c) => c.tipo === 'imei' && c.normalizado === '867782071392430')).toBe(true);
     expect(galileo.textoBruto).toContain('simulação');

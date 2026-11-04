@@ -86,7 +86,7 @@ export default function Reports() {
           </div>
           <Button variant={showFilters || activeFilters ? 'primary' : 'outline'} icon={<SlidersHorizontal size={15} />}
             onClick={() => setShowFilters((v) => !v)} aria-expanded={showFilters}>
-            Filtros{activeFilters > 0 && <span className="ml-1 rounded-full bg-brand text-primary text-[10px] font-bold px-1.5">{activeFilters}</span>}
+            Filtros{activeFilters > 0 && <span className="ml-1 rounded-full bg-brand text-[#18181b] text-[10px] font-bold px-1.5">{activeFilters}</span>}
           </Button>
         </div>
 
@@ -94,7 +94,7 @@ export default function Reports() {
           {statusChips.map((c) => (
             <button key={c.id} onClick={() => setStatus(c.id)}
               className={cn('press rounded-full px-3 py-1.5 text-[12px] font-semibold border transition-colors cursor-pointer',
-                status === c.id ? 'bg-primary text-white border-primary' : 'bg-white/50 text-subtle border-primary/10 hover:text-primary hover:border-primary/20')}>
+                status === c.id ? 'bg-primary text-primary-foreground border-primary' : 'bg-surface/60 text-subtle border-primary/10 hover:text-primary hover:border-primary/20')}>
               {c.label}
             </button>
           ))}
@@ -153,7 +153,6 @@ export default function Reports() {
                     <td className="td">
                       <div className="flex items-center gap-2 flex-wrap">
                         <Link to={`/relatorios/${r.id}`} className="mono font-bold text-accent hover:underline">{r.codigo}</Link>
-                        {r.origemDados === 'referencia_empresa' && <Badge tone="amber">referência</Badge>}
                         {r.enviadoCliente && <Badge tone="teal">enviado</Badge>}
                       </div>
                       <div className="text-[12px] text-subtle mt-0.5">

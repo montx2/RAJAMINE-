@@ -1,7 +1,6 @@
 /* Modelo de domínio do Rajamine FieldOps.
-   A partir das referências reais fornecidas pela empresa (set/2026), o modelo
-   diferencia EQUIPAMENTO DO CLIENTE (ex.: CP-101, TYE-9A00) dos DISPOSITIVOS
-   embarcados (telemetria, tablet Pulsus, câmera de fadiga, Galileo).
+   O modelo diferencia EQUIPAMENTO DO CLIENTE (ex.: SA-101, VA-205) dos
+   DISPOSITIVOS embarcados (telemetria, tablet Pulsus, câmera de fadiga, Galileo).
    No protótipo, persistido em localStorage (metadados) + IndexedDB (fotos).
    Em produção, mapeia para PostgreSQL + storage de objetos (docs/03). */
 
@@ -19,7 +18,7 @@ export interface User {
   truckIds?: string[];
 }
 
-export type DataOrigin = 'sintetico' | 'referencia_empresa';
+export type DataOrigin = 'sintetico';
 
 export interface Client {
   id: string;
@@ -55,17 +54,17 @@ export type EquipmentType =
 
 export type EquipmentStatus = 'instalado' | 'estoque' | 'manutencao' | 'desmobilizado';
 
-/** Identificadores reais usados nas planilhas e relatórios da Rajamine. */
+/** Identificadores operacionais usados nos relatórios de campo. */
 export interface DeviceIds {
-  telemetria?: string;      // ex.: 0987 (preservar zeros à esquerda)
-  pulsus?: string;          // tablet, ex.: 2758
+  telemetria?: string;      // ex.: 0187 (preservar zeros à esquerda)
+  pulsus?: string;          // tablet, ex.: 2741
   cameraFadiga?: string;    // IMEI, ex.: 864993060408250
   galileo?: string;         // ID Galileo, ex.: 867782071392430
 }
 
 export interface Equipment extends DeviceIds {
   id: string;
-  codigo: string;           // ex.: CP-101, TYE-9A00 ou EQ-2041 (demo)
+  codigo: string;           // ex.: SA-101, VA-205 ou EQ-2041
   tipo: EquipmentType;
   serial: string;
   status: EquipmentStatus;
@@ -105,13 +104,13 @@ export const ACTIVITY_KIND_LABEL: Record<ActivityKind, string> = {
 export type TelemetrySituation = 'ok' | 'pendente' | 'antiga' | 'nao_informada';
 export type PhotosSituation = 'enviadas' | 'pendentes' | 'nao_informado';
 
-/** Linha de atividade por equipamento — espelha a planilha real da empresa. */
+/** Linha de atividade por equipamento. */
 export interface ActivityEntry extends DeviceIds {
   id: string;
   data: string;                       // yyyy-mm-dd
   clienteId?: string;                 // no consolidado semanal, cada linha pode ter um cliente
   colaboradorId?: string;
-  equipamentoCodigo: string;          // CP-101, TYE-9A00, RUU-1G56…
+  equipamentoCodigo: string;          // SA-101, VA-205…
   tipo: ActivityKind;
   componentes?: string[];             // ['Telemetria', 'Câmera de fadiga', 'Tablet']
   observacao?: string;                // "Telemetria antiga: 0995", "ID Galileo: …"
@@ -120,7 +119,7 @@ export interface ActivityEntry extends DeviceIds {
   descricao?: string;                 // relato livre da atividade
 }
 
-/** Linha transcrita da planilha "Instalações/Manutenções/Retiradas — Equipamentos". */
+/** Linha de operação de campo (instalações/manutenções/retiradas). */
 export interface OperationRow extends DeviceIds {
   id: string;
   data: string;
@@ -247,7 +246,6 @@ export interface Report {
   melhorias?: string;
   atividades?: ActivityEntry[];
   origemDados?: DataOrigin;
-  fonteReferencia?: string;
 }
 
 export interface Notification {

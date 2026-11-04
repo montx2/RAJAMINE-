@@ -74,7 +74,7 @@ export default function DriverOps() {
           <div className="flex flex-wrap gap-2">
             {(['todas', 'aberta', 'em_analise', 'resolvida', 'rejeitada'] as const).map((f) => (
               <button key={f} type="button" onClick={() => setFilter(f)}
-                className={`press rounded-full border px-3 py-1.5 text-[12px] font-semibold cursor-pointer ${filter === f ? 'bg-primary text-white border-primary' : 'border-border text-secondary hover:border-accent/40'}`}>
+                className={`press rounded-full border px-3 py-1.5 text-[12px] font-semibold cursor-pointer ${filter === f ? 'bg-primary text-primary-foreground border-primary' : 'border-border text-secondary hover:border-accent/40'}`}>
                 {f === 'todas' ? 'Todas' : DRIVER_OCCURRENCE_STATUS_LABEL[f]}
               </button>
             ))}
@@ -168,7 +168,7 @@ export default function DriverOps() {
               <Textarea value={resposta} onChange={(e) => setResposta(e.target.value)} placeholder="Resposta ao motorista (obrigatória para resolver/rejeitar). Ex.: equipe de campo acionada, suporte reapertado, etc." aria-label="Resposta ao motorista" />
             )}
             {detail.resposta && (
-              <div className="rounded-xl bg-success-soft/60 border border-success/20 p-3 text-[13px] text-green-900">
+              <div className="rounded-xl bg-success-soft/60 border border-success/20 p-3 text-[13px] text-success">
                 <strong>Resposta registrada:</strong> {detail.resposta}
                 <div className="text-[11.5px] mt-1 opacity-80">{detail.resolvidaPor} · {detail.resolvidaEm ? fmtDateTime(detail.resolvidaEm) : ''}</div>
               </div>

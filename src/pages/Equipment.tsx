@@ -51,7 +51,7 @@ export default function EquipmentPage() {
   );
 
   const save = () => {
-    if (!CODE_RE.test(form.codigo.trim())) { setErr('Use o padrão real, ex.: CP-101, TYE-9A00, RUU-1G56 ou EQ-2041.'); return; }
+    if (!CODE_RE.test(form.codigo.trim())) { setErr('Use o padrão válido, ex.: SA-101, VA-205, SR-305 ou EQ-2041.'); return; }
     const res = addEquipment({
       codigo: form.codigo.trim(), tipo: form.tipo, serial: form.serial.trim() || '—',
       truckId: form.truckId || null, clienteId: form.clienteId || null,
@@ -78,7 +78,7 @@ export default function EquipmentPage() {
         <div className="grid md:grid-cols-[1fr_220px_180px] gap-2.5">
           <div className="relative">
             <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-subtle" aria-hidden />
-            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Pesquisar por CP-101, 0987, 2758, IMEI 864993060408250…" className="pl-10" aria-label="Pesquisar equipamentos" />
+            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Pesquisar por SA-101, 0187, 2741, IMEI 864993060408250…" className="pl-10" aria-label="Pesquisar equipamentos" />
           </div>
           <Select value={tipo} onChange={(e) => setTipo(e.target.value)} aria-label="Filtrar por tipo">
             <option value="">Tipo: todos</option>
@@ -120,7 +120,6 @@ export default function EquipmentPage() {
                     <tr className="hover:bg-muted/30 transition-colors">
                       <td className="td">
                         <span className="mono font-bold text-[14px] text-primary">{e.codigo}</span>
-                        {e.origemDados === 'referencia_empresa' && <Badge tone="amber" className="ml-2">referência</Badge>}
                       </td>
                       <td className="td text-secondary">{e.tipo}</td>
                       <td className="td mono text-[12.5px] text-subtle">{e.telemetria ?? '—'} / {e.pulsus ?? '—'}</td>
@@ -178,7 +177,7 @@ export default function EquipmentPage() {
         <div className="space-y-4">
           {err && <p className="text-[13px] text-destructive font-medium" role="alert">{err}</p>}
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Código" required htmlFor="eq-code"><Input id="eq-code" value={form.codigo} onChange={(e) => setForm((f) => ({ ...f, codigo: e.target.value }))} placeholder="CP-101 / TYE-9A00" /></Field>
+            <Field label="Código" required htmlFor="eq-code"><Input id="eq-code" value={form.codigo} onChange={(e) => setForm((f) => ({ ...f, codigo: e.target.value }))} placeholder="SA-101 / VA-205" /></Field>
             <Field label="Nº de série" htmlFor="eq-serial"><Input id="eq-serial" value={form.serial} onChange={(e) => setForm((f) => ({ ...f, serial: e.target.value }))} placeholder="opcional" /></Field>
           </div>
           <Field label="Tipo" htmlFor="eq-tipo">
@@ -201,8 +200,8 @@ export default function EquipmentPage() {
             </Field>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Telemetria" htmlFor="eq-tel"><Input id="eq-tel" value={form.telemetria} onChange={(e) => setForm((f) => ({ ...f, telemetria: e.target.value }))} placeholder="0987" /></Field>
-            <Field label="Pulsus" htmlFor="eq-pul"><Input id="eq-pul" value={form.pulsus} onChange={(e) => setForm((f) => ({ ...f, pulsus: e.target.value }))} placeholder="2758" /></Field>
+            <Field label="Telemetria" htmlFor="eq-tel"><Input id="eq-tel" value={form.telemetria} onChange={(e) => setForm((f) => ({ ...f, telemetria: e.target.value }))} placeholder="0187" /></Field>
+            <Field label="Pulsus" htmlFor="eq-pul"><Input id="eq-pul" value={form.pulsus} onChange={(e) => setForm((f) => ({ ...f, pulsus: e.target.value }))} placeholder="2741" /></Field>
             <Field label="Câmera (IMEI)" htmlFor="eq-cam"><Input id="eq-cam" value={form.cameraFadiga} onChange={(e) => setForm((f) => ({ ...f, cameraFadiga: e.target.value }))} placeholder="864993060408250" /></Field>
             <Field label="Galileo" htmlFor="eq-gal"><Input id="eq-gal" value={form.galileo} onChange={(e) => setForm((f) => ({ ...f, galileo: e.target.value }))} placeholder="867782071392430" /></Field>
           </div>

@@ -1,4 +1,6 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
 @import "@fontsource-variable/plus-jakarta-sans";
 @import "@fontsource-variable/jetbrains-mono";
 
@@ -72,6 +74,67 @@
   --ease-in: cubic-bezier(0.64, 0, 0.78, 0);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Superfícies semânticas (tema claro) */
+  --input-bg: rgb(255 255 255 / 0.78);
+  --input-bg-focus: rgb(255 255 255 / 0.95);
+  --input-border: rgb(24 24 27 / 0.10);
+  --input-border-hover: rgb(24 24 27 / 0.18);
+  --chip-bg: rgb(255 255 255 / 0.6);
+  --divide-soft: rgb(24 24 27 / 0.06);
+  --ambient-dot: rgb(24 24 27 / 0.035);
+  --scrollbar: rgb(24 24 27 / 0.18);
+  --scrollbar-hover: rgb(24 24 27 / 0.28);
+}
+
+.dark {
+  --color-primary: #f4f4f5;
+  --color-primary-foreground: #18181b;
+  --color-secondary: #d4d4d8;
+  --color-accent: #f59e0b;
+  --color-accent-hover: #fbbf24;
+  --color-accent-foreground: #1c1917;
+  --color-accent-soft: rgb(245 158 11 / 0.14);
+  --color-brand: #ffc400;
+  --color-brand-soft: rgb(255 196 0 / 0.12);
+  --color-background: #0b0d10;
+  --color-surface: #15181d;
+  --color-foreground: #f4f4f5;
+  --color-muted: #1c2026;
+  --color-muted-foreground: #a1a1aa;
+  --color-subtle: #a1a1aa;
+  --color-border: #2a2f37;
+  --color-destructive: #f87171;
+  --color-destructive-soft: rgb(248 113 113 / 0.14);
+  --color-success: #4ade80;
+  --color-success-soft: rgb(74 222 128 / 0.14);
+  --color-warning: #fbbf24;
+  --color-warning-soft: rgb(251 191 36 / 0.14);
+  --color-navy-800: #27272a;
+  --color-navy-700: #3f3f46;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -12px rgb(0 0 0 / 0.5);
+  --shadow-pop: 0 12px 40px -12px rgb(0 0 0 / 0.6), 0 4px 12px -4px rgb(0 0 0 / 0.4);
+  --shadow-glass: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 8px 32px -12px rgb(0 0 0 / 0.5);
+  --shadow-lift: 0 16px 48px -16px rgb(0 0 0 / 0.6), 0 4px 12px -6px rgb(0 0 0 / 0.4);
+
+  --glass-bg: rgb(21 24 29 / 0.72);
+  --glass-bg-strong: rgb(21 24 29 / 0.88);
+  --glass-bg-soft: rgb(21 24 29 / 0.55);
+  --glass-border: rgb(255 255 255 / 0.08);
+  --glass-border-ink: rgb(255 255 255 / 0.06);
+  --glass-dark-bg: rgb(13 15 19 / 0.86);
+  --glass-dark-border: rgb(255 255 255 / 0.08);
+
+  --input-bg: rgb(21 24 29 / 0.78);
+  --input-bg-focus: rgb(21 24 29 / 0.95);
+  --input-border: rgb(255 255 255 / 0.10);
+  --input-border-hover: rgb(255 255 255 / 0.18);
+  --chip-bg: rgb(21 24 29 / 0.6);
+  --divide-soft: rgb(255 255 255 / 0.06);
+  --ambient-dot: rgb(255 255 255 / 0.03);
+  --scrollbar: rgb(255 255 255 / 0.16);
+  --scrollbar-hover: rgb(255 255 255 / 0.26);
 }
 
 html {
@@ -94,13 +157,20 @@ body {
 }
 
 /* Textura sutil para o blur ter o que difundir (sem peso visual) */
+.dark body {
+  background-image:
+    radial-gradient(900px 520px at 8% -10%, rgb(255 196 0 / 0.07), transparent 60%),
+    radial-gradient(760px 480px at 100% 0%, rgb(245 158 11 / 0.05), transparent 55%),
+    radial-gradient(900px 600px at 50% 120%, rgb(255 255 255 / 0.03), transparent 60%);
+}
+
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgb(24 24 27 / 0.035) 1px, transparent 0);
+  background-image: radial-gradient(circle at 1px 1px, var(--ambient-dot) 1px, transparent 0);
   background-size: 26px 26px;
   mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.7), transparent 70%);
 }
@@ -137,7 +207,7 @@ body::before {
   }
 }
 @utility glass-strong {
-  background: rgb(255 255 255 / 0.94);
+  background: var(--glass-bg-strong);
   border: 1px solid var(--glass-border-ink);
   box-shadow: var(--shadow-pop);
   @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
@@ -174,16 +244,16 @@ body::before {
   .input {
     @apply w-full rounded-xl px-3.5 py-2.5 text-[14.5px] text-foreground placeholder:text-subtle/60
       disabled:bg-muted disabled:text-subtle;
-    background: rgb(255 255 255 / 0.78);
-    border: 1px solid rgb(24 24 27 / 0.10);
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
     box-shadow: 0 1px 2px rgb(24 24 27 / 0.03) inset;
     transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
   }
-  .input:hover { border-color: rgb(24 24 27 / 0.18); }
+  .input:hover { border-color: var(--input-border-hover); }
   .input:focus {
     outline: none;
     border-color: var(--color-accent);
-    background: rgb(255 255 255 / 0.95);
+    background: var(--input-bg-focus);
     box-shadow: 0 0 0 3px rgb(180 83 9 / 0.16);
   }
   .input-error { border-color: var(--color-destructive) !important; }
@@ -198,15 +268,15 @@ body::before {
 
   .chip {
     @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] font-semibold whitespace-nowrap;
-    background: rgb(255 255 255 / 0.6);
-    border: 1px solid rgb(24 24 27 / 0.08);
+    background: var(--chip-bg);
+    border: 1px solid var(--input-border);
     color: var(--color-secondary);
   }
 
-  .divide-soft > * + * { border-top: 1px solid rgb(24 24 27 / 0.06); }
+  .divide-soft > * + * { border-top: 1px solid var(--divide-soft); }
 
   .skeleton {
-    background: linear-gradient(90deg, rgb(24 24 27 / 0.05) 25%, rgb(24 24 27 / 0.09) 37%, rgb(24 24 27 / 0.05) 63%);
+    background: linear-gradient(90deg, var(--divide-soft) 25%, var(--input-border) 37%, var(--divide-soft) 63%);
     background-size: 400% 100%;
     animation: shimmer 1.4s ease infinite;
     border-radius: 10px;
@@ -214,10 +284,10 @@ body::before {
 }
 
 /* Scrollbar discreta */
-* { scrollbar-width: thin; scrollbar-color: rgb(24 24 27 / 0.18) transparent; }
+* { scrollbar-width: thin; scrollbar-color: var(--scrollbar) transparent; }
 *::-webkit-scrollbar { width: 8px; height: 8px; }
-*::-webkit-scrollbar-thumb { background: rgb(24 24 27 / 0.18); border-radius: 8px; }
-*::-webkit-scrollbar-thumb:hover { background: rgb(24 24 27 / 0.28); }
+*::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 8px; }
+*::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-hover); }
 
 /* ── Motion utilities ── */
 @keyframes fade-up {

@@ -711,18 +711,12 @@ export const useStore = create<State>()(
     {
       name: 'rajamine-fieldops-v2',
       storage: createJSONStorage(() => localStorage),
-      version: 3,
+      version: 4,
       migrate: (persisted, version) => {
         const s = (persisted ?? {}) as Partial<State>;
-        if (version < 3) {
-          // Acrescenta o domínio do Portal do Motorista sem perder dados existentes.
-          return {
-            ...s,
-            driverChecklists: s.driverChecklists ?? seedDriverChecklists,
-            driverOccurrences: s.driverOccurrences ?? seedDriverOccurrences,
-            driverTrainings: s.driverTrainings ?? seedDriverTrainings,
-            driverSyncQueue: s.driverSyncQueue ?? seedDriverSyncQueue,
-          } as State;
+        if (version < 4) {
+          // Base 100% sintética: remove quaisquer dados de referência persistidos.
+          return { ...buildSeed(), session: null } as State;
         }
         return s as State;
       },

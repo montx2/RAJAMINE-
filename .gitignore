@@ -19,3 +19,7 @@ public/ocr/lang/*.gz
 # Cache do Tesseract em Node
 eng.traineddata
 *.traineddata
+
+# Pacote pendrive gerado (app buildado + zip)
+portable/app/
+Rajamine-FieldOps-Pendrive.zip

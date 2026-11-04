@@ -8,9 +8,9 @@ import { DRIVER_CHECKLIST_STATUS_LABEL, type DriverChecklistItemStatus } from '.
 import { cn } from '../../lib/cn';
 
 const STATUS_OPTIONS: Array<{ value: DriverChecklistItemStatus; label: string; icon: typeof Check; tone: string }> = [
-  { value: 'ok', label: 'OK', icon: Check, tone: 'data-[on=true]:bg-success data-[on=true]:text-white data-[on=true]:border-success' },
-  { value: 'atencao', label: 'Atenção', icon: AlertTriangle, tone: 'data-[on=true]:bg-warning data-[on=true]:text-white data-[on=true]:border-warning' },
-  { value: 'falha', label: 'Falha', icon: X, tone: 'data-[on=true]:bg-destructive data-[on=true]:text-white data-[on=true]:border-destructive' },
+  { value: 'ok', label: 'OK', icon: Check, tone: 'data-[on=true]:bg-success data-[on=true]:text-primary-foreground data-[on=true]:border-success' },
+  { value: 'atencao', label: 'Atenção', icon: AlertTriangle, tone: 'data-[on=true]:bg-warning data-[on=true]:text-primary-foreground data-[on=true]:border-warning' },
+  { value: 'falha', label: 'Falha', icon: X, tone: 'data-[on=true]:bg-destructive data-[on=true]:text-primary-foreground data-[on=true]:border-destructive' },
 ];
 
 export default function DriverChecklist() {
