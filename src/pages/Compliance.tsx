@@ -15,6 +15,8 @@ const IMPLEMENTADO = [
   ['Trilha de auditoria', 'Criação, edição, revisão, aprovação, geração e envio registrados com autor, data/hora e detalhe.'],
   ['Simulações rotuladas', 'Envios, lembretes e resultados de OCR simulados são explicitamente identificados na interface e na auditoria.'],
   ['Proveniência de dados', 'Base mista: exemplos sintéticos + referências reais fornecidas pela empresa, marcadas como origemDados. Imagens originais não são commitadas; campos ausentes não são inventados.'],
+  ['Portal do Motorista com automação limitada', 'Checklist/ocorrência/sync automatizam captura e roteamento; aprovação, triagem e liberação de documentos continuam humanas. Sem GPS contínuo, biometria ou score de fadiga.'],
+  ['Ciência de treinamento sem biometria', 'Confirmação digitada + caixa de ciência, auditada com autor/data/hora; não substitui treinamento presencial obrigatório.'],
 ];
 
 const PRODUCAO = [

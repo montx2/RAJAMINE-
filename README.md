@@ -24,7 +24,7 @@ npm run dev          # http://localhost:5173
 Outros comandos:
 
 ```bash
-npm test             # 60 testes unitários + smoke de renderização (Vitest)
+npm test             # 80 testes unitários + smoke de renderização (Vitest)
 npm run build        # build de produção (TypeScript + Vite)
 npm run test:e2e     # Playwright (requer: npx playwright install chromium)
 node scripts/ocr-smoke.mjs   # verifica o OCR real nas fotos de exemplo (Node)
@@ -34,7 +34,7 @@ node scripts/ocr-smoke.mjs   # verifica o OCR real nas fotos de exemplo (Node)
 
 ## 🧭 Roteiro de demonstração (10–12 minutos)
 
-1. **Login** — Helena (Administradora), Marta (Revisão) ou Glauber (colaborador de referência real).
+1. **Login** — Helena (Administradora), Marta (Revisão), Glauber (colaborador de referência real) ou **João Batista (Motorista)**.
 2. **Dashboard** — KPIs, prazos, produtividade e o painel **Referências reais da Rajamine integradas**.
 3. **Operações de campo** (`/operacoes`) — planilha real MFS 22/09/2026: equipamento, telemetria, Pulsus, câmera (IMEI), atividade, observação e fotos. Exporte CSV e veja alertas de consistência.
 4. **Novo relatório** — caminhão agora é **opcional**; escolha visita técnica / atividade externa / viagem, informe objetivo, setor e cidade. O sistema gera o **link individual** com prazo de 48 h.
@@ -44,7 +44,8 @@ node scripts/ocr-smoke.mjs   # verifica o OCR real nas fotos de exemplo (Node)
 8. **Documentos** — gere os **2 PDFs reais** nos formatos da empresa: cliente (Visita Técnica / Atividade Externa, sem fotos) e interno (fotos, OCR, original, sensação do cliente, melhorias, histórico). Envio ao cliente é **simulado**.
 9. **Consolidado semanal** (`/semanal`) — referência real AMDA/FDX e gerador de PDF semanal a partir de relatórios **aprovados**. O sistema sinaliza atividade fora do período sem alterá-la.
 10. **Equipamentos & IDs** — busque `0987`, `2758` ou um IMEI e veja equipamentos/relatórios vinculados.
-11. **Segurança & LGPD** — medidas implementadas, pendências de produção, mapa legal, exportação JSON com proveniência e restauração da base demo.
+11. **Portal do Motorista** (`/motorista`) — como João Batista: checklist automático do C-101, falha que abre ocorrência, ciência de treinamento digitada e fila offline simulada. Como Helena: triagem em **Ocorrências de motoristas** (`/ocorrencias`).
+12. **Segurança & LGPD** — medidas implementadas, pendências de produção, mapa legal, exportação JSON com proveniência e restauração da base demo.
 
 ## ✅ Real × simulado (integridade)
 
@@ -56,6 +57,8 @@ node scripts/ocr-smoke.mjs   # verifica o OCR real nas fotos de exemplo (Node)
 | Geração dos 2 PDFs + consolidado semanal | **Real — pdf-lib**, download e preview funcionais |
 | Aprovação humana obrigatória | **Real** (regra bloqueante, inclusive no semanal) |
 | Trilha de auditoria / versões / proveniência de dados | **Real** |
+| Portal do Motorista (checklist, ocorrência, treino, histórico) | **Real no protótipo** (PWA mobile-first, regras locais, RBAC demonstrativo) |
+| Sincronização offline / notificações do motorista | **Simuladas e rotuladas** (fila local; produção exige API + push consentido) |
 | Autenticação | **Simulada** (seleção de perfil; produção exige OIDC/MFA) |
 | Envio de link, lembretes, envio ao cliente | **Simulados e rotulados** |
 | Banco de dados / backend | **Camada demonstrativa** (localStorage + IndexedDB); arquitetura de produção documentada |
@@ -67,14 +70,18 @@ node scripts/ocr-smoke.mjs   # verifica o OCR real nas fotos de exemplo (Node)
 ├── src/
 │   ├── components/      # UI kit, layout, painel IA, painel OCR, diff, timeline
 │   ├── pages/           # Dashboard, Relatórios, Preencher, Revisão, Operações,
-│   │                    # Semanal, Equipamentos, Caminhões, Cadastros, Documentos,
-│   │                    # Conformidade, Login
+│   │                    # Semanal, Equipamentos, Caminhões, Ocorrências de motoristas,
+│   │                    # Cadastros, Documentos, Conformidade, Login
+│   │   └── driver/      # Portal do Motorista (PWA): início, checklist, ocorrências,
+│   │                    # histórico, treinamento
 │   ├── services/        # padronizacao.ts, ocr.ts (Tesseract), pdf.ts (pdf-lib + semanal)
 │   ├── store/           # Zustand + persistência; fotos no IndexedDB
 │   ├── data/            # types, seed sintético, referencias.ts (material real)
 │   └── lib/             # diff, formatação, operations.ts (consistência real), docs
 ├── public/ocr/          # assets locais do Tesseract (gerados por setup:ocr)
 ├── public/demo/         # 14 fotos demonstrativas sintéticas (não são fotos reais da empresa)
+├── public/icons/        # ícones PWA do Portal do Motorista
+├── public/manifest.webmanifest + sw.js  # PWA (registro apenas em build de produção)
 ├── tests/               # Vitest: motores, regras, PDF, referências reais, smoke de telas
 ├── e2e/                 # Playwright: fluxos completos (CI/local)
 ├── scripts/             # setup-ocr.mjs, ocr-smoke.mjs
@@ -94,6 +101,7 @@ node scripts/ocr-smoke.mjs   # verifica o OCR real nas fotos de exemplo (Node)
 | [07-custos.md](docs/07-custos.md) | Estimativas mensais em R$ com premissas e fontes |
 | [08-plano.md](docs/08-plano.md) | MVP, plano de desenvolvimento, riscos e demonstração |
 | [09-referencias-empresa.md](docs/09-referencias-empresa.md) | **Material real recebido, correções aplicadas e limites de inferência** |
+| [10-portal-motorista.md](docs/10-portal-motorista.md) | **Portal do Motorista PWA**: automações permitidas/proibidas, rotas, dados, offline, testes |
 | [design-system-output.md](docs/design-system-output.md) | Saída bruta do gerador UI UX Pro Max |
 
 ## 🧰 Stack

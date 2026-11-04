@@ -80,3 +80,10 @@ Baseline a cada deploy de homologação; scan de API (OpenAPI) semanal; falhas d
 - Storage: versionamento de objetos + cópia cross-region semanal.
 - Teste de restauração trimestral com evidência (runbook).
 - RPO alvo: 24 h (dump) / minutos (WAL); RTO alvo: 4 h — a validar com a empresa.
+
+
+## Portal do Motorista — limites de automação
+
+Implementado: RBAC demonstrativo (motorista só acessa `/motorista` e caminhões vinculados; triagem só admin/revisora), validação de upload, trilha de auditoria, ciência digitada sem biometria, notificações/sync simulados rotulados.
+
+Proibido no protótipo: aprovação automática, liberação de PDF de cliente, envio real, GPS contínuo, biometria/score de fadiga. Produção exige autorização server-side, OIDC/MFA, TLS, criptografia, rate limiting, CSP/HSTS, logs imutáveis e governança LGPD (ver [06-legal.md](06-legal.md) e [10-portal-motorista.md](10-portal-motorista.md)).

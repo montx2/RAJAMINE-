@@ -13,9 +13,15 @@ import { clear } from 'idb-keyval';
 import type {
   User, Client, Truck, Equipment, Report, Notification, Session, Photo, Detection,
   TextVersion, EquipmentType, ReportStatus, ActivityEntry, ReportKind, DeviceIds,
+  DriverChecklist, DriverChecklistItem, DriverOccurrence, DriverOccurrenceCategory,
+  DriverOccurrenceSeverity, DriverOccurrenceStatus, DriverTraining, DriverSyncItem,
 } from '../data/types';
-import { seedUsers, seedClients, seedTrucks, seedEquipment, seedReports, seedNotifications } from '../data/seed';
+import {
+  seedUsers, seedClients, seedTrucks, seedEquipment, seedReports, seedNotifications,
+  seedDriverChecklists, seedDriverOccurrences, seedDriverTrainings, seedDriverSyncQueue,
+} from '../data/seed';
 import { uid } from '../lib/id';
+import { buildChecklistItems, itemToOccurrenceCategory, suggestSeverity, occurrenceTemplate, todayISO, currentShift } from '../lib/driver';
 
 interface FillFields {
   dataViagem?: string;
@@ -62,6 +68,11 @@ interface State {
   session: Session | null;
   seededAt: string;
 
+  driverChecklists: DriverChecklist[];
+  driverOccurrences: DriverOccurrence[];
+  driverTrainings: DriverTraining[];
+  driverSyncQueue: DriverSyncItem[];
+
   login: (userId: string) => void;
   logout: () => void;
   resetDemo: () => Promise<void>;
@@ -89,6 +100,19 @@ interface State {
 
   markNotificationRead: (nid: string) => void;
   markAllRead: () => void;
+
+  /* Portal do Motorista — automações seguras (sem aprovação de relatório / sem envio real) */
+  ensureDriverChecklist: (motoristaId: string, caminhaoId: string, opts?: { data?: string; turno?: 'dia' | 'noite' }) => string;
+  updateDriverChecklistItem: (checklistId: string, itemId: string, patch: Partial<Pick<DriverChecklistItem, 'status' | 'observacao'>>, ator: string) => void;
+  markAllChecklistOk: (checklistId: string, ator: string) => void;
+  submitDriverChecklist: (checklistId: string, ator: string) => { ok: boolean; erros: string[]; ocorrenciasIds: string[] };
+  createDriverOccurrence: (args: {
+    motoristaId: string; caminhaoId: string; equipmentId?: string; checklistId?: string;
+    categoria: DriverOccurrenceCategory; severidade: DriverOccurrenceSeverity; descricao: string; fotos?: Photo[];
+  }, ator: string) => { ok: boolean; id?: string; erro?: string };
+  setDriverOccurrenceStatus: (id: string, status: DriverOccurrenceStatus, ator: string, resposta?: string) => { ok: boolean; erro?: string };
+  confirmDriverTraining: (motoristaId: string, treinamentoId: string, titulo: string, nomeConfirmado: string, ator: string) => { ok: boolean; erro?: string };
+  syncDriverQueue: () => number;
 }
 
 function buildSeed() {
@@ -101,6 +125,10 @@ function buildSeed() {
     notifications: seedNotifications,
     session: null as Session | null,
     seededAt: new Date().toISOString(),
+    driverChecklists: seedDriverChecklists,
+    driverOccurrences: seedDriverOccurrences,
+    driverTrainings: seedDriverTrainings,
+    driverSyncQueue: seedDriverSyncQueue,
   };
 }
 
@@ -108,8 +136,11 @@ function audit(ator: string, acao: string, detalhe?: string) {
   return { id: uid('ev'), em: new Date().toISOString(), ator, acao, detalhe };
 }
 
-function notif(tipo: Notification['tipo'], titulo: string, mensagem: string, para: Notification['para'], reportId?: string): Notification {
-  return { id: uid('n'), tipo, titulo, mensagem, criadaEm: new Date().toISOString(), lida: false, reportId, para };
+function notif(
+  tipo: Notification['tipo'], titulo: string, mensagem: string, para: Notification['para'],
+  reportId?: string, extra?: { userId?: string; occurrenceId?: string; checklistId?: string },
+): Notification {
+  return { id: uid('n'), tipo, titulo, mensagem, criadaEm: new Date().toISOString(), lida: false, reportId, para, ...extra };
 }
 
 export const useStore = create<State>()(
@@ -129,7 +160,7 @@ export const useStore = create<State>()(
         logout: () => set({ session: null }),
 
         resetDemo: async () => {
-          await clear().catch(() => undefined);
+          try { await clear(); } catch { /* IndexedDB indisponível (testes/SSR) */ }
           set({ ...buildSeed() });
         },
 
@@ -450,6 +481,225 @@ export const useStore = create<State>()(
           }));
         },
 
+        /* ── Portal do Motorista ──
+           Automações: gerar checklist, salvar rascunho, abrir ocorrência em falha,
+           rotear notificação interna e sincronizar fila. Tudo simulado/local.
+           NÃO aprova relatório, NÃO gera PDF de cliente, NÃO envia mensagem real. */
+
+        ensureDriverChecklist: (motoristaId, caminhaoId, opts) => {
+          const data = opts?.data ?? todayISO();
+          const turno = opts?.turno ?? currentShift();
+          const existing = get().driverChecklists.find((c) => c.motoristaId === motoristaId && c.caminhaoId === caminhaoId && c.data === data && c.turno === turno);
+          if (existing) return existing.id;
+          const truck = get().trucks.find((t) => t.id === caminhaoId);
+          const id = uid('dck');
+          const agora = new Date().toISOString();
+          const checklist: DriverChecklist = {
+            id, motoristaId, caminhaoId, clienteId: truck?.clienteId ?? '',
+            data, turno,
+            items: buildChecklistItems(truck, get().equipment),
+            status: 'rascunho', origem: 'automatico',
+            criadoEm: agora, atualizadoEm: agora, ocorrenciasIds: [],
+            historico: [audit('Sistema', 'Checklist gerado automaticamente', `Itens padrão do veículo + equipamentos instalados${truck ? ` no ${truck.frota}` : ''}`)],
+          };
+          set((s) => ({ driverChecklists: [checklist, ...s.driverChecklists] }));
+          return id;
+        },
+
+        updateDriverChecklistItem: (checklistId, itemId, patch, ator) => {
+          set((s) => ({
+            driverChecklists: s.driverChecklists.map((c) => {
+              if (c.id !== checklistId || c.status !== 'rascunho') return c;
+              return {
+                ...c,
+                atualizadoEm: new Date().toISOString(),
+                items: c.items.map((i) => (i.id === itemId ? { ...i, ...patch } : i)),
+              };
+            }),
+          }));
+          void ator;
+        },
+
+        markAllChecklistOk: (checklistId, ator) => {
+          set((s) => ({
+            driverChecklists: s.driverChecklists.map((c) => {
+              if (c.id !== checklistId || c.status !== 'rascunho') return c;
+              return {
+                ...c,
+                atualizadoEm: new Date().toISOString(),
+                items: c.items.map((i) => ({ ...i, status: 'ok' as const, observacao: '' })),
+                historico: [...c.historico, audit(ator, 'Itens marcados como OK em lote', 'Ação explícita do motorista — não é aprovação de relatório')],
+              };
+            }),
+          }));
+        },
+
+        submitDriverChecklist: (checklistId, ator) => {
+          const c = get().driverChecklists.find((x) => x.id === checklistId);
+          if (!c) return { ok: false, erros: ['Checklist não encontrado.'], ocorrenciasIds: [] };
+          if (c.status !== 'rascunho') return { ok: false, erros: ['Este checklist já foi enviado.'], ocorrenciasIds: [] };
+          const erros: string[] = [];
+          const naoVerificados = c.items.filter((i) => i.status === 'nao_verificado');
+          if (naoVerificados.length) erros.push(`Verifique todos os itens (${naoVerificados.length} pendente(s)).`);
+          if (erros.length) return { ok: false, erros, ocorrenciasIds: [] };
+
+          const truck = get().trucks.find((t) => t.id === c.caminhaoId);
+          const agora = new Date().toISOString();
+          const ocorrenciasIds: string[] = [];
+          const novasOcorrencias: DriverOccurrence[] = [];
+          const maxOco = get().driverOccurrences.reduce((m, o) => Math.max(m, parseInt(o.codigo.split('-')[2] ?? '0', 10)), 0);
+          let seq = maxOco;
+
+          // Automação segura: item com falha abre ocorrência automaticamente.
+          for (const i of c.items.filter((x) => x.status === 'falha')) {
+            seq += 1;
+            const categoria = itemToOccurrenceCategory(i.key);
+            const occ: DriverOccurrence = {
+              id: uid('oco'), codigo: `OCO-2026-${String(seq).padStart(4, '0')}`,
+              motoristaId: c.motoristaId, caminhaoId: c.caminhaoId, clienteId: c.clienteId,
+              equipmentId: i.equipmentId, checklistId: c.id,
+              categoria, severidade: suggestSeverity(categoria, 'falha'),
+              descricao: i.observacao?.trim() || occurrenceTemplate(categoria, truck),
+              fotos: [], status: 'aberta', origem: 'checklist',
+              criadoEm: agora, atualizadoEm: agora,
+              historico: [
+                audit(ator, 'Ocorrência aberta automaticamente', `Item "${i.label}" marcado como falha no checklist`),
+                audit('Sistema', 'Notificação interna roteada', 'Coordenação/revisão notificadas (simulação)'),
+              ],
+            };
+            novasOcorrencias.push(occ);
+            ocorrenciasIds.push(occ.id);
+          }
+
+          const status = ocorrenciasIds.length ? 'em_analise' as const : 'concluido' as const;
+          set((s) => ({
+            driverChecklists: s.driverChecklists.map((x) => x.id === checklistId ? {
+              ...x,
+              status,
+              enviadoEm: agora,
+              concluidoEm: ocorrenciasIds.length ? undefined : agora,
+              ocorrenciasIds,
+              atualizadoEm: agora,
+              historico: [...x.historico, audit(ator, 'Checklist enviado', ocorrenciasIds.length ? `${ocorrenciasIds.length} ocorrência(s) aberta(s) automaticamente` : 'Todos os itens OK — concluído automaticamente')],
+            } : x),
+            driverOccurrences: [...novasOcorrencias, ...s.driverOccurrences],
+            driverSyncQueue: [
+              { id: uid('sync'), tipo: 'checklist' as const, refId: checklistId, detalhe: `Checklist ${c.data} ${c.turno}`, criadoEm: agora, status: 'pendente' as const },
+              ...novasOcorrencias.map((o) => ({ id: uid('sync'), tipo: 'ocorrencia' as const, refId: o.id, detalhe: o.codigo, criadoEm: agora, status: 'pendente' as const })),
+              ...s.driverSyncQueue,
+            ],
+            notifications: [
+              ...(ocorrenciasIds.length ? [
+                notif('motorista', `Checklist com falha — ${truck?.frota ?? 'caminhão'}`, `${ator} enviou checklist com ${ocorrenciasIds.length} falha(s). Ocorrências abertas automaticamente.`, 'admin', undefined, { checklistId, occurrenceId: ocorrenciasIds[0] }),
+                notif('motorista', `Checklist com falha — ${truck?.frota ?? 'caminhão'}`, `${ator} enviou checklist com ${ocorrenciasIds.length} falha(s). Ocorrências abertas automaticamente.`, 'revisora', undefined, { checklistId, occurrenceId: ocorrenciasIds[0] }),
+              ] : []),
+              ...s.notifications,
+            ],
+          }));
+          return { ok: true, erros: [], ocorrenciasIds };
+        },
+
+        createDriverOccurrence: (args, ator) => {
+          const session = get().session;
+          if (session?.role === 'motorista' && session.userId !== args.motoristaId) {
+            return { ok: false, erro: 'Motorista só pode registrar ocorrências em seu próprio nome.' };
+          }
+          const motorista = get().users.find((u) => u.id === args.motoristaId);
+          if (motorista?.truckIds?.length && !motorista.truckIds.includes(args.caminhaoId)) {
+            return { ok: false, erro: 'Caminhão não vinculado a este motorista.' };
+          }
+          if (args.descricao.trim().length < 10) return { ok: false, erro: 'Descreva a ocorrência com pelo menos 10 caracteres.' };
+          const truck = get().trucks.find((t) => t.id === args.caminhaoId);
+          const agora = new Date().toISOString();
+          const maxOco = get().driverOccurrences.reduce((m, o) => Math.max(m, parseInt(o.codigo.split('-')[2] ?? '0', 10)), 0);
+          const id = uid('oco');
+          const codigo = `OCO-2026-${String(maxOco + 1).padStart(4, '0')}`;
+          const occ: DriverOccurrence = {
+            id, codigo,
+            motoristaId: args.motoristaId, caminhaoId: args.caminhaoId, clienteId: truck?.clienteId ?? '',
+            equipmentId: args.equipmentId, checklistId: args.checklistId,
+            categoria: args.categoria, severidade: args.severidade,
+            descricao: args.descricao.trim(), fotos: args.fotos ?? [],
+            status: 'aberta', origem: args.checklistId ? 'checklist' : 'manual',
+            criadoEm: agora, atualizadoEm: agora,
+            historico: [
+              audit(ator, 'Ocorrência aberta', `${args.categoria} — severidade ${args.severidade}`),
+              audit('Sistema', 'Notificação interna roteada', 'Coordenação/revisão notificadas (simulação)'),
+            ],
+          };
+          set((s) => ({
+            driverOccurrences: [occ, ...s.driverOccurrences],
+            driverSyncQueue: [{ id: uid('sync'), tipo: 'ocorrencia', refId: id, detalhe: codigo, criadoEm: agora, status: 'pendente' }, ...s.driverSyncQueue],
+            notifications: [
+              notif('motorista', `Ocorrência de motorista — ${codigo}`, `${ator} reportou ocorrência no ${truck?.frota ?? 'caminhão'}. Aguardando triagem.`, 'admin', undefined, { occurrenceId: id }),
+              notif('motorista', `Ocorrência de motorista — ${codigo}`, `${ator} reportou ocorrência no ${truck?.frota ?? 'caminhão'}. Aguardando triagem.`, 'revisora', undefined, { occurrenceId: id }),
+              ...s.notifications,
+            ],
+          }));
+          return { ok: true, id };
+        },
+
+        setDriverOccurrenceStatus: (id, status, ator, resposta) => {
+          const session = get().session;
+          if (!session || (session.role !== 'admin' && session.role !== 'revisora')) {
+            return { ok: false, erro: 'Apenas coordenação/revisão pode alterar o status de ocorrências.' };
+          }
+          const occ = get().driverOccurrences.find((o) => o.id === id);
+          if (!occ) return { ok: false, erro: 'Ocorrência não encontrada.' };
+          const agora = new Date().toISOString();
+          const done = status === 'resolvida' || status === 'rejeitada';
+          set((s) => ({
+            driverOccurrences: s.driverOccurrences.map((o) => o.id === id ? {
+              ...o, status,
+              atualizadoEm: agora,
+              resolvidaEm: done ? agora : o.resolvidaEm,
+              resolvidaPor: done ? ator : o.resolvidaPor,
+              resposta: resposta ?? o.resposta,
+              historico: [...o.historico, audit(ator, `Ocorrência ${status === 'em_analise' ? 'em análise' : status}`, resposta || undefined)],
+            } : o),
+            notifications: [
+              notif('motorista', `Ocorrência ${occ.codigo} atualizada`, `Status: ${status}.${resposta ? ` Resposta: ${resposta}` : ''}`, 'motorista', undefined, { userId: occ.motoristaId, occurrenceId: id }),
+              ...s.notifications,
+            ],
+          }));
+          return { ok: true };
+        },
+
+        confirmDriverTraining: (motoristaId, treinamentoId, titulo, nomeConfirmado, ator) => {
+          const user = get().users.find((u) => u.id === motoristaId);
+          if (!user) return { ok: false, erro: 'Motorista não encontrado.' };
+          if (nomeConfirmado.trim().toLowerCase() !== user.nome.trim().toLowerCase()) {
+            return { ok: false, erro: 'Digite seu nome completo exatamente como cadastrado para confirmar ciência.' };
+          }
+          const existing = get().driverTrainings.find((t) => t.motoristaId === motoristaId && t.treinamentoId === treinamentoId);
+          if (existing) return { ok: false, erro: 'Ciência deste treinamento já registrada.' };
+          const agora = new Date().toISOString();
+          const id = uid('dtr');
+          set((s) => ({
+            driverTrainings: [{
+              id, motoristaId, treinamentoId, titulo, nomeConfirmado: nomeConfirmado.trim(), ciencia: true, confirmadoEm: agora,
+              historico: [audit(ator, 'Ciência de treinamento registrada', 'Confirmação digitada — sem biometria')],
+              syncedAt: undefined,
+            }, ...s.driverTrainings],
+            driverSyncQueue: [{ id: uid('sync'), tipo: 'treinamento', refId: id, detalhe: titulo, criadoEm: agora, status: 'pendente' }, ...s.driverSyncQueue],
+          }));
+          return { ok: true };
+        },
+
+        syncDriverQueue: () => {
+          const pending = get().driverSyncQueue.filter((q) => q.status === 'pendente');
+          if (!pending.length) return 0;
+          const agora = new Date().toISOString();
+          const refIds = new Set(pending.map((p) => p.refId));
+          set((s) => ({
+            driverSyncQueue: s.driverSyncQueue.map((q) => q.status === 'pendente' ? { ...q, status: 'sincronizado', sincronizadoEm: agora } : q),
+            driverChecklists: s.driverChecklists.map((c) => refIds.has(c.id) ? { ...c, syncedAt: agora } : c),
+            driverOccurrences: s.driverOccurrences.map((o) => refIds.has(o.id) ? { ...o, syncedAt: agora } : o),
+            driverTrainings: s.driverTrainings.map((t) => refIds.has(t.id) ? { ...t, syncedAt: agora } : t),
+          }));
+          return pending.length;
+        },
+
         markNotificationRead: (nid) => {
           set((s) => ({ notifications: s.notifications.map((n) => (n.id === nid ? { ...n, lida: true } : n)) }));
         },
@@ -461,7 +711,21 @@ export const useStore = create<State>()(
     {
       name: 'rajamine-fieldops-v2',
       storage: createJSONStorage(() => localStorage),
-      version: 2,
+      version: 3,
+      migrate: (persisted, version) => {
+        const s = (persisted ?? {}) as Partial<State>;
+        if (version < 3) {
+          // Acrescenta o domínio do Portal do Motorista sem perder dados existentes.
+          return {
+            ...s,
+            driverChecklists: s.driverChecklists ?? seedDriverChecklists,
+            driverOccurrences: s.driverOccurrences ?? seedDriverOccurrences,
+            driverTrainings: s.driverTrainings ?? seedDriverTrainings,
+            driverSyncQueue: s.driverSyncQueue ?? seedDriverSyncQueue,
+          } as State;
+        }
+        return s as State;
+      },
     },
   ),
 );

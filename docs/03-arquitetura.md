@@ -132,3 +132,8 @@ origem_dados, fonte_referencia
 ```
 
 Regras: `telemetria`/`pulsus` são texto (não inteiro) para preservar zeros; IMEI validado com 15 dígitos quando informado; atividades fora do período do relatório geram alerta, não bloqueio automático; consolidado semanal só inclui relatórios com `aprovado_em` preenchido.
+
+
+## Portal do Motorista (PWA)
+
+O mesmo app React/Vite serve o **Portal do Motorista** em `/motorista` (mobile-first, bottom nav, manifest + service worker em build de produção). O domínio (`DriverChecklist`, `DriverOccurrence`, `DriverTraining`, `DriverSyncItem`) vive no mesmo Zustand store, com persistência local e fila de sincronização **simulada**. A triagem humana fica em `/ocorrencias` (admin/revisora). Contrato e limites: [10-portal-motorista.md](10-portal-motorista.md).

@@ -7,8 +7,10 @@
 */
 import type {
   User, Client, Truck, Equipment, Report, Notification, Photo, Detection, AuditEvent, TextVersion,
+  DriverChecklist, DriverOccurrence, DriverTraining, DriverSyncItem,
 } from './types';
 import { realClients, realUsers, realEquipment, realReports } from './referencias';
+import { buildChecklistItems } from '../lib/driver';
 
 const now = Date.now();
 const H = 3600000;
@@ -29,6 +31,9 @@ export const seedUsers: User[] = [
   { id: 'u_joao', nome: 'João Pedro Rocha', email: 'joao.rocha@rajamine.demo', role: 'colaborador', cargo: 'Técnico de Instalação', ativo: true },
   { id: 'u_andre', nome: 'André Luiz Santos', email: 'andre.santos@rajamine.demo', role: 'colaborador', cargo: 'Técnico Sênior', ativo: true },
   { id: 'u_felipe', nome: 'Felipe Araújo', email: 'felipe.araujo@rajamine.demo', role: 'colaborador', cargo: 'Técnico de Eletrônica', ativo: true },
+  { id: 'u_mot_joao', nome: 'João Batista', email: 'joao.batista@rajamine.demo', role: 'motorista', cargo: 'Motorista de caminhão fora de estrada', ativo: true, truckIds: ['t101'] },
+  { id: 'u_mot_antonio', nome: 'Antônio Ferreira', email: 'antonio.ferreira@rajamine.demo', role: 'motorista', cargo: 'Motorista de caminhão fora de estrada', ativo: true, truckIds: ['t103'] },
+  { id: 'u_mot_marcos', nome: 'Marcos Paulo', email: 'marcos.paulo@rajamine.demo', role: 'motorista', cargo: 'Motorista de caminhão fora de estrada', ativo: true, truckIds: ['t105'] },
   ...realUsers,
 ];
 
@@ -423,4 +428,79 @@ export const seedNotifications: Notification[] = [
   { id: 'n4', tipo: 'revisao', titulo: 'Novo relatório para revisão', mensagem: 'REL-2026-0143 (João Pedro Rocha) aguarda revisão. Equipamento EQ-2041 já confirmado.', criadaEm: iso(-2 * D), lida: false, reportId: 'r_143', para: 'revisora' },
   { id: 'n5', tipo: 'correcao', titulo: 'Correção solicitada — REL-2026-0142', mensagem: 'Marta Fonseca solicitou complementação de dados a Felipe Araújo.', criadaEm: iso(-2 * D), lida: true, reportId: 'r_142', para: 'colaborador' },
   { id: 'n6', tipo: 'documento', titulo: 'Documentos gerados — REL-2026-0139', mensagem: 'PDF do cliente e PDF interno disponíveis no arquivo. Envio ao cliente registrado (simulação).', criadaEm: iso(-7 * D), lida: true, reportId: 'r_139', para: 'todos' },
+  { id: 'n7', tipo: 'motorista', titulo: 'Ocorrência de motorista — OCO-2026-0001', mensagem: 'João Batista reportou telemetria sem sinal no C-101. Aguardando triagem da coordenação.', criadaEm: iso(-6 * H), lida: false, occurrenceId: 'oco_1', para: 'admin' },
+  { id: 'n8', tipo: 'motorista', titulo: 'Ocorrência de motorista — OCO-2026-0001', mensagem: 'João Batista reportou telemetria sem sinal no C-101. Aguardando triagem da coordenação.', criadaEm: iso(-6 * H), lida: false, occurrenceId: 'oco_1', para: 'revisora' },
 ];
+
+/* ── Portal do Motorista: histórico demonstrativo ── */
+const driverItemsOk = buildChecklistItems(seedTrucks.find((t) => t.id === 't101'), seedEquipment).map((i) => ({ ...i, status: 'ok' as const }));
+
+export const seedDriverChecklists: DriverChecklist[] = [
+  {
+    id: 'dck_1', motoristaId: 'u_mot_joao', caminhaoId: 't101', clienteId: 'c_serra',
+    data: dayStr(-1), turno: 'dia', items: driverItemsOk, status: 'concluido', origem: 'automatico',
+    criadoEm: iso(-D - 2 * H), atualizadoEm: iso(-D - H), enviadoEm: iso(-D - H), concluidoEm: iso(-D - H),
+    ocorrenciasIds: [],
+    historico: [
+      { id: 'dev_1', em: iso(-D - 2 * H), ator: 'Sistema', acao: 'Checklist gerado automaticamente', detalhe: 'Itens padrão do veículo + equipamentos instalados no C-101' },
+      { id: 'dev_2', em: iso(-D - H), ator: 'João Batista', acao: 'Checklist enviado', detalhe: 'Todos os itens OK — concluído automaticamente, sem ocorrência' },
+    ],
+    syncedAt: iso(-D - H),
+  },
+  {
+    id: 'dck_2', motoristaId: 'u_mot_antonio', caminhaoId: 't103', clienteId: 'c_aco',
+    data: dayStr(-3), turno: 'dia',
+    items: buildChecklistItems(seedTrucks.find((t) => t.id === 't103'), seedEquipment).map((i) =>
+      i.key === 'fixacao'
+        ? { ...i, status: 'falha' as const, observacao: 'Suporte do rastreador com folga; parafuso solto no chassi.' }
+        : { ...i, status: 'ok' as const }),
+    status: 'concluido', origem: 'automatico',
+    criadoEm: iso(-3 * D - 2 * H), atualizadoEm: iso(-2 * D), enviadoEm: iso(-3 * D - H), concluidoEm: iso(-2 * D),
+    ocorrenciasIds: ['oco_2'],
+    historico: [
+      { id: 'dev_3', em: iso(-3 * D - 2 * H), ator: 'Sistema', acao: 'Checklist gerado automaticamente', detalhe: 'Itens padrão do veículo + equipamentos instalados no C-103' },
+      { id: 'dev_4', em: iso(-3 * D - H), ator: 'Antônio Ferreira', acao: 'Checklist enviado', detalhe: '1 falha — ocorrência OCO-2026-0002 aberta automaticamente' },
+      { id: 'dev_5', em: iso(-2 * D), ator: 'Helena Duarte', acao: 'Ocorrência resolvida', detalhe: 'Suporte reapertado e validado pela equipe de campo' },
+    ],
+    syncedAt: iso(-2 * D),
+  },
+];
+
+export const seedDriverOccurrences: DriverOccurrence[] = [
+  {
+    id: 'oco_1', codigo: 'OCO-2026-0001', motoristaId: 'u_mot_joao', caminhaoId: 't101', clienteId: 'c_serra',
+    equipmentId: 'e2041', categoria: 'telemetria_sem_sinal', severidade: 'alta',
+    descricao: 'Telemetria/rastreador do C-101 (RTA-4G52) sem sinal ou sem comunicação aparente. Motorista não realizou intervenção técnica.',
+    fotos: [], status: 'aberta', origem: 'manual',
+    criadoEm: iso(-6 * H), atualizadoEm: iso(-6 * H),
+    historico: [
+      { id: 'oev_1', em: iso(-6 * H), ator: 'João Batista', acao: 'Ocorrência aberta', detalhe: 'Telemetria sem sinal — EQ-2041' },
+      { id: 'oev_2', em: iso(-6 * H), ator: 'Sistema', acao: 'Notificação interna roteada', detalhe: 'Coordenação/revisão notificadas (simulação)' },
+    ],
+    syncedAt: iso(-6 * H),
+  },
+  {
+    id: 'oco_2', codigo: 'OCO-2026-0002', motoristaId: 'u_mot_antonio', caminhaoId: 't103', clienteId: 'c_aco',
+    equipmentId: 'e1087', categoria: 'suporte_solto', severidade: 'media',
+    descricao: 'Suporte do rastreador no chassi do C-103 (PLX-2D94) com fixação frouxa. Reportado após checklist.',
+    fotos: [], status: 'resolvida', origem: 'checklist', checklistId: 'dck_2',
+    criadoEm: iso(-3 * D), atualizadoEm: iso(-2 * D), resolvidaEm: iso(-2 * D), resolvidaPor: 'Helena Duarte',
+    resposta: 'Equipe de campo reapertou o suporte e validou a fixação. Ocorrência encerrada.',
+    historico: [
+      { id: 'oev_3', em: iso(-3 * D), ator: 'Antônio Ferreira', acao: 'Ocorrência aberta automaticamente', detalhe: 'Item "Fixação de suportes/chicotes" marcado como falha no checklist' },
+      { id: 'oev_4', em: iso(-2 * D), ator: 'Helena Duarte', acao: 'Ocorrência resolvida', detalhe: 'Suporte reapertado pela equipe de campo' },
+    ],
+    syncedAt: iso(-3 * D),
+  },
+];
+
+export const seedDriverTrainings: DriverTraining[] = [
+  {
+    id: 'dtr_1', motoristaId: 'u_mot_joao', treinamentoId: 'trein_camera', titulo: 'Uso da câmera de fadiga',
+    nomeConfirmado: 'João Batista', ciencia: true, confirmadoEm: iso(-8 * D),
+    historico: [{ id: 'trev_1', em: iso(-8 * D), ator: 'João Batista', acao: 'Ciência de treinamento registrada', detalhe: 'Confirmação digitada — sem biometria' }],
+    syncedAt: iso(-8 * D),
+  },
+];
+
+export const seedDriverSyncQueue: DriverSyncItem[] = [];

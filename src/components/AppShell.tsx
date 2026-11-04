@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { NavLink, Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, FileText, ClipboardCheck, Cpu, Truck, Users, Archive,
-  Bell, ShieldCheck, LogOut, Menu, X, ChevronRight, PenLine, Table2, CalendarRange,
+  Bell, ShieldCheck, LogOut, Menu, X, ChevronRight, PenLine, Table2, CalendarRange, AlertTriangle,
 } from 'lucide-react';
 import { useStore, useCurrentUser } from '../store/useStore';
 import { ROLE_LABEL } from '../data/types';
@@ -22,6 +22,7 @@ const NAV: NavItem[] = [
   { to: '/semanal', label: 'Consolidado semanal', short: 'Semanal', icon: CalendarRange, roles: ['admin', 'revisora'], group: 'Campo' },
   { to: '/equipamentos', label: 'Equipamentos & IDs', short: 'Equipamentos', icon: Cpu, roles: ['admin', 'revisora'], group: 'Campo' },
   { to: '/caminhoes', label: 'Caminhões / Frota', short: 'Frota', icon: Truck, roles: ['admin', 'revisora'], group: 'Campo' },
+  { to: '/ocorrencias', label: 'Ocorrências de motoristas', short: 'Ocorrências', icon: AlertTriangle, roles: ['admin', 'revisora'], group: 'Campo' },
   { to: '/cadastros', label: 'Colaboradores & Clientes', short: 'Cadastros', icon: Users, roles: ['admin'], group: 'Gestão' },
   { to: '/documentos', label: 'Arquivo de Documentos', short: 'Documentos', icon: Archive, roles: ['admin', 'revisora'], group: 'Gestão' },
   { to: '/conformidade', label: 'Segurança & LGPD', short: 'LGPD', icon: ShieldCheck, roles: ['admin', 'revisora', 'colaborador'], group: 'Gestão' },
@@ -174,7 +175,8 @@ export default function AppShell() {
                           onClick={() => {
                             markRead(n.id);
                             setNotifOpen(false);
-                            if (n.reportId) navigate(`/relatorios/${n.reportId}`);
+                            if (n.occurrenceId) navigate('/ocorrencias');
+                            else if (n.reportId) navigate(`/relatorios/${n.reportId}`);
                           }}
                         >
                           <div className="flex items-start gap-2.5">

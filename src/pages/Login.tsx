@@ -11,12 +11,12 @@ export default function Login() {
   const users = useStore((s) => s.users);
   const reports = useStore((s) => s.reports);
 
-  const profiles = ['u_helena', 'u_marta', 'u_glauber', 'u_carlos'].map((id) => users.find((u) => u.id === id)!).filter(Boolean);
+  const profiles = ['u_helena', 'u_marta', 'u_glauber', 'u_carlos', 'u_mot_joao'].map((id) => users.find((u) => u.id === id)!).filter(Boolean);
   const pendingLink = reports.find((r) => r.status === 'pendente' || r.status === 'correcao');
 
   const enter = (userId: string, role: string) => {
     login(userId);
-    navigate(role === 'colaborador' ? '/relatorios' : '/');
+    navigate(role === 'motorista' ? '/motorista' : role === 'colaborador' ? '/relatorios' : '/');
   };
 
   return (
@@ -86,7 +86,7 @@ export default function Login() {
                   <div className="flex-1 min-w-0">
                     <div className="text-[14.5px] font-bold text-primary">{u.nome}</div>
                     <div className="text-[12px] text-subtle truncate">{u.cargo}</div>
-                    <Badge tone={u.role === 'admin' ? 'violet' : u.role === 'revisora' ? 'blue' : 'teal'} className="mt-1.5">
+                    <Badge tone={u.role === 'admin' ? 'violet' : u.role === 'revisora' ? 'blue' : u.role === 'motorista' ? 'green' : 'teal'} className="mt-1.5">
                       {ROLE_LABEL[u.role]}
                     </Badge>
                   </div>

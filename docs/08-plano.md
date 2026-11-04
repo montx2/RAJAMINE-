@@ -71,3 +71,11 @@
 ## 7. Papéis da equipe (sugestão para o curso)
 
 - 2 frontend (React/TS) · 1 backend (API/DB) · 1 UX/QA (testes, acessibilidade) · 1 segurança/LGPD (checklists, ZAP) — com rodízio para aprendizado integral.
+
+
+## Fase entregue — Portal do Motorista (PWA)
+
+- Login motorista demonstrativo, meus caminhões, checklist automático por turno, ocorrência assistida com foto, ciência de treinamento digitada, histórico e fila offline simulada.
+- Triagem humana em `/ocorrencias` para coordenação/revisão.
+- Testes: `tests/driver.test.ts` + `tests/driver-smoke.test.tsx` (suíte total 80 testes).
+- Próximo passo: backend real com os mesmos contratos, sync idempotente, push consentido e ordem de serviço de manutenção. Detalhes: [10-portal-motorista.md](10-portal-motorista.md).

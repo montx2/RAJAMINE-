@@ -5,7 +5,7 @@
    No protótipo, persistido em localStorage (metadados) + IndexedDB (fotos).
    Em produção, mapeia para PostgreSQL + storage de objetos (docs/03). */
 
-export type Role = 'admin' | 'revisora' | 'colaborador';
+export type Role = 'admin' | 'revisora' | 'colaborador' | 'motorista';
 
 export interface User {
   id: string;
@@ -15,6 +15,8 @@ export interface User {
   cargo: string;
   ativo: boolean;
   origemDados?: DataOrigin;
+  /** Caminhões vinculados ao motorista (protótipo). Em produção: tabela de vínculo/escala. */
+  truckIds?: string[];
 }
 
 export type DataOrigin = 'sintetico' | 'referencia_empresa';
@@ -250,13 +252,108 @@ export interface Report {
 
 export interface Notification {
   id: string;
-  tipo: 'prazo' | 'revisao' | 'aprovacao' | 'correcao' | 'documento' | 'sistema';
+  tipo: 'prazo' | 'revisao' | 'aprovacao' | 'correcao' | 'documento' | 'sistema' | 'motorista';
   titulo: string;
   mensagem: string;
   criadaEm: string;
   lida: boolean;
   reportId?: string;
+  /** Quando presente, notificação é privada deste usuário (ex.: motorista). */
+  userId?: string;
+  occurrenceId?: string;
+  checklistId?: string;
   para: Role | 'todos';
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   Portal do Motorista (PWA) — coleta rápida, checklists e ocorrências.
+   Regras: motorista NÃO aprova relatório nem libera PDF; apenas reporta.
+   Notificações/envios são simulados. Sem GPS contínuo/biometria/score.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+export type DriverChecklistItemStatus = 'nao_verificado' | 'ok' | 'atencao' | 'falha';
+
+export interface DriverChecklistItem {
+  id: string;
+  key: string;
+  label: string;
+  categoria: 'veiculo' | 'equipamento';
+  equipmentId?: string;
+  status: DriverChecklistItemStatus;
+  observacao?: string;
+}
+
+export type DriverChecklistStatus = 'rascunho' | 'enviado' | 'em_analise' | 'concluido';
+
+export interface DriverChecklist {
+  id: string;
+  motoristaId: string;
+  caminhaoId: string;
+  clienteId: string;
+  data: string;                      // yyyy-mm-dd
+  turno: 'dia' | 'noite';
+  items: DriverChecklistItem[];
+  status: DriverChecklistStatus;
+  origem: 'automatico' | 'manual';
+  criadoEm: string;
+  atualizadoEm: string;
+  enviadoEm?: string;
+  concluidoEm?: string;
+  ocorrenciasIds: string[];
+  historico: AuditEvent[];
+  syncedAt?: string;
+}
+
+export type DriverOccurrenceCategory =
+  | 'camera_obstruida' | 'tablet_nao_liga' | 'telemetria_sem_sinal'
+  | 'suporte_solto' | 'avaria_veiculo' | 'outro';
+
+export type DriverOccurrenceSeverity = 'baixa' | 'media' | 'alta' | 'critica';
+export type DriverOccurrenceStatus = 'aberta' | 'em_analise' | 'resolvida' | 'rejeitada';
+
+export interface DriverOccurrence {
+  id: string;
+  codigo: string;                    // OCO-2026-0001
+  motoristaId: string;
+  caminhaoId: string;
+  clienteId: string;
+  equipmentId?: string;
+  checklistId?: string;
+  categoria: DriverOccurrenceCategory;
+  severidade: DriverOccurrenceSeverity;
+  descricao: string;
+  fotos: Photo[];
+  status: DriverOccurrenceStatus;
+  origem: 'checklist' | 'manual';
+  criadoEm: string;
+  atualizadoEm: string;
+  resolvidaEm?: string;
+  resolvidaPor?: string;
+  resposta?: string;
+  historico: AuditEvent[];
+  syncedAt?: string;
+}
+
+export interface DriverTraining {
+  id: string;
+  motoristaId: string;
+  treinamentoId: string;
+  titulo: string;
+  nomeConfirmado: string;
+  ciencia: boolean;
+  confirmadoEm: string;
+  historico: AuditEvent[];
+  syncedAt?: string;
+}
+
+export interface DriverSyncItem {
+  id: string;
+  tipo: 'checklist' | 'ocorrencia' | 'treinamento';
+  refId: string;
+  detalhe: string;
+  criadoEm: string;
+  status: 'pendente' | 'sincronizado';
+  sincronizadoEm?: string;
 }
 
 export interface Session { userId: string; role: Role; }
@@ -274,4 +371,19 @@ export const ROLE_LABEL: Record<Role, string> = {
   admin: 'Administrador',
   revisora: 'Revisão',
   colaborador: 'Colaborador',
+  motorista: 'Motorista',
+};
+
+export const DRIVER_CHECKLIST_STATUS_LABEL: Record<DriverChecklistStatus, string> = {
+  rascunho: 'Rascunho',
+  enviado: 'Enviado',
+  em_analise: 'Em análise',
+  concluido: 'Concluído',
+};
+
+export const DRIVER_OCCURRENCE_STATUS_LABEL: Record<DriverOccurrenceStatus, string> = {
+  aberta: 'Aberta',
+  em_analise: 'Em análise',
+  resolvida: 'Resolvida',
+  rejeitada: 'Rejeitada',
 };

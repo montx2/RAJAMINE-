@@ -1,59 +1,82 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import type { ReactNode } from 'react';
-import { useStore, useCurrentUser } from './store/useStore';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { useStore } from './store/useStore';
 import type { Role } from './data/types';
 import AppShell from './components/AppShell';
+import DriverShell from './components/DriverShell';
 import { Toaster } from './components/ui';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Reports from './pages/Reports';
 import NewReport from './pages/NewReport';
 import ReportDetail from './pages/ReportDetail';
-import FillReport from './pages/FillReport';
 import ReviewCenter from './pages/ReviewCenter';
-import EquipmentPage from './pages/Equipment';
+import Equipment from './pages/Equipment';
 import Trucks from './pages/Trucks';
 import Registry from './pages/Registry';
 import Documents from './pages/Documents';
 import Compliance from './pages/Compliance';
-import Operations from './pages/Operations';
 import Weekly from './pages/Weekly';
+import Operations from './pages/Operations';
+import DriverOps from './pages/DriverOps';
+import FillReport from './pages/FillReport';
+import DriverHome from './pages/driver/DriverHome';
+import DriverChecklist from './pages/driver/DriverChecklist';
+import DriverOccurrences from './pages/driver/DriverOccurrences';
+import DriverOccurrenceNew from './pages/driver/DriverOccurrenceNew';
+import DriverHistory from './pages/driver/DriverHistory';
+import DriverTraining from './pages/driver/DriverTraining';
 
-function RequireAuth({ roles, children }: { roles?: Role[]; children: ReactNode }) {
-  const user = useCurrentUser();
-  if (!user) return <Navigate to="/login" replace />;
-  if (roles && !roles.includes(user.role)) return <Navigate to={user.role === 'colaborador' ? '/relatorios' : '/'} replace />;
+function homeFor(role?: Role) {
+  if (role === 'motorista') return '/motorista';
+  if (role === 'colaborador') return '/relatorios';
+  return '/';
+}
+
+function RequireAuth({ children, roles }: { children: React.ReactNode; roles?: Role[] }) {
+  const session = useStore((s) => s.session);
+  if (!session) return <Navigate to="/login" replace />;
+  if (roles && !roles.includes(session.role)) {
+    return <Navigate to={homeFor(session.role)} replace />;
+  }
   return <>{children}</>;
 }
 
 export function AppRoutes() {
   const session = useStore((s) => s.session);
   return (
-    <>
-      <Routes>
-        <Route path="/login" element={session ? <Navigate to="/" replace /> : <Login />} />
-        {/* Link individual do colaborador — sem login, escopo restrito ao token */}
-        <Route path="/preencher/:token" element={<FillReport />} />
+    <Routes>
+      <Route path="/login" element={session ? <Navigate to={homeFor(session.role)} replace /> : <Login />} />
+      <Route path="/preencher/:token" element={<FillReport />} />
 
-        <Route element={<RequireAuth><AppShell /></RequireAuth>}>
-          <Route path="/" element={<RequireAuth roles={['admin', 'revisora']}><Dashboard /></RequireAuth>} />
-          <Route path="/relatorios" element={<Reports />} />
-          <Route path="/relatorios/novo" element={<RequireAuth roles={['admin']}><NewReport /></RequireAuth>} />
-          <Route path="/relatorios/:id" element={<ReportDetail />} />
-          <Route path="/revisao" element={<RequireAuth roles={['admin', 'revisora']}><ReviewCenter /></RequireAuth>} />
-          <Route path="/operacoes" element={<Operations />} />
-          <Route path="/semanal" element={<RequireAuth roles={['admin', 'revisora']}><Weekly /></RequireAuth>} />
-          <Route path="/equipamentos" element={<RequireAuth roles={['admin', 'revisora']}><EquipmentPage /></RequireAuth>} />
-          <Route path="/caminhoes" element={<RequireAuth roles={['admin', 'revisora']}><Trucks /></RequireAuth>} />
-          <Route path="/cadastros" element={<RequireAuth roles={['admin']}><Registry /></RequireAuth>} />
-          <Route path="/documentos" element={<RequireAuth roles={['admin', 'revisora']}><Documents /></RequireAuth>} />
-          <Route path="/conformidade" element={<Compliance />} />
-        </Route>
+      {/* Portal do Motorista — PWA mobile-first */}
+      <Route path="/motorista" element={<RequireAuth roles={['motorista']}><DriverShell /></RequireAuth>}>
+        <Route index element={<DriverHome />} />
+        <Route path="checklist" element={<DriverChecklist />} />
+        <Route path="checklist/:caminhaoId" element={<DriverChecklist />} />
+        <Route path="ocorrencias" element={<DriverOccurrences />} />
+        <Route path="ocorrencias/nova" element={<DriverOccurrenceNew />} />
+        <Route path="historico" element={<DriverHistory />} />
+        <Route path="treinamento" element={<DriverTraining />} />
+      </Route>
 
-        <Route path="*" element={<Navigate to={session ? '/' : '/login'} replace />} />
-      </Routes>
-      <Toaster />
-    </>
+      <Route element={<RequireAuth><AppShell /></RequireAuth>}>
+        <Route path="/" element={<RequireAuth roles={['admin', 'revisora']}><Dashboard /></RequireAuth>} />
+        <Route path="/relatorios" element={<Reports />} />
+        <Route path="/relatorios/novo" element={<RequireAuth roles={['admin', 'revisora', 'colaborador']}><NewReport /></RequireAuth>} />
+        <Route path="/relatorios/:id" element={<ReportDetail />} />
+        <Route path="/revisao" element={<RequireAuth roles={['admin', 'revisora']}><ReviewCenter /></RequireAuth>} />
+        <Route path="/operacoes" element={<RequireAuth roles={['admin', 'revisora']}><Operations /></RequireAuth>} />
+        <Route path="/semanal" element={<RequireAuth roles={['admin', 'revisora']}><Weekly /></RequireAuth>} />
+        <Route path="/equipamentos" element={<RequireAuth roles={['admin', 'revisora']}><Equipment /></RequireAuth>} />
+        <Route path="/caminhoes" element={<RequireAuth roles={['admin', 'revisora']}><Trucks /></RequireAuth>} />
+        <Route path="/ocorrencias" element={<RequireAuth roles={['admin', 'revisora']}><DriverOps /></RequireAuth>} />
+        <Route path="/cadastros" element={<RequireAuth roles={['admin']}><Registry /></RequireAuth>} />
+        <Route path="/documentos" element={<RequireAuth roles={['admin', 'revisora']}><Documents /></RequireAuth>} />
+        <Route path="/conformidade" element={<RequireAuth roles={['admin', 'revisora']}><Compliance /></RequireAuth>} />
+      </Route>
+
+      <Route path="*" element={<Navigate to={session ? homeFor(session.role) : '/login'} replace />} />
+    </Routes>
   );
 }
 
@@ -61,6 +84,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <AppRoutes />
+      <Toaster />
     </BrowserRouter>
   );
 }
