@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
   Home, ClipboardCheck, AlertTriangle, History, GraduationCap, LogOut, Bell,
-  RefreshCw, Wifi, WifiOff, ShieldCheck,
+  RefreshCw, Wifi, WifiOff, ShieldCheck, CircleHelp,
 } from 'lucide-react';
 import { useStore, useCurrentUser } from '../store/useStore';
 import { cn } from '../lib/cn';
@@ -10,6 +10,7 @@ import { timeAgo } from '../lib/format';
 import { Avatar, Badge, toast } from './ui';
 import { LogoMark, Wordmark } from './Logo';
 import ThemeToggle from './ThemeToggle';
+import OnboardingTour from './OnboardingTour';
 
 const NAV = [
   { to: '/motorista', label: 'Início', icon: Home, end: true },
@@ -77,7 +78,7 @@ export default function DriverShell() {
         <div className="mx-auto flex h-[58px] max-w-3xl items-center gap-3 px-4">
           <LogoMark size={30} />
           <div className="min-w-0 flex-1">
-            <Wordmark className="text-[15px]" light={false} />
+            <Wordmark className="text-[15px] hidden min-[420px]:block" light={false} />
             <div className="text-[9.5px] font-bold tracking-[0.18em] text-accent">PORTAL DO MOTORISTA</div>
           </div>
           <Badge tone={online ? 'green' : 'amber'} dot className="hidden sm:inline-flex">
@@ -87,6 +88,7 @@ export default function DriverShell() {
           <button
             type="button"
             onClick={() => doSync()}
+            data-tour="driver-sync"
             className="press relative rounded-xl p-2.5 text-secondary hover:bg-primary/5 cursor-pointer"
             aria-label={`Sincronizar${pending ? ` (${pending} pendentes)` : ''}`}
             title="Sincronização simulada"
@@ -133,6 +135,15 @@ export default function DriverShell() {
               </>
             )}
           </div>
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent('rajamine-start-tour'))}
+            className="press rounded-xl p-2.5 text-secondary hover:bg-primary/5 cursor-pointer"
+            aria-label="Abrir tutorial"
+            title="Tutorial — como usar o portal"
+          >
+            <CircleHelp size={17} />
+          </button>
           <ThemeToggle />
           <button
             type="button"
@@ -178,6 +189,7 @@ export default function DriverShell() {
               key={item.to}
               to={item.to}
               end={item.end}
+              data-tour={`driver-nav-${item.to.split('/').pop()}`}
               className={({ isActive }) => cn(
                 'flex flex-1 flex-col items-center gap-1 py-2.5 text-[10px] font-semibold transition-colors min-h-[56px]',
                 isActive ? 'text-accent' : 'text-subtle hover:text-secondary',
@@ -189,6 +201,8 @@ export default function DriverShell() {
           ))}
         </div>
       </nav>
+
+      <OnboardingTour variant="motorista" />
     </div>
   );
 }

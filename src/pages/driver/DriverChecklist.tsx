@@ -76,7 +76,7 @@ export default function DriverChecklist() {
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <div className="eyebrow mb-1">Checklist automático · {todayISO()} · turno {currentShift()}</div>
-            <h1 className="text-[20px] font-extrabold text-primary mono">{truck.frota} <span className="text-subtle text-[14px]">({truck.placa})</span></h1>
+            <h1 data-tour="driver-checklist-title" className="text-[20px] font-extrabold text-primary mono">{truck.frota} <span className="text-subtle text-[14px]">({truck.placa})</span></h1>
             <p className="text-[12.5px] text-subtle">{client?.nome} · {truck.marca} {truck.modelo}</p>
           </div>
           {checklist && <Badge tone={checklist.status === 'concluido' ? 'green' : checklist.status === 'em_analise' ? 'amber' : 'slate'}>{DRIVER_CHECKLIST_STATUS_LABEL[checklist.status]}</Badge>}

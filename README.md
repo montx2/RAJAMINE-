@@ -7,7 +7,7 @@ Protótipo funcional de alta fidelidade para a **Rajamine Inteligência em Miner
 >
 > **Base 100% sintética e realista.** Nenhum dado real de cliente, colaborador ou planilha da empresa é utilizado. Envios, lembretes e sincronização são simulados e rotulados.
 >
-> **Design v4 — Clean Glass:** superfícies de vidro com lastro acessível, tema claro/escuro, animações sutis (120–360ms, reduced-motion), tutorial rápido e progressive disclosure.
+> **Design v4 — Clean Glass:** superfícies de vidro com lastro acessível, tema claro/escuro, animações sutis (120–360ms, reduced-motion), tutorial guiado de introdução e progressive disclosure.
 
 ---
 
@@ -50,6 +50,8 @@ O pacote usa apenas PowerShell (já incluso no Windows 10/11). Todos os assets (
 > OCR: `setup:ocr` copia worker/core do `node_modules` e baixa o modelo `eng.traineddata` do repositório oficial `tesseract-ocr/tessdata_fast` (Apache-2.0). Tudo é servido localmente de `public/ocr/` — **nenhuma imagem sai do dispositivo**.
 
 ## 🧭 Roteiro de demonstração (8–10 minutos)
+
+> **Tutorial guiado:** no primeiro acesso (e a qualquer momento pelo botão de ajuda **?**), um tour curto navega sozinho pelas telas e explica cada função principal em linguagem simples — pensado para quem nunca teve contato com o sistema. O passo de tema claro/escuro foi removido por ser óbvio; o foco é o que cada área faz. Há um tour próprio para o Portal do Motorista.
 
 1. **Login** — Helena (Administradora), Marta (Revisão), Carlos (Colaborador) ou **João Batista (Motorista)**.
 2. **Dashboard** — KPIs, prazos, produtividade e atalhos.

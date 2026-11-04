@@ -119,7 +119,7 @@ export default function Dashboard() {
       />
 
       {/* KPIs essenciais */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 stagger">
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 stagger" data-tour="dashboard-kpis">
         {kpis.map((k, i) => (
           <Link key={k.label} to={k.to} style={{ '--i': i } as React.CSSProperties}
             className="card card-hover p-4 block cursor-pointer">

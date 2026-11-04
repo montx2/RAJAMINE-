@@ -201,7 +201,7 @@ export default function AppShell() {
               onClick={() => window.dispatchEvent(new CustomEvent('rajamine-start-tour'))}
               className="press p-2.5 rounded-xl text-secondary hover:bg-primary/5 cursor-pointer"
               aria-label="Abrir tutorial"
-              title="Tutorial rápido"
+              title="Tutorial — como usar o sistema"
             >
               <CircleHelp size={18} />
             </button>
@@ -238,7 +238,7 @@ export default function AppShell() {
 
 export function PageHeader({ title, subtitle, actions, eyebrow }: { title: string; subtitle?: string; actions?: React.ReactNode; eyebrow?: string }) {
   return (
-    <div className="flex flex-wrap items-end justify-between gap-3 mb-6">
+    <div className="flex flex-wrap items-end justify-between gap-3 mb-6" data-tour="page-header">
       <div className="min-w-0">
         {eyebrow && <div className="eyebrow mb-1">{eyebrow}</div>}
         <h1 className="text-[24px] font-extrabold tracking-tight text-primary text-balance">{title}</h1>
