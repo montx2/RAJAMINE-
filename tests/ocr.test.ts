@@ -6,6 +6,7 @@ describe('Extração e normalização de identificações (OCR)', () => {
   it('corrige confusões típicas O→0, I→1, S→5 em posições numéricas', () => {
     expect(normalizeDigits('2O41')).toEqual({ value: '2041', altered: true });
     expect(normalizeDigits('1O87')).toEqual({ value: '1087', altered: true });
+    expect(normalizeDigits('2s4b')).toEqual({ value: '2548', altered: true });
     expect(normalizeDigits('2041')).toEqual({ value: '2041', altered: false });
   });
 
