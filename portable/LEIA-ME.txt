@@ -1,0 +1,25 @@
+RAJAMINE FIELDOPS — PACOTE PENDRIVE (WINDOWS)
+
+Como usar
+1. Extraia o ZIP completo para o pendrive (ou copie a pasta inteira).
+2. Abra a pasta e dê dois cliques em INICIAR.bat.
+3. O navegador abrirá em http://localhost:8080.
+4. Mantenha a janela preta do servidor aberta enquanto usar o sistema.
+5. Para encerrar, feche a janela do servidor ou pressione Ctrl+C.
+
+Requisitos
+- Windows 10/11 com PowerShell (já incluso no Windows).
+- Não precisa instalar Node, npm ou qualquer dependência.
+- Todos os assets (OCR, fontes, fotos demo) já estão na pasta app.
+
+Observações
+- Os dados são salvos no navegador (localStorage/IndexedDB). Use o mesmo navegador/perfil.
+- OCR e padronização rodam localmente. Envios/notificações são simulados.
+- Se a porta 8080 estiver ocupada, o servidor tenta as próximas portas automaticamente.
+- Não abra app/index.html diretamente; use sempre INICIAR.bat.
+
+Estrutura
+  INICIAR.bat      -> inicializador
+  servidor.ps1     -> servidor local sem dependências
+  app/             -> aplicação pronta (build de produção)
+  LEIA-ME.txt      -> este arquivo

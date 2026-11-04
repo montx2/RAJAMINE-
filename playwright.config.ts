@@ -1,0 +1,19 @@
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  testDir: './e2e',
+  timeout: 60000,
+  retries: 1,
+  use: {
+    baseURL: 'http://localhost:5173',
+    locale: 'pt-BR',
+    viewport: { width: 1366, height: 900 },
+    trace: 'retain-on-failure',
+  },
+  webServer: {
+    command: 'npm run dev',
+    url: 'http://localhost:5173',
+    reuseExistingServer: true,
+    timeout: 60000,
+  },
+});
