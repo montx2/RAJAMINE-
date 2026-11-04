@@ -95,7 +95,7 @@ export default function Login() {
                     autoComplete="username"
                     autoFocus
                     spellCheck={false}
-                    placeholder="nome.sobrenome@rajamine.demo"
+                    placeholder="nome.sobrenome@safip.demo"
                     value={email}
                     invalid={!!errors.email}
                     aria-invalid={!!errors.email}
@@ -225,7 +225,7 @@ export default function Login() {
 
       <footer className="px-5 pb-6 text-center animate-fade-in" style={{ animationDelay: '220ms' }}>
         <p className="text-[11px] text-subtle">
-          Rajamine Inteligência em Mineração · Ambiente demonstrativo com dados sintéticos
+          SAFIP Inteligência em Mineração · Ambiente demonstrativo com dados sintéticos
         </p>
       </footer>
     </div>

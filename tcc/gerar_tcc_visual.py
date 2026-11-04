@@ -32,8 +32,8 @@ from reportlab.platypus import (
 
 HERE = Path(__file__).resolve().parent
 FIGS = HERE / 'figuras_tcc'
-OUT_PDF = HERE / 'TCC_Rajamine_FieldOps_ABNT.pdf'
-OUT_DOCX = HERE / 'TCC_Rajamine_FieldOps_ABNT.docx'
+OUT_PDF = HERE / 'TCC_SAFIP_FieldOps_ABNT.pdf'
+OUT_DOCX = HERE / 'TCC_SAFIP_FieldOps_ABNT.docx'
 
 TITULO = 'PADRONIZAÇÃO E RASTREABILIDADE DE RELATÓRIOS DE CAMPO'
 SUBTITULO = 'Uma aplicação web com leitura de códigos no dispositivo e revisão humana obrigatória'
@@ -470,7 +470,7 @@ def build_pdf():
         STATE.pop('first_done', None)
         doc = Doc(str(OUT_PDF), pagesize=A4, leftMargin=ML, rightMargin=MR,
                   topMargin=MT, bottomMargin=MB, title=TITULO, author=AUTOR,
-                  subject='Trabalho de Conclusão de Curso')
+                  subject='Trabalho de Conclusão de Curso', creator='SAFIP FieldOps')
         frame = Frame(ML, MB, CW, CH, id='n', leftPadding=0, rightPadding=0,
                       topPadding=0, bottomPadding=0)
         doc.addPageTemplates([PageTemplate(id='all', frames=[frame], onPage=on_page)])
@@ -661,6 +661,9 @@ def build_docx(pages):
         p.paragraph_format.space_after = Pt(8)
         p.paragraph_format.line_spacing = 1.0
 
+    d.core_properties.title = TITULO
+    d.core_properties.subject = 'Trabalho de Conclusão de Curso'
+    d.core_properties.author = 'SAFIP FieldOps'
     d.save(str(OUT_DOCX))
 
 

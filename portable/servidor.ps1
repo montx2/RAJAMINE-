@@ -64,7 +64,7 @@ if (-not $listener) { Write-Host 'Nenhuma porta livre encontrada.' -ForegroundCo
 
 $url = "http://localhost:$Port/"
 Write-Host ''
-Write-Host '  Rajamine FieldOps' -ForegroundColor Yellow
+Write-Host '  SAFIP FieldOps' -ForegroundColor Yellow
 Write-Host "  Servidor local: $url" -ForegroundColor Green
 Write-Host '  Mantenha esta janela aberta enquanto usar o sistema.'
 Write-Host '  Feche a janela ou pressione Ctrl+C para encerrar.'

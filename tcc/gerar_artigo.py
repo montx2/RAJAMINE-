@@ -23,8 +23,8 @@ from reportlab.platypus import (
 
 HERE = Path(__file__).resolve().parent
 FIGS = HERE / 'figuras_artigo'
-OUT_PDF = HERE / 'TCC_Rajamine_FieldOps.pdf'
-OUT_DOCX = HERE / 'TCC_Rajamine_FieldOps.docx'
+OUT_PDF = HERE / 'TCC_SAFIP_FieldOps.pdf'
+OUT_DOCX = HERE / 'TCC_SAFIP_FieldOps.docx'
 
 INK = colors.HexColor('#000000')
 RULE = colors.HexColor('#808080')
@@ -347,7 +347,8 @@ def pdf_tab(caption, headers, rows):
 def build_pdf():
     doc = BaseDocTemplate(str(OUT_PDF), pagesize=A4,
                           leftMargin=ML, rightMargin=MR, topMargin=MT, bottomMargin=MB,
-                          title=TITULO, author=AUTOR, subject='TCC – artigo científico')
+                          title=TITULO, author=AUTOR, subject='TCC – artigo científico',
+                          creator='SAFIP FieldOps')
     frame = Frame(ML, MB, CW, H - MT - MB, id='main',
                   leftPadding=0, rightPadding=0, topPadding=0, bottomPadding=0)
     doc.addPageTemplates([PageTemplate(id='all', frames=[frame], onPage=_numbered)])
@@ -494,6 +495,9 @@ def build_docx():
     for r in REFERENCIAS:
         para(r, align=WD_ALIGN_PARAGRAPH.LEFT, indent=False, spacing=1.0, after=8)
 
+    d.core_properties.title = TITULO
+    d.core_properties.subject = 'TCC – artigo científico'
+    d.core_properties.author = 'SAFIP FieldOps'
     d.save(str(OUT_DOCX))
     print('DOCX:', OUT_DOCX.name)
 

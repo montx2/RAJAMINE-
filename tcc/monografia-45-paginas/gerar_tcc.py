@@ -16,8 +16,8 @@ from reportlab.pdfbase.ttfonts import TTFont
 import conteudo as C
 
 HERE = os.path.dirname(__file__)
-OUT_PDF = os.path.join(HERE, 'TCC_Rajamine_FieldOps.pdf')
-OUT_DOCX = os.path.join(HERE, 'TCC_Rajamine_FieldOps.docx')
+OUT_PDF = os.path.join(HERE, 'TCC_SAFIP_FieldOps.pdf')
+OUT_DOCX = os.path.join(HERE, 'TCC_SAFIP_FieldOps.docx')
 
 PAGE_W, PAGE_H = A4
 M_L, M_R, M_T, M_B = 3*cm, 2*cm, 3*cm, 2*cm

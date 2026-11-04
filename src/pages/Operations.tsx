@@ -30,7 +30,7 @@ export default function Operations() {
 
   const exportCsv = () => {
     const bytes = new TextEncoder().encode('\uFEFF' + toCsv(filtered));
-    downloadBytes(bytes, `rajamine-operacoes-${new Date().toISOString().slice(0, 10)}.csv`, 'text/csv;charset=utf-8');
+    downloadBytes(bytes, `safip-operacoes-${new Date().toISOString().slice(0, 10)}.csv`, 'text/csv;charset=utf-8');
     toast('CSV exportado.');
   };
 

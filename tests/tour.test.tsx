@@ -37,7 +37,7 @@ function renderAt(path: string) {
   return render(<MemoryRouter initialEntries={[path]}><AppRoutes /><RouteProbe /></MemoryRouter>);
 }
 function startTour() {
-  act(() => { window.dispatchEvent(new CustomEvent('rajamine-start-tour')); });
+  act(() => { window.dispatchEvent(new CustomEvent('safip-start-tour')); });
 }
 function walkToEnd() {
   for (let i = 0; i < 20; i++) {
@@ -115,7 +115,7 @@ describe('Guia em tela', () => {
     startTour();
     fireEvent.click(screen.getByText('Encerrar'));
     expect(screen.queryByText('Como o FieldOps funciona')).toBeNull();
-    expect(localStorage.getItem('rajamine-tour-v2-gestao')).toBe('done');
+    expect(localStorage.getItem('safip-tour-v2-gestao')).toBe('done');
   });
 
   it('o destaque fica exatamente sobre o alvo e congela as animações da página', async () => {
@@ -144,7 +144,7 @@ describe('Guia em tela', () => {
     expect(screen.getByText('Guia concluído')).toBeTruthy();
     fireEvent.click(screen.getByText('Fechar'));
     expect(screen.queryByText('Guia concluído')).toBeNull();
-    expect(localStorage.getItem('rajamine-tour-v2-gestao')).toBe('done');
+    expect(localStorage.getItem('safip-tour-v2-gestao')).toBe('done');
     // o guia navegou por várias páginas; ao fechar, volta para onde o usuário estava
     expect(screen.getByTestId('rota').textContent).toBe('/relatorios');
   });

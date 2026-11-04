@@ -46,7 +46,7 @@ export default function Weekly() {
     try {
       const bytes = await buildWeeklyPdf(chosen, refsFor, { inicio, fim });
       if (asPreview) setPreview(pdfBlobUrl(bytes));
-      else { downloadBytes(bytes, `rajamine-semanal-${inicio}-a-${fim}.pdf`); toast('Consolidado semanal gerado.'); }
+      else { downloadBytes(bytes, `safip-semanal-${inicio}-a-${fim}.pdf`); toast('Consolidado semanal gerado.'); }
     } catch (e) {
       toast(e instanceof Error ? e.message : 'Falha ao gerar consolidado.', 'error');
     } finally { setBusy(false); }

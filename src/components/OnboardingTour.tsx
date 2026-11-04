@@ -130,7 +130,7 @@ export const DRIVER_STEPS: TourStep[] = [
   },
 ];
 
-const KEY_PREFIX = 'rajamine-tour-v2-';
+const KEY_PREFIX = 'safip-tour-v2-';
 const CARD_W = 340;
 const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);
 
@@ -198,14 +198,14 @@ export default function OnboardingTour({ variant = 'gestao' }: { variant?: 'gest
   // Abre uma única vez por perfil; o ícone de ajuda reabre a qualquer momento.
   useEffect(() => {
     const onStart = () => start();
-    window.addEventListener('rajamine-start-tour', onStart);
+    window.addEventListener('safip-start-tour', onStart);
     let t: number | undefined;
     if (import.meta.env.MODE !== 'test') {
       let done = false;
       try { done = localStorage.getItem(storageKey) === 'done'; } catch { /* ignore */ }
       t = window.setTimeout(() => { if (!done) start(); }, 800);
     }
-    return () => { if (t) window.clearTimeout(t); window.removeEventListener('rajamine-start-tour', onStart); };
+    return () => { if (t) window.clearTimeout(t); window.removeEventListener('safip-start-tour', onStart); };
   }, [start, storageKey]);
 
   // Congela as animações de entrada para o alvo ser medido na posição final.

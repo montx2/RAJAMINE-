@@ -198,7 +198,7 @@ export default function AppShell() {
             </div>
             <button
               type="button"
-              onClick={() => window.dispatchEvent(new CustomEvent('rajamine-start-tour'))}
+              onClick={() => window.dispatchEvent(new CustomEvent('safip-start-tour'))}
               className="press p-2.5 rounded-xl text-secondary hover:bg-primary/5 cursor-pointer"
               aria-label="Abrir tutorial"
               title="Tutorial — como usar o sistema"
