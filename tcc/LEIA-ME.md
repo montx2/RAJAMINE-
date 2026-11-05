@@ -2,7 +2,7 @@
 
 | Formato | Arquivo | Quando usar |
 | --- | --- | --- |
-| **ABNT com capa e sumário** | `TCC_SAFIP_FieldOps_ABNT.pdf` / `.docx` | 23 páginas, texto enxuto e **25 figuras** do sistema. É a versão para quem quer ver o produto. |
+| **ABNT com capa e sumário** | `TCC_SAFIP_FieldOps_ABNT.pdf` / `.docx` | 17 páginas, texto mínimo e **27 figuras** do sistema agrupadas várias por página. É a versão para quem quer ver o produto. |
 | Artigo científico (NBR 6022) | `TCC_SAFIP_FieldOps.pdf` / `.docx` | 8 páginas, texto corrido, 3 figuras. Para submissão como artigo. |
 
 Ambos são gerados por script a partir de uma fonte única: editar o texto em um
@@ -15,18 +15,22 @@ Estrutura conforme NBR 14724: **capa, folha de rosto, sumário**, parte textual
 motorista, 6 Preenchimento pelo colaborador, 7 Verificação, 8 Considerações
 finais) e **referências**.
 
-O texto é deliberadamente curto — cerca de 1.580 palavras em 23 páginas — porque
-o argumento é carregado pelas figuras. São 25 capturas reais do protótipo em
+O texto é deliberadamente mínimo — cerca de 800 palavras em 17 páginas — porque
+o argumento é carregado pelas figuras. São 27 capturas reais do protótipo em
 execução, com dados sintéticos, cobrindo acesso, painel, link individual,
 carteira, padronização lado a lado, OCR com conferência humana, revisão,
 histórico, os dois PDFs, arquivo, operações, consolidado semanal, equipamentos,
 frota, ocorrências, cadastros, tema escuro e o portal do motorista no celular.
+As capturas de área de conteúdo tiveram a barra superior recomposta a partir
+das capturas de tela cheia, para não aparecerem cortadas no topo. As figuras
+são agrupadas por altura (2–3 telas de desktop por página; celulares em trios)
+para reduzir o total de páginas sem cortar nenhuma tela.
 
 ### Arquivos
 
 | Caminho | O que é |
 | --- | --- |
-| `TCC_SAFIP_FieldOps_ABNT.pdf` | documento final, 23 páginas |
+| `TCC_SAFIP_FieldOps_ABNT.pdf` | documento final, 17 páginas |
 | `TCC_SAFIP_FieldOps_ABNT.docx` | mesmo conteúdo, editável no Word |
 | `gerar_tcc_visual.py` | conteúdo + geradores de PDF e DOCX (fonte única) |
 | `figuras_tcc/` | 27 capturas preparadas, em 2× para impressão |
@@ -64,7 +68,7 @@ numeradas (NBR 14724, 5.2). Legendas acima da figura e fonte abaixo, em 10 pt
 
 O sumário é resolvido em **duas passadas**: a primeira coleta a página real de
 cada título, a segunda imprime os números. Como o número de linhas do sumário não
-muda entre as passadas, a paginação permanece estável. Todas as 31 entradas foram
+muda entre as passadas, a paginação permanece estável. Todas as entradas foram
 conferidas contra a página real.
 
 Título, texto e figura ficam no mesmo bloco coeso, para não deixar título órfão
