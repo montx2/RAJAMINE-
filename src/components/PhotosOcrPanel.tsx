@@ -2,7 +2,8 @@ import { useRef, useState } from 'react';
 import { Upload, Camera, ScanLine, Trash2, FlaskConical, ImagePlus, Loader2, ShieldCheck, Shuffle, Images } from 'lucide-react';
 import type { Photo, Report } from '../data/types';
 import { useStore } from '../store/useStore';
-import { savePhotoBytes, validateImageFile } from '../store/photos';
+import { demoThumb } from '../lib/demoThumb';
+import { resolvePhotoUrl, savePhotoBytes, validateImageFile } from '../store/photos';
 import { runOcr, demoOcrResult, generateSyntheticPhoto, newDetectionId, type OcrProgress } from '../services/ocr';
 import { uid } from '../lib/id';
 import { DEMO_PHOTOS, demoPhotoBySrc } from '../data/demoPhotos';
@@ -90,10 +91,7 @@ export default function PhotosOcrPanel({ report, actorName, canUpload, canValida
         await new Promise((r) => setTimeout(r, 900));
         result = demoOcrResult(photo.src ?? photo.nome);
       } else {
-        const url = photo.origem === 'demo' ? photo.src! : await (async () => {
-          const { resolvePhotoUrl } = await import('../store/photos');
-          return (await resolvePhotoUrl(photo))!;
-        })();
+        const url = photo.origem === 'demo' ? photo.src! : (await resolvePhotoUrl(photo))!;
         result = await runOcr(url, (p) => setBusy((b) => ({ ...b, [photo.id]: p })));
       }
       addDetection(report.id, {
@@ -144,7 +142,7 @@ export default function PhotosOcrPanel({ report, actorName, canUpload, canValida
                 Gerar foto sintética de teste
               </Button>
             </div>
-            <p className="mt-2 text-[11.5px] text-subtle">JPEG, PNG ou WebP · até 8 MB · validação de tipo e conteúdo</p>
+            <p className="mt-2 text-xs text-subtle">JPEG, PNG ou WebP · até 8 MB · validação de tipo e conteúdo</p>
             <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" multiple className="hidden" aria-label="Enviar fotografias"
               onChange={(e) => { if (e.target.files?.length) handleFiles(e.target.files); e.target.value = ''; }} />
           </div>
@@ -164,7 +162,7 @@ export default function PhotosOcrPanel({ report, actorName, canUpload, canValida
             </div>
             <div
               id="demo-photo"
-              role="listbox"
+              role="group"
               aria-labelledby="demo-photo-label"
               className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2 max-h-56 overflow-y-auto rounded-xl border border-border bg-muted/30 p-2"
             >
@@ -175,22 +173,21 @@ export default function PhotosOcrPanel({ report, actorName, canUpload, canValida
                   <button
                     key={d.src}
                     type="button"
-                    role="option"
-                    aria-selected={selected}
+                    aria-pressed={selected}
                     disabled={used}
                     title={used ? `${d.legenda} (já anexada)` : d.legenda}
                     onClick={() => setDemoPick(d.src)}
                     onDoubleClick={() => !used && addDemo(d.src)}
                     className={`relative rounded-lg overflow-hidden border-2 text-left transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-45 ${selected ? 'border-accent ring-2 ring-accent/25' : 'border-transparent hover:border-accent/50'}`}
                   >
-                    <img src={d.src} alt="" loading="lazy" decoding="async" className="h-16 w-full object-cover" />
-                    <span className="block px-1.5 py-1 text-[10px] leading-tight text-secondary bg-surface/95 line-clamp-2">{d.legenda}</span>
-                    {used && <span className="absolute top-1 right-1 rounded bg-black/70 px-1 text-[9px] font-bold text-white">anexada</span>}
+                    <img src={demoThumb(d.src)} alt="" width={360} height={197} loading="lazy" decoding="async" className="h-16 w-full object-cover" />
+                    <span className="block px-1.5 py-1 text-xs leading-tight text-secondary bg-surface/95 line-clamp-2">{d.legenda}</span>
+                    {used && <span className="absolute top-1 right-1 rounded bg-black/70 px-1 text-xs font-bold text-white">anexada</span>}
                   </button>
                 );
               })}
             </div>
-            <p className="text-[11.5px] text-subtle">
+            <p className="text-xs text-subtle">
               Selecione uma miniatura e clique em “Anexar selecionada” (ou dê duplo clique). Todas são imagens sintéticas de demonstração, não fotos reais de clientes.
             </p>
           </div>
@@ -210,7 +207,7 @@ export default function PhotosOcrPanel({ report, actorName, canUpload, canValida
           return (
             <div key={photo.id} className="card overflow-hidden flex flex-col">
               <div className="relative">
-                <PhotoImg photo={photo} className="w-full h-48" />
+                <PhotoImg thumb photo={photo} className="w-full h-48" />
                 <div className="absolute top-2 left-2 flex gap-1.5">
                   <Badge tone={photo.categoria === 'equipamento' ? 'blue' : 'slate'}>{photo.categoria}</Badge>
                   {photo.origem === 'demo' && <Badge tone="slate">demo</Badge>}

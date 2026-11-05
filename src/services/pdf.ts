@@ -1,7 +1,7 @@
 /*
   Geração REAL de PDFs no navegador com pdf-lib (MIT).
-  Layout alinhado aos documentos reais da SAFIP: título em preto, faixa amarela,
-  wordmark SAFIP, seções de visita técnica / atividade externa / semanal.
+  Layout alinhado aos documentos reais da operação: título em preto, faixa amarela,
+  marca Rajamine, seções de visita técnica / atividade externa / semanal.
   · Documento CLIENTE: sem fotografias internas; exige aprovação humana registrada.
   · Documento INTERNO: fotos, OCR, texto original, sensação do cliente, melhorias e histórico.
 */
@@ -9,6 +9,7 @@ import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from 'pdf
 import type { ActivityEntry, Client, Detection, Equipment, Photo, Report, Truck, User } from '../data/types';
 import { ACTIVITY_KIND_LABEL } from '../data/types';
 import { fmtDate, fmtDateTime, fmtKm } from '../lib/format';
+import { BRAND as MARCA } from '../lib/brand';
 import { verifyCode } from '../lib/id';
 
 const PAGE_W = 595.28;
@@ -75,17 +76,22 @@ class Flow {
     this.addPage(true);
   }
 
-  /** Wordmark SAFIP: o "I" usa o amarelo da marca e o mesmo corpo das demais letras. */
+  /** Marca Rajamine: ladrilho grafite com o "R" em estratos amarelos + nome em negrito. */
   private wordmark(x: number, y: number, size: number) {
-    this.page.drawText('SAF', { x, y, size, font: this.bold, color: INK });
-    const ix = x + this.bold.widthOfTextAtSize('SAF', size);
-    this.page.drawText('I', { x: ix, y, size, font: this.bold, color: BRAND });
-    this.page.drawText('P', { x: ix + this.bold.widthOfTextAtSize('I', size), y, size, font: this.bold, color: INK });
+    const tile = size * 1.45;
+    const bottom = y - size * 0.3;
+    const k = tile / 64;
+    const top = bottom + tile;
+    this.page.drawSvgPath('M14 0H50A14 14 0 0 1 64 14V50A14 14 0 0 1 50 64H14A14 14 0 0 1 0 50V14A14 14 0 0 1 14 0Z', { x, y: top, scale: k, color: INK, borderWidth: 0 });
+    for (const d of ['M15 13H24V51H15Z', 'M27 13H40L47 20V23H27Z', 'M27 26H47V29L40 36H27Z', 'M31 39H42L50 51H39Z']) {
+      this.page.drawSvgPath(d, { x, y: top, scale: k, color: BRAND, borderWidth: 0 });
+    }
+    this.page.drawText(MARCA.empresa, { x: x + tile + size * 0.45, y, size, font: this.bold, color: INK });
   }
 
-  /** Largura total do wordmark. */
+  /** Largura total da marca (ladrilho + espaço + nome). */
   private wordmarkWidth(size: number) {
-    return this.bold.widthOfTextAtSize('SAFIP', size);
+    return size * 1.45 + size * 0.45 + this.bold.widthOfTextAtSize(MARCA.empresa, size);
   }
 
   addPage(first = false) {
@@ -209,7 +215,7 @@ class Flow {
     const pages = this.doc.getPages();
     pages.forEach((p, i) => {
       p.drawLine({ start: { x: MARGIN, y: 50 }, end: { x: PAGE_W - MARGIN, y: 50 }, thickness: 0.6, color: BORDER });
-      const left = `SAFIP FieldOps · Gerado eletronicamente · Verificação ${verification}`;
+      const left = `${MARCA.nomeCompleto} · Gerado eletronicamente · Verificação ${verification}`;
       p.drawText(left, { x: MARGIN, y: 38, size: 7, font: this.font, color: MUTED });
       const right = `Página ${i + 1} de ${pages.length}`;
       p.drawText(right, { x: PAGE_W - MARGIN - this.font.widthOfTextAtSize(right, 7), y: 38, size: 7, font: this.font, color: MUTED });
@@ -243,8 +249,8 @@ export async function buildReportPdf(report: Report, refs: PdfRefs, kind: DocKin
   }
   const doc = await PDFDocument.create();
   doc.setTitle(`${report.codigo} — ${clientTitle(report, kind)}`);
-  doc.setAuthor('SAFIP FieldOps');
-  doc.setCreator('SAFIP FieldOps — protótipo');
+  doc.setAuthor(MARCA.nomeCompleto);
+  doc.setCreator(`${MARCA.nomeCompleto} — protótipo`);
   doc.setProducer('pdf-lib');
   doc.setCreationDate(new Date());
 
@@ -343,9 +349,9 @@ export async function buildWeeklyPdf(
   if (notApproved.length) throw new Error(`O consolidado semanal exige aprovação humana de todos os relatórios selecionados. Pendentes: ${notApproved.map((r) => r.codigo).join(', ')}.`);
 
   const doc = await PDFDocument.create();
-  doc.setTitle(`SAFIP — Relatório semanal de viagens ${periodo.inicio} a ${periodo.fim}`);
-  doc.setAuthor('SAFIP FieldOps');
-  doc.setCreator('SAFIP FieldOps — protótipo');
+  doc.setTitle(`${MARCA.empresa} — Relatório semanal de viagens ${periodo.inicio} a ${periodo.fim}`);
+  doc.setAuthor(MARCA.nomeCompleto);
+  doc.setCreator(`${MARCA.nomeCompleto} — protótipo`);
   doc.setProducer('pdf-lib');
   const font = await doc.embedFont(StandardFonts.Helvetica);
   const bold = await doc.embedFont(StandardFonts.HelveticaBold);
@@ -353,7 +359,7 @@ export async function buildWeeklyPdf(
   const f = new Flow(doc, font, bold, mono, `SEM-${periodo.inicio}`, 'cliente', 'RELATÓRIO SEMANAL - VIAGENS');
 
   f.paragraph(`Data: ${fmtDate((periodo.emissao ?? periodo.fim) + 'T12:00:00')}`, { font: bold });
-  f.paragraph(`O presente relatório tem como finalidade documentar as atividades de instalações, manutenções, reuniões e treinamentos realizados pela Equipe SAFIP, no período de ${fmtDate(periodo.inicio + 'T12:00:00')} a ${fmtDate(periodo.fim + 'T12:00:00')}, de forma presencial em empresas clientes, com o intuito de organizar e aprimorar nossos processos.`);
+  f.paragraph(`O presente relatório tem como finalidade documentar as atividades de instalações, manutenções, reuniões e treinamentos realizados pela Equipe ${MARCA.empresa}, no período de ${fmtDate(periodo.inicio + 'T12:00:00')} a ${fmtDate(periodo.fim + 'T12:00:00')}, de forma presencial em empresas clientes, com o intuito de organizar e aprimorar nossos processos.`);
 
   const byClient = new Map<string, Report[]>();
   for (const r of reports) {

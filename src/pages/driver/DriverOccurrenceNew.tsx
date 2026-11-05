@@ -132,7 +132,7 @@ export default function DriverOccurrenceNew() {
         </div>
         <div className="flex flex-wrap gap-1.5">
           {DEMO_PHOTOS.slice(0, 8).map((d) => (
-            <button key={d.src} type="button" onClick={() => addDemo(d.src)} title={d.legenda} className="press rounded-lg border border-border px-2 py-1 text-[11px] text-secondary hover:border-accent/50 cursor-pointer">
+            <button key={d.src} type="button" onClick={() => addDemo(d.src)} title={d.legenda} className="press rounded-lg border border-border px-2 py-1 text-xs text-secondary hover:border-accent/50 cursor-pointer">
               + {d.src.replace('/demo/foto-', '').replace('.jpg', '')}
             </button>
           ))}
@@ -141,7 +141,7 @@ export default function DriverOccurrenceNew() {
           <div className="grid grid-cols-3 gap-2">
             {fotos.map((f) => (
               <div key={f.id} className="relative">
-                <PhotoImg photo={f} className="h-20 w-full rounded-lg" />
+                <PhotoImg thumb photo={f} className="h-20 w-full rounded-lg" />
                 <button type="button" onClick={() => setFotos((x) => x.filter((y) => y.id !== f.id))} className="absolute top-1 right-1 rounded-lg bg-black/60 p-1 text-white cursor-pointer" aria-label={`Remover ${f.nome}`}>
                   <Trash2 size={12} />
                 </button>
@@ -149,7 +149,7 @@ export default function DriverOccurrenceNew() {
             ))}
           </div>
         )}
-        <p className="text-[11.5px] text-subtle">JPEG/PNG/WebP até 8 MB. Imagens demonstrativas são sintéticas.</p>
+        <p className="text-xs text-subtle">JPEG/PNG/WebP até 8 MB. Imagens demonstrativas são sintéticas.</p>
       </div>
 
       <Button variant="primary" size="lg" className="w-full" icon={<Send size={17} />} loading={saving} onClick={submit} disabled={!caminhaoId || descricao.trim().length < 10}>

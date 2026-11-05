@@ -1,4 +1,4 @@
-/* Modelo de domínio do SAFIP FieldOps.
+/* Modelo de domínio do Rajamine FieldOps.
    O modelo diferencia EQUIPAMENTO DO CLIENTE (ex.: SA-101, VA-205) dos
    DISPOSITIVOS embarcados (telemetria, tablet Pulsus, câmera de fadiga, Galileo).
    No protótipo, persistido em localStorage (metadados) + IndexedDB (fotos).
@@ -233,7 +233,7 @@ export interface Report {
   equipamentosIds: string[];
   enviadoCliente: boolean;
 
-  // Campos alinhados aos documentos reais da SAFIP
+  // Campos alinhados aos documentos reais da operação
   tipo?: ReportKind;
   setor?: string;
   cidadeBairro?: string;

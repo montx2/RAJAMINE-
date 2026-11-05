@@ -9,7 +9,7 @@ Respostas prontas para colar. Baseadas no que o artefato realmente faz
 
 ### Versão recomendada (~120 palavras)
 
-Desenvolvemos o SAFIP FieldOps, uma aplicação web que organiza o ciclo do
+Desenvolvemos o Rajamine FieldOps, uma aplicação web que organiza o ciclo do
 relatório de campo — do preenchimento na operação até a entrega do PDF ao
 cliente — mantendo a decisão sempre com uma pessoa.
 

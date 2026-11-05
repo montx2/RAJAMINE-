@@ -46,7 +46,7 @@ export default function Weekly() {
     try {
       const bytes = await buildWeeklyPdf(chosen, refsFor, { inicio, fim });
       if (asPreview) setPreview(pdfBlobUrl(bytes));
-      else { downloadBytes(bytes, `safip-semanal-${inicio}-a-${fim}.pdf`); toast('Consolidado semanal gerado.'); }
+      else { downloadBytes(bytes, `rajamine-semanal-${inicio}-a-${fim}.pdf`); toast('Consolidado semanal gerado.'); }
     } catch (e) {
       toast(e instanceof Error ? e.message : 'Falha ao gerar consolidado.', 'error');
     } finally { setBusy(false); }
@@ -122,7 +122,7 @@ export default function Weekly() {
       {preview && (
         <Modal open onClose={() => { URL.revokeObjectURL(preview); setPreview(null); }} title="Consolidado semanal" wide
           footer={<Button variant="ghost" onClick={() => { URL.revokeObjectURL(preview); setPreview(null); }}>Fechar</Button>}>
-          <iframe src={preview} title="Pré-visualização do consolidado semanal" className="w-full h-[65vh] rounded-lg border border-border bg-muted" />
+          <iframe src={preview} title="Pré-visualização do consolidado semanal" className="w-full h-[65dvh] rounded-lg border border-border bg-muted" />
         </Modal>
       )}
     </div>

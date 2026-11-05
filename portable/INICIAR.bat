@@ -1,6 +1,6 @@
 @echo off
 setlocal
-title SAFIP FieldOps
+title Rajamine FieldOps
 cd /d "%~dp0"
 
 where powershell >nul 2>nul

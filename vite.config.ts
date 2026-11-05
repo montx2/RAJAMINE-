@@ -17,7 +17,4 @@ export default defineConfig({
     port: 4173,
     allowedHosts: true,
   },
-  build: {
-    chunkSizeWarningLimit: 1600,
-  },
 });

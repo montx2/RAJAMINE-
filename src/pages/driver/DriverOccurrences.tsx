@@ -80,17 +80,17 @@ export default function DriverOccurrences() {
             <p className="text-[13.5px] text-secondary leading-relaxed">{detail.descricao}</p>
             {detail.fotos.length > 0 && (
               <div className="grid grid-cols-2 gap-2">
-                {detail.fotos.map((f) => <PhotoImg key={f.id} photo={f} className="h-32 w-full rounded-xl" />)}
+                {detail.fotos.map((f) => <PhotoImg thumb key={f.id} photo={f} className="h-32 w-full rounded-xl" />)}
               </div>
             )}
             {detail.resposta && (
               <div className="rounded-xl bg-success-soft/60 border border-success/20 p-3 text-[13px] text-success">
                 <strong>Resposta da coordenação:</strong> {detail.resposta}
-                {detail.resolvidaPor && <div className="text-[11.5px] mt-1 opacity-80">{detail.resolvidaPor} · {detail.resolvidaEm ? fmtDateTime(detail.resolvidaEm) : ''}</div>}
+                {detail.resolvidaPor && <div className="text-xs mt-1 opacity-80">{detail.resolvidaPor} · {detail.resolvidaEm ? fmtDateTime(detail.resolvidaEm) : ''}</div>}
               </div>
             )}
             <div>
-              <h3 className="text-[11px] font-bold uppercase tracking-wider text-subtle mb-2">Histórico</h3>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-subtle mb-2">Histórico</h3>
               <ol className="space-y-2">
                 {detail.historico.map((h) => (
                   <li key={h.id} className="flex items-start gap-2 text-[12.5px]">

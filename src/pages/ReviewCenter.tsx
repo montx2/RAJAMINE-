@@ -35,7 +35,7 @@ export default function ReviewCenter() {
         subtitle="Fila da responsável. Aprovação humana obrigatória antes do cliente."
       />
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 min-[440px]:grid-cols-3 gap-3">
         <div className="card p-4 text-center">
           <div className="text-[24px] font-semibold text-accent tabular-nums">{queue.length}</div>
           <div className="text-[12px] font-semibold text-subtle">na fila de revisão</div>
@@ -113,7 +113,7 @@ export default function ReviewCenter() {
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="mono font-bold text-[13.5px] text-primary">{r.codigo}</span>
                     <span className="text-[12.5px] text-subtle">{colab?.nome}</span>
-                    {nota && <span className="text-[11.5px] text-subtle">· solicitado {fmtDateTime(nota.criadaEm)}</span>}
+                    {nota && <span className="text-xs text-subtle">· solicitado {fmtDateTime(nota.criadaEm)}</span>}
                   </div>
                   {nota && <p className="text-[12.5px] text-secondary mt-1 line-clamp-2">{nota.texto}</p>}
                 </button>

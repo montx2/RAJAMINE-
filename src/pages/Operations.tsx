@@ -30,7 +30,7 @@ export default function Operations() {
 
   const exportCsv = () => {
     const bytes = new TextEncoder().encode('\uFEFF' + toCsv(filtered));
-    downloadBytes(bytes, `safip-operacoes-${new Date().toISOString().slice(0, 10)}.csv`, 'text/csv;charset=utf-8');
+    downloadBytes(bytes, `rajamine-operacoes-${new Date().toISOString().slice(0, 10)}.csv`, 'text/csv;charset=utf-8');
     toast('CSV exportado.');
   };
 
@@ -65,7 +65,7 @@ export default function Operations() {
             <thead className="border-b border-border bg-muted/40">
               <tr>
                 {['Data', 'Cliente', 'Técnico', 'Equipamento', 'Atividade', 'Dispositivos', 'Fotos'].map((h) => (
-                  <th key={h} className="th">{h}</th>
+                  <th key={h} scope="col" className="th">{h}</th>
                 ))}
               </tr>
             </thead>

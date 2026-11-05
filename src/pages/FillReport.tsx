@@ -201,7 +201,7 @@ export default function FillReport() {
                 i < step ? 'bg-success border-success text-primary-foreground' : i === step ? 'border-accent bg-accent-soft text-accent' : 'border-border bg-surface text-subtle')}>
                 {i < step ? <Check size={15} /> : <s.icon size={15} aria-hidden />}
               </span>
-              <span className={cn('text-[10.5px] sm:text-[11.5px] font-bold text-center leading-tight', i === step ? 'text-accent' : 'text-subtle')}>
+              <span className={cn('text-xs sm:text-xs font-bold text-center leading-tight', i === step ? 'text-accent' : 'text-subtle')}>
                 {s.label}
               </span>
             </button>
@@ -294,7 +294,7 @@ export default function FillReport() {
             <p className="text-[12.5px] text-subtle">Escreva no seu estilo. O sistema sugere a padronização para 3ª pessoa sem alterar os fatos — e você decide se aceita.</p>
             <Textarea value={form.descricao} onChange={(e) => setForm((f) => ({ ...f, descricao: e.target.value }))} onBlur={persist}
               placeholder="Ex.: Foi realizado instalação do equipamento SA-101, telemetria numero 0187…" className="min-h-[150px]" aria-label="Descrição das atividades" />
-            <div className="text-[11.5px] text-subtle text-right">{form.descricao.trim().length} caracteres</div>
+            <div className="text-xs text-subtle text-right">{form.descricao.trim().length} caracteres</div>
           </div>
           {(form.descricao.trim().length >= 20 || atividades.length > 0) && (
             <PadronizacaoPanel report={{ ...report, descricaoAtual: form.descricao, atividades, objetivo: form.objetivo, periodoInicio: form.periodoInicio, periodoFim: form.periodoFim, tipo: form.tipo }} actorName={colab?.nome ?? 'Colaborador'} canEdit />
@@ -311,13 +311,13 @@ export default function FillReport() {
           <div className="card p-5">
             <h2 className="section-title mb-4">Confira antes de enviar</h2>
             <dl className="grid sm:grid-cols-2 gap-x-6 gap-y-3 text-[13.5px]">
-              <div><dt className="text-[11px] font-bold uppercase tracking-wider text-subtle">Tipo</dt><dd>{REPORT_KIND_LABEL[form.tipo]}</dd></div>
-              <div><dt className="text-[11px] font-bold uppercase tracking-wider text-subtle">Período</dt><dd>{fmtDate(form.periodoInicio + 'T12:00:00')} → {fmtDate(form.periodoFim + 'T12:00:00')}</dd></div>
-              <div><dt className="text-[11px] font-bold uppercase tracking-wider text-subtle">Objetivo</dt><dd>{form.objetivo || '—'}</dd></div>
-              <div><dt className="text-[11px] font-bold uppercase tracking-wider text-subtle">Atividades / Fotos</dt><dd>{atividades.length} atividade(s) · {report.fotos.length} foto(s)</dd></div>
+              <div><dt className="text-xs font-bold uppercase tracking-wider text-subtle">Tipo</dt><dd>{REPORT_KIND_LABEL[form.tipo]}</dd></div>
+              <div><dt className="text-xs font-bold uppercase tracking-wider text-subtle">Período</dt><dd>{fmtDate(form.periodoInicio + 'T12:00:00')} → {fmtDate(form.periodoFim + 'T12:00:00')}</dd></div>
+              <div><dt className="text-xs font-bold uppercase tracking-wider text-subtle">Objetivo</dt><dd>{form.objetivo || '—'}</dd></div>
+              <div><dt className="text-xs font-bold uppercase tracking-wider text-subtle">Atividades / Fotos</dt><dd>{atividades.length} atividade(s) · {report.fotos.length} foto(s)</dd></div>
             </dl>
             <div className="mt-4 rounded-lg bg-muted/50 p-4">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-subtle mb-1.5">Descrição que será enviada</div>
+              <div className="text-xs font-bold uppercase tracking-wider text-subtle mb-1.5">Descrição que será enviada</div>
               <p className="text-[13.5px] text-secondary whitespace-pre-wrap">{report.descricaoAtual || form.descricao || '(sem relato livre)'}</p>
             </div>
             <div className="grid sm:grid-cols-2 gap-3 mt-4">
@@ -346,21 +346,21 @@ export default function FillReport() {
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-background">
-      <header className="glass-dark border-b border-white/10">
+    <div className="min-h-dvh bg-background">
+      <header className="glass-dark border-b border-white/10 pt-safe">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <LogoMark size={32} />
             <div className="leading-none">
-              <Wordmark className="text-[16px]" />
-              <div className="text-[10.5px] text-subtle mt-0.5">Preenchimento de relatório de campo</div>
+              <Wordmark className="text-[19px]" />
+              <div className="text-xs text-zinc-400 mt-1">Preenchimento de relatório de campo</div>
             </div>
           </div>
           <Badge tone="amber" className="bg-brand/10 text-brand">link individual</Badge>
         </div>
       </header>
       <main className="max-w-2xl mx-auto px-4 py-6">{children}</main>
-      <footer className="max-w-2xl mx-auto px-4 pb-8 text-center text-[11px] text-subtle">
+      <footer className="max-w-2xl mx-auto px-4 pb-8 pb-safe text-center text-xs text-subtle">
         Protótipo · dados sintéticos · processamento local (OCR e padronização)
       </footer>
     </div>

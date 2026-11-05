@@ -61,7 +61,7 @@ export default function Registry() {
             <div className="overflow-x-auto">
               <table className="w-full min-w-[720px]">
                 <thead className="bg-muted/50 border-b border-border">
-                  <tr><th className="th">Colaborador</th><th className="th">Cargo</th><th className="th">Perfil de acesso</th><th className="th">Relatórios</th><th className="th">Situação</th></tr>
+                  <tr><th scope="col" className="th">Colaborador</th><th scope="col" className="th">Cargo</th><th scope="col" className="th">Perfil de acesso</th><th scope="col" className="th">Relatórios</th><th scope="col" className="th">Situação</th></tr>
                 </thead>
                 <tbody className="divide-y divide-border/70">
                   {users.map((u) => {

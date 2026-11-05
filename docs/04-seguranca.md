@@ -68,7 +68,7 @@ Referências consultadas (READMEs/licenças/manutenção verificados via GitHub 
 # Exemplo de etapa (GitHub Actions) — não executada neste sandbox
 - uses: zaproxy/action-baseline@v0.14.0
   with:
-    target: 'https://homolog.safip.example'
+    target: 'https://homolog.rajamine.example'
     rules_file_name: '.zap/rules.tsv'
 ```
 

@@ -107,7 +107,7 @@ export default function DetectionCard({ report, detection, actorName, canValidat
                   </Badge>
                   <span className="text-[12px] text-subtle tabular-nums">{m.candidate.confianca}%</span>
                   {m.candidate.valor !== m.candidate.normalizado && (
-                    <span className="text-[11.5px] text-subtle">lido: “{m.candidate.valor}” (caracteres corrigidos)</span>
+                    <span className="text-xs text-subtle">lido: “{m.candidate.valor}” (caracteres corrigidos)</span>
                   )}
                 </div>
                 <div className="mt-1 text-[12.5px]">
@@ -131,7 +131,7 @@ export default function DetectionCard({ report, detection, actorName, canValidat
       {detection.textoBruto && (
         <details className="text-[12px] text-subtle">
           <summary className="cursor-pointer font-semibold hover:text-secondary">Texto bruto reconhecido</summary>
-          <pre className="mt-2 whitespace-pre-wrap rounded-lg bg-primary text-slate-200 px-3 py-2 text-[11.5px] font-mono">{detection.textoBruto}</pre>
+          <pre className="mt-2 whitespace-pre-wrap rounded-lg bg-primary text-slate-200 px-3 py-2 text-xs font-mono">{detection.textoBruto}</pre>
         </details>
       )}
 

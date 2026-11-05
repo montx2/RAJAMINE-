@@ -114,7 +114,7 @@ export default function DriverOps() {
           <div className="card overflow-x-auto">
             <table className="w-full min-w-[640px]">
               <thead className="bg-muted/50 border-b border-border">
-                <tr><th className="th">Motorista</th><th className="th">Caminhão</th><th className="th">Data/turno</th><th className="th">Progresso</th><th className="th">Falhas</th><th className="th">Status</th></tr>
+                <tr><th scope="col" className="th">Motorista</th><th scope="col" className="th">Caminhão</th><th scope="col" className="th">Data/turno</th><th scope="col" className="th">Progresso</th><th scope="col" className="th">Falhas</th><th scope="col" className="th">Status</th></tr>
               </thead>
               <tbody className="divide-y divide-border/70">
                 {myChecklists.map((c) => {
@@ -155,7 +155,7 @@ export default function DriverOps() {
             <p className="text-[13.5px] text-secondary leading-relaxed">{detail.descricao}</p>
             {detail.fotos.length > 0 && (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                {detail.fotos.map((f) => <PhotoImg key={f.id} photo={f} className="h-28 w-full rounded-xl" />)}
+                {detail.fotos.map((f) => <PhotoImg thumb key={f.id} photo={f} className="h-28 w-full rounded-xl" />)}
               </div>
             )}
             <div className="grid sm:grid-cols-2 gap-3 text-[12.5px] text-subtle">
@@ -170,11 +170,11 @@ export default function DriverOps() {
             {detail.resposta && (
               <div className="rounded-xl bg-success-soft/60 border border-success/20 p-3 text-[13px] text-success">
                 <strong>Resposta registrada:</strong> {detail.resposta}
-                <div className="text-[11.5px] mt-1 opacity-80">{detail.resolvidaPor} · {detail.resolvidaEm ? fmtDateTime(detail.resolvidaEm) : ''}</div>
+                <div className="text-xs mt-1 opacity-80">{detail.resolvidaPor} · {detail.resolvidaEm ? fmtDateTime(detail.resolvidaEm) : ''}</div>
               </div>
             )}
             <div>
-              <h3 className="text-[11px] font-bold uppercase tracking-wider text-subtle mb-2">Histórico</h3>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-subtle mb-2">Histórico</h3>
               <ol className="space-y-2">
                 {detail.historico.map((h) => (
                   <li key={h.id} className="text-[12.5px] text-secondary"><strong>{h.acao}</strong> — {h.ator}<div className="text-subtle">{h.detalhe} · {fmtDateTime(h.em)}</div></li>

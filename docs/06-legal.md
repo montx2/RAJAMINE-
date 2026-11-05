@@ -67,7 +67,7 @@ Fonte: [texto oficial](https://www.gov.br/anpd/pt-br/acesso-a-informacao/institu
 - **Art. 4º**: alto risco = ao menos um critério **geral** (larga escala OU afetação significativa de direitos) **+** um **específico** (tecnologias emergentes; vigilância de zonas públicas; decisões unicamente automatizadas; dados sensíveis/crianças/adolescentes/idosos), **cumulativamente**.
 - Flexibilizações: registro simplificado (art. 9º), **dispensa de indicar encarregado** com canal de comunicação (art. 11), medidas/policy de segurança simplificadas (arts. 12–13), **prazos em dobro** (art. 14, inclusive incidentes na forma da Res. 15/2024).
 
-**Aplicação à SAFIP — sem presunção:** o enquadramento depende do faturamento e da estrutura societária (dados que não temos). O uso de OCR/IA é "tecnologia emergente" (critério específico), mas o alto risco exige **também** um critério geral — a avaliar (número de titulares, escala, impacto). **Não presumimos o enquadramento nem a dispensa de DPO.** Recomendação: manter encarregado/canal e adotar as boas práticas mesmo se houver dispensa (contam na dosimetria, art. 52, §1º, IX da LGPD).
+**Aplicação à Rajamine — sem presunção:** o enquadramento depende do faturamento e da estrutura societária (dados que não temos). O uso de OCR/IA é "tecnologia emergente" (critério específico), mas o alto risco exige **também** um critério geral — a avaliar (número de titulares, escala, impacto). **Não presumimos o enquadramento nem a dispensa de DPO.** Recomendação: manter encarregado/canal e adotar as boas práticas mesmo se houver dispensa (contam na dosimetria, art. 52, §1º, IX da LGPD).
 
 ## 6. Guia de Segurança da Informação da ANPD (pequeno porte)
 

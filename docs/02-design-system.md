@@ -13,7 +13,7 @@ A plataforma desta sessão não instala "skills" nativamente, então — conform
 ```bash
 python3 design_system.py \
   "enterprise B2B SaaS dashboard field operations report management mining industrial professional trustworthy" \
-  -p "SAFIP FieldOps" -f markdown
+  -p "Rajamine FieldOps" -f markdown
 ```
 
 A saída completa está preservada em [design-system-output.md](design-system-output.md). Também consultamos os domínios `chart` (dashboards) e `ux` (formulários, tabelas, feedback, acessibilidade) e aplicamos as diretrizes no código.
@@ -68,19 +68,23 @@ Componentes consistentes em `src/components/ui.tsx`: Button (6 variantes), Badge
 - [x] Chips/badges sem clipping; truncamento com acesso ao valor
 - [x] Responsivo 375 / 768 / 1024 / 1440 (sidebar → drawer + bottom nav)
 
-## 6. Adaptação à identidade real da SAFIP
+## 6. Identidade Rajamine
 
-Após receber os documentos reais da empresa, a paleta inicial (navy/azul) foi substituída pela identidade observada: **grafite/preto + amarelo/âmbar**.
+A paleta inicial (navy/azul) foi substituída por **grafite/preto + amarelo-segurança**, a identidade observada nos documentos de exemplo do desafio e coerente com o setor (sinalização industrial de mineração).
 
 | Token | Valor | Uso |
 |---|---|---|
 | `--color-primary` | `#18181B` | Sidebar, títulos, texto principal |
-| `--color-brand` | `#FFC400` | Wordmark Mine, faixas de PDF, destaques de marca |
-| `--color-accent` | `#B45309` | Links, tabs, CTAs secundários (âmbar escuro para contraste AA sobre branco) |
+| `--color-brand` | `#FFC400` | Marca, faixas de PDF, filete de sinalização (`hazard`) |
+| `--color-accent` | `#A34A08` | Links, CTAs secundários (âmbar escuro, 5,06:1 sobre o fundo) |
 | `--color-accent-soft` | `#FEF3C7` | Fundos suaves de seleção/avisos |
-| `--color-background` | `#FAFAF9` | Fundo geral |
+| `--color-background` | `#EEEDE9` | Fundo geral |
 
-O wordmark `SAFIP` foi aproximado tipograficamente para o protótipo; não é o vetor oficial. O destaque do nome fica só na cor: `SAF` e `P` usam o grafite/branco do texto e apenas o `I` recebe o amarelo da marca (`#FFC400`). Os PDFs usam título preto + faixa amarela + wordmark no canto, como nos documentos reais. A base de acessibilidade do UI UX Pro Max (foco visível, reduced-motion, labels, contraste) foi mantida.
+**Marca (`src/components/Logo.tsx`).** Um "R" montado em estratos: a haste é o furo de sondagem e as três lâminas à direita são as bancadas empilhadas de uma cava; a terceira vira a perna do "R". Grade 64×64, vão constante de 3 unidades, legível em 16 px (favicon) e em monocromia. O nome é texto real em Barlow Semi Condensed 700, seguido de "FieldOps". O mesmo desenho é usado no favicon, nos ícones PWA e nos PDFs. Todo texto de marca vem de `src/lib/brand.ts`: trocar o nome é editar um arquivo.
+
+**Tipografia.** IBM Plex Sans (texto), Barlow Semi Condensed (títulos, KPIs e marca) e JetBrains Mono (IDs operacionais). Piso de 12 px para qualquer texto.
+
+Os PDFs usam título preto + faixa amarela + marca no canto. A base de acessibilidade do UI UX Pro Max (foco visível, reduced-motion, labels, contraste) foi mantida.
 
 ## 7. Reformulação v3 — “Liquid Glass Clean” (pedido do usuário)
 

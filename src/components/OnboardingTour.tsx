@@ -332,7 +332,7 @@ export default function OnboardingTour({ variant = 'gestao' }: { variant?: 'gest
             <>
               <div className="flex items-center gap-2 text-subtle">
                 <Check size={15} aria-hidden />
-                <span className="text-[11px] font-semibold uppercase tracking-[0.1em]">Guia concluído</span>
+                <span className="text-xs font-semibold uppercase tracking-[0.1em]">Guia concluído</span>
               </div>
               <p className="text-[13px] text-secondary mt-3 leading-relaxed">
                 As áreas principais foram apresentadas. Este guia continua disponível no ícone de ajuda da barra superior.
@@ -344,7 +344,7 @@ export default function OnboardingTour({ variant = 'gestao' }: { variant?: 'gest
           ) : (
             <>
               <div className="flex items-start justify-between gap-3">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-subtle mt-0.5">{counter}</span>
+                <span className="text-xs font-semibold uppercase tracking-[0.1em] text-subtle mt-0.5">{counter}</span>
                 <button onClick={finish} className="press -mt-1 -mr-1.5 p-1.5 rounded-md text-subtle hover:text-primary hover:bg-primary/5 cursor-pointer" aria-label="Encerrar guia">
                   <X size={14} />
                 </button>

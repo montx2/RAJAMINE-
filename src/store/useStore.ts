@@ -8,7 +8,8 @@
   · OCR só associa equipamento após confirmação humana.
 */
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
+import { createDeferredStorage } from './deferredStorage';
 import { clear } from 'idb-keyval';
 import type {
   User, Client, Truck, Equipment, Report, Notification, Session, Photo, Detection,
@@ -717,7 +718,7 @@ export const useStore = create<State>()(
     },
     {
       name: 'safip-fieldops-v2',
-      storage: createJSONStorage(() => localStorage),
+      storage: createDeferredStorage<State>(),
       version: 4,
       migrate: (persisted, version) => {
         const s = (persisted ?? {}) as Partial<State>;

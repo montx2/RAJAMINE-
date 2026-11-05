@@ -14,7 +14,7 @@ export default function Timeline({ events }: { events: AuditEvent[] }) {
           </span>
           <div className="text-[13.5px] font-semibold text-foreground">{e.acao}</div>
           {e.detalhe && <div className="text-[12.5px] text-subtle mt-0.5">{e.detalhe}</div>}
-          <div className="text-[11.5px] text-subtle/80 mt-1 flex items-center gap-1.5">
+          <div className="text-xs text-subtle/80 mt-1 flex items-center gap-1.5">
             <History size={11} aria-hidden />
             {fmtDateTime(e.em)} · {e.ator}
           </div>

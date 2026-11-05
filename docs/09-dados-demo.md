@@ -32,7 +32,7 @@ colaborador, planilha ou relatório da empresa é utilizado, persistido ou exibi
 
 ## Limites
 
-- A base não representa a operação real da SAFIP; serve apenas para demonstrar o fluxo.
+- A base não representa a operação real da Rajamine; serve apenas para demonstrar o fluxo.
 - Campos ausentes em operações reais não são inferidos; o modelo foi desenhado para
   aceitá-los quando a empresa optar por importar dados reais em produção.
 - Imagens de campo são sintéticas (`public/demo/`), não são fotos reais da empresa.
