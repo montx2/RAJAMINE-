@@ -1,0 +1,26 @@
+import { launch } from './lib.mjs';
+const { browser, context } = await launch({ width: 1500, height: 1000 });
+const page = await context.newPage();
+await page.goto('http://localhost:5173/login', { waitUntil: 'networkidle' });
+await page.getByRole('button', { name: /Acesso de demonstração/ }).click();
+await page.waitForTimeout(400);
+await page.getByRole('button', { name: /Link individual do colaborador/ }).click();
+await page.waitForTimeout(1200);
+await page.getByRole('button', { name: /Continuar/ }).click();
+await page.waitForTimeout(300);
+await page.getByLabel('Descrição das atividades').fill('Instalação concluída em campo.');
+await page.getByRole('button', { name: /Continuar/ }).click();
+await page.waitForTimeout(600);
+// upload do crop da etiqueta
+await page.setInputFiles('input[type=file]', ['assets/etiqueta-sa101.jpg']);
+await page.waitForTimeout(1500);
+await page.getByRole('button', { name: /Executar OCR/ }).first().click();
+await page.waitForTimeout(1000);
+const t0 = Date.now();
+await page.locator('text=/OCR concluído|SIMULADO|indisponível/').first().waitFor({ timeout: 180000 }).catch(() => console.log('timeout'));
+console.log('ocr secs', (Date.now() - t0) / 1000);
+await page.waitForTimeout(1500);
+const card = await page.locator('div').filter({ hasText: /Leitura de identificação/ }).last().innerText().catch(() => 'no card');
+console.log('---CARD---\n' + card.slice(0, 900));
+await page.screenshot({ path: 'out/z-ocr-crop.png', fullPage: true });
+await browser.close();
