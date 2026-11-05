@@ -1,7 +1,7 @@
 /*
   Geração REAL de PDFs no navegador com pdf-lib (MIT).
   Layout alinhado aos documentos reais da operação: título em preto, faixa amarela,
-  marca Rajamine, seções de visita técnica / atividade externa / semanal.
+  marca SAFIP, seções de visita técnica / atividade externa / semanal.
   · Documento CLIENTE: sem fotografias internas; exige aprovação humana registrada.
   · Documento INTERNO: fotos, OCR, texto original, sensação do cliente, melhorias e histórico.
 */
@@ -76,17 +76,28 @@ class Flow {
     this.addPage(true);
   }
 
-  /** Marca Rajamine: ladrilho grafite com o "R" em estratos amarelos + nome em negrito. */
+  /** Marca SAFIP: ladrilho grafite com montanha amarela + wordmark com "I" amarelo. */
   private wordmark(x: number, y: number, size: number) {
     const tile = size * 1.45;
     const bottom = y - size * 0.3;
     const k = tile / 64;
     const top = bottom + tile;
     this.page.drawSvgPath('M14 0H50A14 14 0 0 1 64 14V50A14 14 0 0 1 50 64H14A14 14 0 0 1 0 50V14A14 14 0 0 1 14 0Z', { x, y: top, scale: k, color: INK, borderWidth: 0 });
-    for (const d of ['M15 13H24V51H15Z', 'M27 13H40L47 20V23H27Z', 'M27 26H47V29L40 36H27Z', 'M31 39H42L50 51H39Z']) {
-      this.page.drawSvgPath(d, { x, y: top, scale: k, color: BRAND, borderWidth: 0 });
+    this.page.drawSvgPath('M14 44 L24 20 L34 34 L40 26 L50 44 Z', { x, y: top, scale: k, color: BRAND, borderWidth: 0 });
+    this.page.drawSvgPath('M12 48 H52', { x, y: top, scale: k, borderColor: BRAND, borderWidth: 3 * k });
+    const nome = MARCA.empresa;
+    const tx = x + tile + size * 0.45;
+    const i = nome.indexOf('I');
+    if (i >= 0) {
+      const before = nome.slice(0, i);
+      const after = nome.slice(i + 1);
+      this.page.drawText(before, { x: tx, y, size, font: this.bold, color: INK });
+      const ix = tx + this.bold.widthOfTextAtSize(before, size);
+      this.page.drawText(nome.charAt(i), { x: ix, y, size, font: this.bold, color: BRAND });
+      this.page.drawText(after, { x: ix + this.bold.widthOfTextAtSize(nome.charAt(i), size), y, size, font: this.bold, color: INK });
+    } else {
+      this.page.drawText(nome, { x: tx, y, size, font: this.bold, color: INK });
     }
-    this.page.drawText(MARCA.empresa, { x: x + tile + size * 0.45, y, size, font: this.bold, color: INK });
   }
 
   /** Largura total da marca (ladrilho + espaço + nome). */

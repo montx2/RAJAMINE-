@@ -1,7 +1,7 @@
-# Rajamine FieldOps
+# SAFIP FieldOps
 
 **Sistema de Gestão e Padronização de Relatórios de Campo**
-Protótipo funcional de alta fidelidade para a **Rajamine Inteligência em Mineração LTDA**.
+Protótipo funcional de alta fidelidade para a **SAFIP Inteligência em Mineração LTDA**.
 
 > Do link de preenchimento ao arquivo final: coleta móvel, padronização de textos, leitura de equipamentos por foto (OCR local no navegador), revisão humana obrigatória e geração de PDFs profissionais — com trilha de auditoria completa.
 >
@@ -110,7 +110,7 @@ O pacote usa apenas PowerShell (já incluso no Windows 10/11). Todos os assets (
 | Doc | Conteúdo |
 |---|---|
 | [01-diagnostico.md](docs/01-diagnostico.md) | Problema, gargalos, proposta e diferenciais |
-| [02-design-system.md](docs/02-design-system.md) | UI UX Pro Max + identidade Rajamine |
+| [02-design-system.md](docs/02-design-system.md) | UI UX Pro Max + identidade SAFIP |
 | [03-arquitetura.md](docs/03-arquitetura.md) | Stack, comparações, banco de dados, produção |
 | [04-seguranca.md](docs/04-seguranca.md) | OWASP (Top 10, ASVS 5.0, Cheat Sheets, API, ZAP) |
 | [05-ia-ocr.md](docs/05-ia-ocr.md) | IA/OCR, PaddleOCR × Tesseract, PDFs, IDs operacionais |

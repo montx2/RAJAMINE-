@@ -1,7 +1,7 @@
 {
-  "name": "Rajamine FieldOps — Portal do Motorista",
-  "short_name": "Rajamine Motorista",
-  "description": "Checklist diário, ocorrências e ciência de treinamentos para motoristas da Rajamine. Protótipo demonstrativo com sincronização simulada.",
+  "name": "SAFIP FieldOps — Portal do Motorista",
+  "short_name": "SAFIP Motorista",
+  "description": "Checklist diário, ocorrências e ciência de treinamentos para motoristas da SAFIP. Protótipo demonstrativo com sincronização simulada.",
   "id": "/motorista",
   "start_url": "/motorista",
   "scope": "/",

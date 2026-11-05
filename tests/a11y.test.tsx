@@ -148,12 +148,19 @@ describe('Marca', () => {
     render(<MemoryRouter initialEntries={['/login']}><AppRoutes /></MemoryRouter>);
     const text = document.body.textContent ?? '';
     expect(text).toContain(BRAND.razaoSocial);
-    expect(text).not.toMatch(/SAFIP/i);
+    expect(text).not.toMatch(/Rajamine/i);
     expect(screen.getByLabelText('E-mail').getAttribute('placeholder')).toContain(`@${BRAND.dominioDemo}`);
   });
 
+  it('a tela de acesso é só o formulário: sem painel institucional nem faixa listrada', () => {
+    render(<MemoryRouter initialEntries={['/login']}><AppRoutes /></MemoryRouter>);
+    expect(screen.queryByText('Do campo ao relatório aprovado.')).toBeNull();
+    expect(document.querySelector('aside')).toBeNull();
+    expect(document.querySelector('.hazard')).toBeNull();
+  });
+
   it('a marca desenhada no componente é a mesma do favicon e dos PDFs (uma só fonte)', () => {
-    const paths = ['M15 13H24V51H15Z', 'M27 13H40L47 20V23H27Z', 'M27 26H47V29L40 36H27Z', 'M31 39H42L50 51H39Z'];
+    const paths = ['M14 44 L24 20 L34 34 L40 26 L50 44 Z', 'M12 48 H52'];
     const fav = readFileSync('public/favicon.svg', 'utf8');
     const logo = readFileSync('src/components/Logo.tsx', 'utf8');
     const pdf = readFileSync('src/services/pdf.ts', 'utf8');

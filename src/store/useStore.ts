@@ -719,11 +719,12 @@ export const useStore = create<State>()(
     {
       name: 'safip-fieldops-v2',
       storage: createDeferredStorage<State>(),
-      version: 4,
+      version: 5,
       migrate: (persisted, version) => {
         const s = (persisted ?? {}) as Partial<State>;
-        if (version < 4) {
-          // Base 100% sintética: remove quaisquer dados de referência persistidos.
+        if (version < 5) {
+          // Base 100% sintética: recria o seed para não persistir o nome antigo
+          // nem e-mails de demonstração de outra marca em localStorage.
           return { ...buildSeed(), session: null } as State;
         }
         return s as State;

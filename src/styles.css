@@ -10,7 +10,7 @@
 @import "@fontsource/barlow-semi-condensed/latin-700.css";
 
 /*
-  Rajamine FieldOps — Design System v4 "Grafite e amarelo-segurança"
+  SAFIP FieldOps — Design System v4 "Grafite e amarelo-segurança"
   ------------------------------------------------------------------
   Base: UI UX Pro Max (Minimalism & Swiss).
   - Cartões sólidos com borda de 1 px. Desfoque (backdrop-filter) apenas em
@@ -214,11 +214,6 @@ h1, h2 { font-family: var(--font-display); }
   border: 1px solid var(--glass-dark-border);
   color: #fafafa;
 }
-/* Filete de sinalização: marca o ponto de atenção (bloqueio, destaque de marca). */
-@utility hazard {
-  background: repeating-linear-gradient(135deg, var(--color-brand) 0 10px, #18181b 10px 20px);
-}
-
 /* Áreas seguras (iPhone com entalhe/barra home): o app usa viewport-fit=cover. */
 @utility pt-safe { padding-top: env(safe-area-inset-top, 0px); }
 @utility pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }

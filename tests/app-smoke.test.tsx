@@ -66,7 +66,7 @@ describe('Renderização das telas', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Entrar' }));
     expect(screen.getByText('Formato de e-mail inválido.')).toBeTruthy();
 
-    fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'desconhecido@rajamine.demo' } });
+    fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'desconhecido@safip.demo' } });
     fireEvent.click(screen.getByRole('button', { name: 'Entrar' }));
     expect(screen.getByText('E-mail não encontrado neste ambiente.')).toBeTruthy();
     expect(useStore.getState().session).toBeNull();
@@ -74,7 +74,7 @@ describe('Renderização das telas', () => {
 
   it('login por e-mail corporativo autentica e leva ao destino do perfil', async () => {
     await renderAt('/login');
-    fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'HELENA.DUARTE@rajamine.demo' } });
+    fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'HELENA.DUARTE@safip.demo' } });
     fireEvent.change(screen.getByLabelText('Senha'), { target: { value: 'qualquer' } });
     fireEvent.click(screen.getByRole('button', { name: 'Entrar' }));
     await waitFor(() => expect(useStore.getState().session?.userId).toBe('u_helena'), { timeout: 2000 });

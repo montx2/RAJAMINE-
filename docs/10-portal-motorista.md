@@ -5,7 +5,7 @@
 
 ## 1. Objetivo
 
-Dar ao motorista da Rajamine um canal simples, mobile-first e instalável para:
+Dar ao motorista da SAFIP um canal simples, mobile-first e instalável para:
 
 1. ver **seu caminhão** e os equipamentos embarcados;
 2. preencher o **checklist diário por turno** (pneus, luzes, freios, espelhos, fixação, telemetria, tablet, câmera, Galileo, rastreador, sensor de carga);

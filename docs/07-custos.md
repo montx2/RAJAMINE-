@@ -1,6 +1,6 @@
 # 07 — Custos e Viabilidade (estimativas em R$)
 
-> **Premissas de volume** (a validar com a Rajamine): 100 relatórios/mês · 8 usuários internos · 4 fotos/relatório (~2 MB cada) · 2 PDFs/relatório (~300 KB) · crescimento de armazenamento ≈ 0,9 GB/mês · retenção de 5 anos para documentos.
+> **Premissas de volume** (a validar com a SAFIP): 100 relatórios/mês · 8 usuários internos · 4 fotos/relatório (~2 MB cada) · 2 PDFs/relatório (~300 KB) · crescimento de armazenamento ≈ 0,9 GB/mês · retenção de 5 anos para documentos.
 > **Câmbio de referência:** €1 = R$ 6,11 (03/11/2026, [currency.wiki](https://currency.wiki/eur-brl)). Valores em US$ são apresentados na moeda original quando o volume fica em faixa gratuita.
 
 ## 1. Cenário A — Protótipo / demonstração (o que foi entregue)

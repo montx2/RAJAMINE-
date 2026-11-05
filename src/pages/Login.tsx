@@ -2,7 +2,6 @@ import { useState, type FormEvent, type InputHTMLAttributes } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ChevronDown, Eye, EyeOff, ExternalLink } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
-import LoginArt from '../components/LoginArt';
 import { useStore } from '../store/useStore';
 import { Avatar, Button, Field, Input } from '../components/ui';
 import { Logo } from '../components/Logo';
@@ -29,13 +28,9 @@ function PasswordInput({ show, onToggle, className, ...rest }: InputHTMLAttribut
 }
 
 /**
- * Tela de acesso. No desktop, o painel grafite à esquerda apresenta o produto
- * com a rota do relatório (campo → revisão → aprovado); à direita, só o que
- * importa para entrar. No celular o painel vira uma faixa de marca no topo.
- * O formulário vem primeiro no DOM (leitor de tela e teclado chegam nele de
- * imediato); a ordem visual no desktop é invertida com `order`.
- * Os perfis de demonstração ficam em divulgação progressiva para não competir
- * com a ação principal.
+ * Tela de acesso em coluna única: marca, formulário e rodapé, sem painel
+ * institucional lateral nem faixas decorativas. Os perfis de demonstração
+ * ficam em divulgação progressiva para não competir com a ação principal.
  */
 export default function Login() {
   const navigate = useNavigate();
@@ -86,21 +81,22 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-dvh grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] bg-surface">
-      {/* ── Formulário (primeiro no DOM) ── */}
-      <div className="flex flex-col min-h-dvh lg:order-2">
-        {/* Faixa de marca no celular/tablet: o painel grafite do desktop não cabe aqui */}
-        <header className="lg:hidden glass-dark pt-safe">
-          <div className="flex items-center justify-between px-5 py-4">
-            <Logo />
-            <ThemeToggle />
-          </div>
-          <div className="hazard h-1.5" aria-hidden />
-        </header>
+    <div className="min-h-dvh flex flex-col bg-surface">
+      {/* Cabeçalho compacto no celular/tablet */}
+      <header className="lg:hidden glass-dark pt-safe">
+        <div className="flex items-center justify-between px-5 py-4">
+          <Logo />
+          <ThemeToggle />
+        </div>
+      </header>
 
-        <div className="hidden lg:flex justify-end px-8 pt-6"><ThemeToggle /></div>
+      {/* Cabeçalho no desktop: marca à esquerda, tema à direita */}
+      <div className="hidden lg:flex items-center justify-between px-8 pt-6">
+        <Logo light={false} />
+        <ThemeToggle />
+      </div>
 
-        <main className="flex-1 flex items-center justify-center px-5 py-10 sm:px-8">
+      <main className="flex-1 flex items-center justify-center px-5 py-10 sm:px-8">
           <div className="w-full max-w-[400px]">
             <h1 className="font-display text-[32px] font-semibold leading-tight tracking-tight text-primary">Acessar sua conta</h1>
             <p className="mt-1.5 text-[14px] text-subtle">Use suas credenciais corporativas.</p>
@@ -223,27 +219,9 @@ export default function Login() {
           </div>
         </main>
 
-        <footer className="px-5 pb-6 pb-safe text-center">
-          <p className="text-xs text-subtle">{BRAND.razaoSocial} · Ambiente demonstrativo com dados sintéticos</p>
-        </footer>
-      </div>
-
-      {/* ── Painel de marca (só no desktop; à esquerda por `order`) ── */}
-      <aside className="relative hidden lg:flex lg:order-1 flex-col justify-between overflow-hidden bg-[#18181b] text-white p-12 xl:p-16">
-        <div className="hazard absolute inset-x-0 top-0 h-1.5" aria-hidden />
-        <Logo size={44} />
-
-        <div className="max-w-[30rem]">
-          <p className="font-display text-[44px] xl:text-[56px] font-semibold leading-[1.02] tracking-[-0.005em]">
-            Do campo ao relatório aprovado.
-          </p>
-          <p className="mt-5 max-w-[26rem] text-[16px] leading-relaxed text-zinc-300">
-            Cada relatório passa por revisão humana antes de chegar ao cliente.
-          </p>
-        </div>
-
-        <LoginArt className="pointer-events-none -mx-4 mt-6 h-[min(34vh,22rem)] min-h-[12rem] w-[calc(100%+2rem)]" />
-      </aside>
+      <footer className="px-5 pb-6 pb-safe text-center">
+        <p className="text-xs text-subtle">{BRAND.razaoSocial} · Ambiente demonstrativo com dados sintéticos</p>
+      </footer>
     </div>
   );
 }

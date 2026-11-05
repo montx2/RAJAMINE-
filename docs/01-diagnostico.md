@@ -60,6 +60,6 @@ O material enviado pela empresa mudou o centro de gravidade do produto:
 - **Atividades tipificadas.** Instalação, desmobilização, manutenção, conferência e coleta de telemetria.
 - **Transferência × erro.** Os mesmos IDs em instalação e desmobilização no mesmo dia são sinalizados como possível transferência legítima, nunca “corrigidos” automaticamente.
 - **Consolidado semanal.** Agrupamento por cliente/período com checagem de datas; o documento real tinha atividades fora do período informado, e o sistema alerta sem alterar o original.
-- **Identidade visual.** Grafite/preto + amarelo-segurança da Rajamine substituiu o azul genérico, mantendo contraste AA e o design system acessível.
+- **Identidade visual.** Grafite/preto + amarelo-segurança da SAFIP substituiu o azul genérico, mantendo contraste AA e o design system acessível.
 
 Detalhamento da base sintética em [09-dados-demo.md](09-dados-demo.md).

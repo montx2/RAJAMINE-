@@ -41,7 +41,7 @@ function base(partial: Partial<Report> & Pick<Report, 'id' | 'codigo' | 'colabor
   return {
     token: `demo-${partial.id}-${Math.random().toString(36).slice(2, 10)}`,
     caminhaoId: '',
-    origem: 'Base Rajamine — Belo Horizonte/MG',
+    origem: 'Base SAFIP — Belo Horizonte/MG',
     destino: '',
     descricaoAtual: partial.descricaoOriginal,
     versoesTexto: [{ id: `tv_${partial.id}`, texto: partial.descricaoOriginal, tipo: 'original', autor: 'Colaborador', criadaEm: criadoEm }],
