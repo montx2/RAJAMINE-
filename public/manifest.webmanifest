@@ -1,7 +1,7 @@
 {
   "name": "SAFIP FieldOps — Portal do Motorista",
   "short_name": "SAFIP Motorista",
-  "description": "Checklist diário, ocorrências e ciência de treinamentos para motoristas SAFIP. Protótipo demonstrativo com sincronização simulada.",
+  "description": "Checklist diário, ocorrências e ciência de treinamentos para motoristas da SAFIP. Protótipo demonstrativo com sincronização simulada.",
   "id": "/motorista",
   "start_url": "/motorista",
   "scope": "/",

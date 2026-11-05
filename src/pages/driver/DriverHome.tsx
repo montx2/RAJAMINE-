@@ -58,7 +58,7 @@ export default function DriverHome() {
                 </div>
                 {ck && ck.status === 'rascunho' && (
                   <div>
-                    <div className="flex justify-between text-[11.5px] text-subtle mb-1"><span>Checklist de hoje</span><span>{progress}%</span></div>
+                    <div className="flex justify-between text-xs text-subtle mb-1"><span>Checklist de hoje</span><span>{progress}%</span></div>
                     <ProgressBar value={progress} />
                   </div>
                 )}

@@ -205,17 +205,17 @@ export default function ReportDetail() {
                 ['Enviado para revisão', report.enviadoRevisaoEm ? fmtDateTime(report.enviadoRevisaoEm) : '—'],
               ].map(([k, v]) => (
                 <div key={k}>
-                  <dt className="text-[11px] font-bold uppercase tracking-wider text-subtle">{k}</dt>
+                  <dt className="text-xs font-bold uppercase tracking-wider text-subtle">{k}</dt>
                   <dd className="text-[14px] text-foreground mt-0.5">{v}</dd>
                 </div>
               ))}
             </dl>
             {(report.atividades?.length ?? 0) > 0 && (
               <div className="mt-6">
-                <h3 className="text-[11px] font-bold uppercase tracking-wider text-subtle mb-2">Atividades por equipamento</h3>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-subtle mb-2">Atividades por equipamento</h3>
                 <div className="overflow-x-auto rounded-lg border border-border">
                   <table className="w-full min-w-[640px]">
-                    <thead className="bg-muted/50"><tr><th className="th">Equipamento</th><th className="th">Atividade</th><th className="th">Telemetria</th><th className="th">Pulsus</th><th className="th">Câmera / Galileo</th><th className="th">Observação</th></tr></thead>
+                    <thead className="bg-muted/50"><tr><th scope="col" className="th">Equipamento</th><th scope="col" className="th">Atividade</th><th scope="col" className="th">Telemetria</th><th scope="col" className="th">Pulsus</th><th scope="col" className="th">Câmera / Galileo</th><th scope="col" className="th">Observação</th></tr></thead>
                     <tbody className="divide-y divide-border/70">
                       {report.atividades!.map((a) => (
                         <tr key={a.id}>
@@ -223,7 +223,7 @@ export default function ReportDetail() {
                           <td className="td text-[13px]">{ACTIVITY_KIND_LABEL[a.tipo]}{a.componentes?.length ? ` · ${a.componentes.join(', ')}` : ''}</td>
                           <td className="td mono">{a.telemetria ?? '—'}</td>
                           <td className="td mono">{a.pulsus ?? '—'}</td>
-                          <td className="td mono text-[12px]">{a.cameraFadiga ?? '—'}{a.galileo ? <div className="text-[11px] text-subtle">Galileo {a.galileo}</div> : null}</td>
+                          <td className="td mono text-[12px]">{a.cameraFadiga ?? '—'}{a.galileo ? <div className="text-xs text-subtle">Galileo {a.galileo}</div> : null}</td>
                           <td className="td text-[12.5px] text-subtle">{a.observacao || a.descricao || '—'}</td>
                         </tr>
                       ))}
@@ -233,7 +233,7 @@ export default function ReportDetail() {
               </div>
             )}
             <div className="mt-6">
-              <h3 className="text-[11px] font-bold uppercase tracking-wider text-subtle mb-2">Descrição vigente</h3>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-subtle mb-2">Descrição vigente</h3>
               <p className="text-[14px] leading-relaxed text-secondary whitespace-pre-wrap rounded-lg bg-muted/50 p-4">
                 {report.descricaoAtual || 'Ainda não preenchida pelo colaborador.'}
               </p>
@@ -274,7 +274,7 @@ export default function ReportDetail() {
                     </span>
                     <div>
                       <span className={cn('font-semibold', ok ? 'text-foreground' : 'text-subtle')}>{label as string}</span>
-                      <div className="text-[11.5px] text-subtle">{detail as string}</div>
+                      <div className="text-xs text-subtle">{detail as string}</div>
                     </div>
                   </li>
                 ))}
@@ -358,11 +358,11 @@ export default function ReportDetail() {
               {report.descricaoOriginal ? (
                 <div className="grid md:grid-cols-2 gap-3">
                   <div className="rounded-lg bg-muted/50 p-3.5">
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-subtle mb-2">Original do colaborador</div>
+                    <div className="text-xs font-bold uppercase tracking-wider text-subtle mb-2">Original do colaborador</div>
                     <p className="text-[13px] text-secondary whitespace-pre-wrap">{report.descricaoOriginal}</p>
                   </div>
                   <div className="rounded-lg bg-accent-soft/40 border border-accent/20 p-3.5">
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-accent mb-2">Versão vigente</div>
+                    <div className="text-xs font-bold uppercase tracking-wider text-accent mb-2">Versão vigente</div>
                     <p className="text-[13px] text-secondary whitespace-pre-wrap">{report.descricaoAtual}</p>
                   </div>
                 </div>
@@ -380,10 +380,10 @@ export default function ReportDetail() {
                   <div key={n.id} className={cn('rounded-lg border p-3.5', n.tipo === 'correcao' ? 'border-red-200 bg-destructive-soft/40' : n.tipo === 'aprovacao' ? 'border-green-200 bg-success-soft/40' : 'border-border')}>
                     <div className="flex items-center gap-2 mb-1.5">
                       <Badge tone={n.tipo === 'correcao' ? 'red' : n.tipo === 'aprovacao' ? 'green' : 'slate'}>{n.tipo === 'correcao' ? 'correção' : n.tipo === 'aprovacao' ? 'aprovação' : 'observação'}</Badge>
-                      <span className="text-[11.5px] text-subtle">{fmtDateTime(n.criadaEm)}</span>
+                      <span className="text-xs text-subtle">{fmtDateTime(n.criadaEm)}</span>
                     </div>
                     <p className="text-[13px] text-secondary">{n.texto}</p>
-                    <p className="text-[11.5px] text-subtle mt-1.5">— {n.autor}</p>
+                    <p className="text-xs text-subtle mt-1.5">— {n.autor}</p>
                   </div>
                 ))}
               </div>
@@ -445,7 +445,7 @@ export default function ReportDetail() {
                   <div className="overflow-x-auto">
                     <table className="w-full min-w-[560px]">
                       <thead className="bg-muted/50 border-b border-border">
-                        <tr><th className="th">Documento</th><th className="th">Versão</th><th className="th">Gerado em</th><th className="th">Por</th><th className="th">Envio ao cliente</th></tr>
+                        <tr><th scope="col" className="th">Documento</th><th scope="col" className="th">Versão</th><th scope="col" className="th">Gerado em</th><th scope="col" className="th">Por</th><th scope="col" className="th">Envio ao cliente</th></tr>
                       </thead>
                       <tbody className="divide-y divide-border/70">
                         {[...report.documentos].reverse().map((d) => (
@@ -523,7 +523,7 @@ export default function ReportDetail() {
             <Button variant="outline" icon={<Download size={15} />} onClick={() => docs.download(preview.kind)}>Baixar PDF</Button>
             <Button variant="ghost" onClick={() => { URL.revokeObjectURL(preview.url); setPreview(null); }}>Fechar</Button>
           </>}>
-          <iframe src={preview.url} title="Pré-visualização do PDF" className="w-full h-[65vh] rounded-lg border border-border bg-muted" />
+          <iframe src={preview.url} title="Pré-visualização do PDF" className="w-full h-[65dvh] rounded-lg border border-border bg-muted" />
         </Modal>
       )}
     </div>

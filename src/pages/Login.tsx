@@ -1,18 +1,36 @@
-import { useState, type FormEvent } from 'react';
+import { useState, type FormEvent, type InputHTMLAttributes } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ChevronDown, Eye, EyeOff, ExternalLink } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
 import { useStore } from '../store/useStore';
 import { Avatar, Button, Field, Input } from '../components/ui';
-import { LogoMark, Wordmark } from '../components/Logo';
+import { Logo } from '../components/Logo';
 import { ROLE_LABEL } from '../data/types';
+import { BRAND } from '../lib/brand';
 import { cn } from '../lib/cn';
 
+/** Campo de senha com botão de mostrar/ocultar. Recebe id e ARIA do `Field` e repassa ao input. */
+function PasswordInput({ show, onToggle, className, ...rest }: InputHTMLAttributes<HTMLInputElement> & { show: boolean; onToggle: () => void; invalid?: boolean }) {
+  return (
+    <div className="relative">
+      <Input type={show ? 'text' : 'password'} className={cn('pr-12', className)} {...rest} />
+      <button
+        type="button"
+        onClick={onToggle}
+        className="absolute right-1 top-1/2 -translate-y-1/2 grid size-10 place-items-center rounded-lg text-subtle hover:text-primary hover:bg-primary/5 transition-colors cursor-pointer"
+        aria-label={show ? 'Ocultar senha' : 'Mostrar senha'}
+        aria-pressed={show}
+      >
+        {show ? <EyeOff size={17} aria-hidden /> : <Eye size={17} aria-hidden />}
+      </button>
+    </div>
+  );
+}
+
 /**
- * Tela de acesso. Coluna única centrada, marca discreta e apenas os campos
- * essenciais — padrão dos produtos corporativos de referência. Os perfis de
- * demonstração ficam em divulgação progressiva, para não competir com a ação
- * principal nem dar à tela aparência de protótipo.
+ * Tela de acesso em coluna única: marca, formulário e rodapé, sem painel
+ * institucional lateral nem faixas decorativas. Os perfis de demonstração
+ * ficam em divulgação progressiva para não competir com a ação principal.
  */
 export default function Login() {
   const navigate = useNavigate();
@@ -63,170 +81,146 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <div className="absolute top-4 right-4 z-10"><ThemeToggle /></div>
+    <div className="min-h-dvh flex flex-col bg-surface">
+      {/* Cabeçalho compacto no celular/tablet */}
+      <header className="lg:hidden glass-dark pt-safe">
+        <div className="flex items-center justify-between px-5 py-4">
+          <Logo />
+          <ThemeToggle />
+        </div>
+      </header>
 
-      <main className="flex-1 flex items-center justify-center px-5 py-12">
-        <div className="w-full max-w-[380px]">
-          {/* Marca: presente, mas sem competir com o formulário */}
-          <div className="flex flex-col items-center mb-7 animate-fade-up">
-            <LogoMark size={40} />
-            <Wordmark className="text-[20px] mt-3" light={false} />
-            <div className="text-[9.5px] font-semibold tracking-[0.24em] text-subtle mt-1.5">FIELDOPS</div>
-          </div>
+      {/* Cabeçalho no desktop: marca à esquerda, tema à direita */}
+      <div className="hidden lg:flex items-center justify-between px-8 pt-6">
+        <Logo light={false} />
+        <ThemeToggle />
+      </div>
 
-          <div
-            className="rounded-2xl border border-primary/8 bg-surface p-6 sm:p-7 animate-fade-up"
-            style={{
-              animationDelay: '60ms',
-              boxShadow: '0 1px 2px rgb(24 24 27 / 0.04), 0 16px 40px -24px rgb(24 24 27 / 0.28)',
-            }}
-          >
-            <h1 className="text-[19px] font-semibold tracking-tight text-primary">Acessar sua conta</h1>
-            <p className="mt-1 text-[13px] text-subtle">Use suas credenciais corporativas.</p>
+      <main className="flex-1 flex items-center justify-center px-5 py-10 sm:px-8">
+          <div className="w-full max-w-[400px]">
+            <h1 className="font-display text-[32px] font-semibold leading-tight tracking-tight text-primary">Acessar sua conta</h1>
+            <p className="mt-1.5 text-[14px] text-subtle">Use suas credenciais corporativas.</p>
 
-            <form onSubmit={submit} noValidate className="mt-6 space-y-4 stagger">
-              <div style={{ '--i': 0 } as React.CSSProperties}>
-                <Field label="E-mail" htmlFor="login-email" error={errors.email}>
-                  <Input
-                    id="login-email"
-                    type="email"
-                    inputMode="email"
-                    autoComplete="username"
-                    autoFocus
-                    spellCheck={false}
-                    placeholder="nome.sobrenome@safip.demo"
-                    value={email}
-                    invalid={!!errors.email}
-                    aria-invalid={!!errors.email}
-                    onChange={(e) => { setEmail(e.target.value); if (errors.email) setErrors((s) => ({ ...s, email: undefined })); }}
-                  />
-                </Field>
-              </div>
+            <form onSubmit={submit} noValidate className="mt-7 space-y-5">
+              <Field label="E-mail" error={errors.email}>
+                <Input
+                  type="email"
+                  inputMode="email"
+                  autoComplete="username"
+                  autoFocus
+                  spellCheck={false}
+                  placeholder={`nome.sobrenome@${BRAND.dominioDemo}`}
+                  value={email}
+                  invalid={!!errors.email}
+                  onChange={(e) => { setEmail(e.target.value); if (errors.email) setErrors((s) => ({ ...s, email: undefined })); }}
+                />
+              </Field>
 
-              <div style={{ '--i': 1 } as React.CSSProperties}>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="label mb-0" htmlFor="login-senha">Senha</label>
+              <Field
+                label="Senha"
+                error={errors.senha}
+                hint={capsOn ? 'Caps Lock está ativado.' : undefined}
+                action={
                   <button
                     type="button"
                     onClick={() => setResetOpen((v) => !v)}
-                    className="-my-2 -mr-1 px-1 py-2 rounded-md text-[12px] font-medium text-subtle hover:text-primary transition-colors cursor-pointer"
+                    className="-my-2 -mr-1 rounded-md px-1 py-2 text-xs font-medium text-subtle hover:text-primary transition-colors cursor-pointer"
                     aria-expanded={resetOpen}
+                    aria-controls="reset-info"
                   >
                     Esqueci minha senha
                   </button>
-                </div>
-                <div className="relative">
-                  <Input
-                    id="login-senha"
-                    type={showPass ? 'text' : 'password'}
-                    autoComplete="current-password"
-                    placeholder="Digite sua senha"
-                    className="pr-11"
-                    value={senha}
-                    invalid={!!errors.senha}
-                    aria-invalid={!!errors.senha}
-                    onChange={(e) => { setSenha(e.target.value); if (errors.senha) setErrors((s) => ({ ...s, senha: undefined })); }}
-                    onKeyUp={(e) => setCapsOn(e.getModifierState?.('CapsLock') ?? false)}
-                    onBlur={() => setCapsOn(false)}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPass((v) => !v)}
-                    className="absolute right-1.5 top-1/2 -translate-y-1/2 p-2 rounded-lg text-subtle hover:text-primary hover:bg-primary/5 transition-colors cursor-pointer"
-                    aria-label={showPass ? 'Ocultar senha' : 'Mostrar senha'}
-                    tabIndex={-1}
-                  >
-                    {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
-                </div>
-                {errors.senha && <p className="mt-1 text-[12px] text-destructive font-medium" role="alert">{errors.senha}</p>}
-                {capsOn && !errors.senha && <p className="mt-1 text-[12px] text-warning font-medium">Caps Lock está ativado.</p>}
-                {resetOpen && (
-                  <p className="mt-2 text-[12px] text-secondary leading-relaxed rounded-lg bg-primary/[0.03] border border-primary/8 px-3 py-2 animate-fade-up">
-                    A redefinição é feita pela coordenação de operações. Neste ambiente demonstrativo não há envio de e-mail.
-                  </p>
-                )}
-              </div>
+                }
+              >
+                <PasswordInput
+                  show={showPass}
+                  onToggle={() => setShowPass((v) => !v)}
+                  autoComplete="current-password"
+                  placeholder="Digite sua senha"
+                  value={senha}
+                  invalid={!!errors.senha}
+                  onChange={(e) => { setSenha(e.target.value); if (errors.senha) setErrors((s) => ({ ...s, senha: undefined })); }}
+                  onKeyUp={(e) => setCapsOn(e.getModifierState?.('CapsLock') ?? false)}
+                  onBlur={() => setCapsOn(false)}
+                />
+              </Field>
 
-              <div style={{ '--i': 2 } as React.CSSProperties} className="pt-1">
-                <Button type="submit" size="lg" className="w-full" loading={loading}>
-                  {loading ? 'Entrando' : 'Entrar'}
-                </Button>
-              </div>
+              {resetOpen && (
+                <p id="reset-info" className="rounded-lg border border-primary/10 bg-primary/[0.03] px-3 py-2 text-xs leading-relaxed text-secondary">
+                  A redefinição é feita pela coordenação de operações. Neste ambiente demonstrativo não há envio de e-mail.
+                </p>
+              )}
+
+              <Button type="submit" size="lg" className="w-full" loading={loading}>
+                {loading ? 'Entrando' : 'Entrar'}
+              </Button>
             </form>
-          </div>
 
-          {/* Divulgação progressiva: o acesso de demonstração não disputa com o login */}
-          <div className="mt-4 animate-fade-up" style={{ animationDelay: '140ms' }}>
-            <button
-              type="button"
-              onClick={() => setDemoOpen((v) => !v)}
-              className="w-full flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-primary/20 py-2.5 text-[13px] font-semibold text-secondary hover:text-primary hover:border-primary/35 hover:bg-surface/60 transition-colors cursor-pointer"
-              aria-expanded={demoOpen}
-              aria-controls="demo-panel"
-            >
-              <span>Acesso de demonstração</span>
-              <span className="font-normal text-subtle">· entrar sem senha</span>
-              <ChevronDown size={14} className={cn('transition-transform duration-200', demoOpen && 'rotate-180')} aria-hidden />
-            </button>
+            {/* Divulgação progressiva: o acesso de demonstração não disputa com o login */}
+            <section className="mt-8 border-t border-primary/10 pt-5">
+              <button
+                type="button"
+                onClick={() => setDemoOpen((v) => !v)}
+                className="flex w-full items-center gap-2 rounded-lg py-1 text-left text-[13px] font-semibold text-secondary hover:text-primary transition-colors cursor-pointer"
+                aria-expanded={demoOpen}
+                aria-controls="demo-panel"
+              >
+                <span>Acesso de demonstração</span>
+                <span className="font-normal text-subtle">· entrar sem senha</span>
+                <ChevronDown size={15} className={cn('ml-auto transition-transform duration-200', demoOpen && 'rotate-180')} aria-hidden />
+              </button>
 
-            <div
-              id="demo-panel"
-              className={cn('grid transition-[grid-template-rows,opacity] duration-300 ease-out',
-                demoOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0')}
-            >
-              {/* `inert` retira o painel recolhido da ordem de foco e da árvore
-                  de acessibilidade, sem impedir a animação de altura. */}
-              <div className="overflow-hidden" inert={!demoOpen}>
-                <div className="rounded-2xl border border-primary/8 bg-surface p-3 mt-1">
-                  <p className="text-[11.5px] text-subtle leading-relaxed px-1 pb-2">
+              <div
+                id="demo-panel"
+                className={cn('grid transition-[grid-template-rows,opacity] duration-300 ease-out',
+                  demoOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0')}
+              >
+                {/* `inert` retira o painel recolhido da ordem de foco e da árvore
+                    de acessibilidade, sem impedir a animação de altura. */}
+                <div className="overflow-hidden" inert={!demoOpen}>
+                  <p className="pt-3 pb-2 text-xs leading-relaxed text-subtle">
                     Selecione um perfil para entrar. A senha não é verificada neste ambiente.
                   </p>
-                  <div className="space-y-1">
+                  <ul className="space-y-1">
                     {profiles.map((u) => (
-                      <button
-                        key={u.id}
-                        type="button"
-                        onClick={() => enter(u.id, u.role)}
-                        tabIndex={demoOpen ? 0 : -1}
-                        className="press w-full flex items-center gap-3 rounded-xl px-2.5 py-2 text-left hover:bg-primary/[0.04] transition-colors cursor-pointer group"
-                      >
-                        <Avatar nome={u.nome} />
-                        <span className="flex-1 min-w-0">
-                          <span className="block text-[13px] font-medium text-primary truncate">{u.nome}</span>
-                          <span className="block text-[11.5px] text-subtle truncate">{ROLE_LABEL[u.role]}</span>
-                        </span>
-                        <ArrowRight size={15} className="text-subtle opacity-0 group-hover:opacity-100 transition-opacity shrink-0" aria-hidden />
-                      </button>
+                      <li key={u.id}>
+                        <button
+                          type="button"
+                          onClick={() => enter(u.id, u.role)}
+                          className="press group flex w-full items-center gap-3 rounded-xl border border-transparent px-2.5 py-2 text-left hover:border-primary/10 hover:bg-primary/[0.04] transition-colors cursor-pointer"
+                        >
+                          <Avatar nome={u.nome} />
+                          <span className="min-w-0 flex-1">
+                            <span className="block truncate text-[13px] font-medium text-primary">{u.nome}</span>
+                            <span className="block truncate text-xs text-subtle">{ROLE_LABEL[u.role]}</span>
+                          </span>
+                          <ArrowRight size={15} className="shrink-0 text-subtle opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100" aria-hidden />
+                        </button>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
 
                   {pendingLink && (
                     <button
                       type="button"
                       onClick={() => navigate(`/preencher/${pendingLink.token}`)}
-                      tabIndex={demoOpen ? 0 : -1}
-                      className="press mt-2 w-full flex items-start gap-2.5 rounded-xl border-t border-primary/8 px-2.5 pt-3 pb-1 text-left hover:bg-primary/[0.04] transition-colors cursor-pointer"
+                      className="press mt-2 flex w-full items-start gap-2.5 rounded-xl border-t border-primary/10 px-2.5 pt-3 pb-1 text-left hover:bg-primary/[0.04] transition-colors cursor-pointer"
                     >
-                      <ExternalLink size={14} className="text-subtle mt-0.5 shrink-0" aria-hidden />
+                      <ExternalLink size={14} className="mt-0.5 shrink-0 text-subtle" aria-hidden />
                       <span>
-                        <span className="block text-[12.5px] font-medium text-primary">Link individual do colaborador</span>
-                        <span className="block text-[11.5px] text-subtle leading-relaxed">Preenchimento em campo, sem conta de acesso.</span>
+                        <span className="block text-[13px] font-medium text-primary">Link individual do colaborador</span>
+                        <span className="block text-xs leading-relaxed text-subtle">Preenchimento em campo, sem conta de acesso.</span>
                       </span>
                     </button>
                   )}
                 </div>
               </div>
-            </div>
+            </section>
           </div>
-        </div>
-      </main>
+        </main>
 
-      <footer className="px-5 pb-6 text-center animate-fade-in" style={{ animationDelay: '220ms' }}>
-        <p className="text-[11px] text-subtle">
-          SAFIP Inteligência em Mineração · Ambiente demonstrativo com dados sintéticos
-        </p>
+      <footer className="px-5 pb-6 pb-safe text-center">
+        <p className="text-xs text-subtle">{BRAND.razaoSocial} · Ambiente demonstrativo com dados sintéticos</p>
       </footer>
     </div>
   );

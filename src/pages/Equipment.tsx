@@ -99,14 +99,14 @@ export default function EquipmentPage() {
           <table className="w-full min-w-[900px]">
             <thead className="bg-muted/50 border-b border-border">
               <tr>
-                <th className="th">Identificação</th>
-                <th className="th">Tipo</th>
-                <th className="th">Telemetria / Pulsus</th>
-                <th className="th">Câmera / Galileo</th>
-                <th className="th">Cliente</th>
-                <th className="th">Situação</th>
-                <th className="th">Relatórios</th>
-                <th className="th"><span className="sr-only">Expandir</span></th>
+                <th scope="col" className="th">Identificação</th>
+                <th scope="col" className="th">Tipo</th>
+                <th scope="col" className="th">Telemetria / Pulsus</th>
+                <th scope="col" className="th">Câmera / Galileo</th>
+                <th scope="col" className="th">Cliente</th>
+                <th scope="col" className="th">Situação</th>
+                <th scope="col" className="th">Relatórios</th>
+                <th scope="col" className="th"><span className="sr-only">Expandir</span></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/70">
@@ -125,7 +125,7 @@ export default function EquipmentPage() {
                       <td className="td mono text-[12.5px] text-subtle">{e.telemetria ?? '—'} / {e.pulsus ?? '—'}</td>
                       <td className="td mono text-[12px] text-subtle">
                         <div>{e.cameraFadiga ?? '—'}</div>
-                        {e.galileo && <div className="text-[11px]">Galileo {e.galileo}</div>}
+                        {e.galileo && <div className="text-xs">Galileo {e.galileo}</div>}
                       </td>
                       <td className="td text-secondary">{client?.nome ?? '—'}</td>
                       <td className="td">

@@ -68,19 +68,23 @@ Componentes consistentes em `src/components/ui.tsx`: Button (6 variantes), Badge
 - [x] Chips/badges sem clipping; truncamento com acesso ao valor
 - [x] Responsivo 375 / 768 / 1024 / 1440 (sidebar → drawer + bottom nav)
 
-## 6. Adaptação à identidade real da SAFIP
+## 6. Identidade SAFIP
 
-Após receber os documentos reais da empresa, a paleta inicial (navy/azul) foi substituída pela identidade observada: **grafite/preto + amarelo/âmbar**.
+A paleta inicial (navy/azul) foi substituída por **grafite/preto + amarelo-segurança**, a identidade observada nos documentos de exemplo do desafio e coerente com o setor (sinalização industrial de mineração). O nome do produto é **SAFIP FieldOps**.
 
 | Token | Valor | Uso |
 |---|---|---|
 | `--color-primary` | `#18181B` | Sidebar, títulos, texto principal |
-| `--color-brand` | `#FFC400` | Wordmark Mine, faixas de PDF, destaques de marca |
-| `--color-accent` | `#B45309` | Links, tabs, CTAs secundários (âmbar escuro para contraste AA sobre branco) |
+| `--color-brand` | `#FFC400` | Marca, faixas de PDF, realces pequenos |
+| `--color-accent` | `#A34A08` | Links, CTAs secundários (âmbar escuro, 5,06:1 sobre o fundo) |
 | `--color-accent-soft` | `#FEF3C7` | Fundos suaves de seleção/avisos |
-| `--color-background` | `#FAFAF9` | Fundo geral |
+| `--color-background` | `#EEEDE9` | Fundo geral |
 
-O wordmark `SAFIP` foi aproximado tipograficamente para o protótipo; não é o vetor oficial. O destaque do nome fica só na cor: `SAF` e `P` usam o grafite/branco do texto e apenas o `I` recebe o amarelo da marca (`#FFC400`). Os PDFs usam título preto + faixa amarela + wordmark no canto, como nos documentos reais. A base de acessibilidade do UI UX Pro Max (foco visível, reduced-motion, labels, contraste) foi mantida.
+**Marca (`src/components/Logo.tsx`).** Ladrilho grafite com montanha amarela e linha de base, seguido do wordmark **SAFIP** com o "I" amarelo e de "FIELDOPS". Grade 64×64, legível em 16 px (favicon) e em monocromia. O mesmo desenho é usado no favicon, nos ícones PWA e nos PDFs. Todo texto de marca vem de `src/lib/brand.ts`: trocar o nome é editar um arquivo.
+
+**Tipografia.** IBM Plex Sans (texto e wordmark), Barlow Semi Condensed (títulos e KPIs) e JetBrains Mono (IDs operacionais). Piso de 12 px para qualquer texto.
+
+Os PDFs usam título preto + faixa amarela + marca no canto. A base de acessibilidade do UI UX Pro Max (foco visível, reduced-motion, labels, contraste) foi mantida.
 
 ## 7. Reformulação v3 — “Liquid Glass Clean” (pedido do usuário)
 
@@ -219,10 +223,11 @@ competir com o formulário.
   do colaborador ficam num painel recolhido, aberto por “Acesso de demonstração”.
   Recolhido, o painel recebe `inert`, saindo da ordem de foco e da árvore de
   acessibilidade sem impedir a animação de altura.
-- **Marca discreta:** símbolo, wordmark e “FIELDOPS” centralizados acima do
-  cartão; rodapé de uma linha com a razão social e o aviso de dados sintéticos.
-- **Cartão sólido**, não vidro: sobre fundo liso o vidro fica turvo. Sombra em
-  duas camadas, raio de 16 px.
+- **Marca discreta:** lockup SAFIP no cabeçalho (topo no celular, canto superior
+  esquerdo no desktop); rodapé de uma linha com a razão social e o aviso de dados
+  sintéticos.
+- **Fundo liso**, sem cartão de vidro, sem painel grafite lateral, sem faixas
+  listradas e sem ilustração de cava: a tela é só o formulário de acesso.
 - **Movimento contido:** entrada em cascata do cartão e dos campos, expansão
   suave do painel, micro-press no botão. Nada em laço; `prefers-reduced-motion`
   respeitado.

@@ -65,7 +65,7 @@ export default function Operations() {
             <thead className="border-b border-border bg-muted/40">
               <tr>
                 {['Data', 'Cliente', 'Técnico', 'Equipamento', 'Atividade', 'Dispositivos', 'Fotos'].map((h) => (
-                  <th key={h} className="th">{h}</th>
+                  <th key={h} scope="col" className="th">{h}</th>
                 ))}
               </tr>
             </thead>

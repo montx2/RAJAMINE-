@@ -233,7 +233,7 @@ export interface Report {
   equipamentosIds: string[];
   enviadoCliente: boolean;
 
-  // Campos alinhados aos documentos reais da SAFIP
+  // Campos alinhados aos documentos reais da operação
   tipo?: ReportKind;
   setor?: string;
   cidadeBairro?: string;

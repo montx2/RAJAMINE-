@@ -72,7 +72,7 @@ export default function Trucks() {
                 <div className="text-[12px] text-subtle mt-0.5">{client?.nome} — {client?.cidade}/{client?.uf}</div>
               </div>
               <div className="mt-4 flex-1">
-                <div className="text-[11px] font-bold uppercase tracking-wider text-subtle mb-2 flex items-center gap-1.5">
+                <div className="text-xs font-bold uppercase tracking-wider text-subtle mb-2 flex items-center gap-1.5">
                   <Cpu size={12} aria-hidden /> Equipamentos instalados ({eqs.length})
                 </div>
                 {eqs.length === 0 ? (
@@ -82,7 +82,7 @@ export default function Trucks() {
                     {eqs.map((e) => (
                       <Link key={e.id} to={`/equipamentos?q=${e.codigo}`} className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2 hover:bg-accent-soft/50 transition-colors">
                         <span className="mono font-bold text-[13px] text-primary">{e.codigo}</span>
-                        <span className="text-[11.5px] text-subtle">{e.tipo}</span>
+                        <span className="text-xs text-subtle">{e.tipo}</span>
                       </Link>
                     ))}
                   </div>

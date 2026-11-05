@@ -1,37 +1,43 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
-@import "@fontsource-variable/plus-jakarta-sans";
+@import "@fontsource-variable/ibm-plex-sans/wght.css";
 @import "@fontsource-variable/jetbrains-mono";
+/* Títulos, KPIs e marca: condensada de sinalização/engenharia. Só o subconjunto
+   latino (cobre todo o português) para não carregar arquivos que ninguém usa. */
+@import "@fontsource/barlow-semi-condensed/latin-500.css";
+@import "@fontsource/barlow-semi-condensed/latin-600.css";
+@import "@fontsource/barlow-semi-condensed/latin-700.css";
 
 /*
-  SAFIP FieldOps — Design System v3 "Liquid Glass Clean"
+  SAFIP FieldOps — Design System v4 "Grafite e amarelo-segurança"
   ------------------------------------------------------------------
-  Base: UI UX Pro Max (Minimalism & Swiss + Glassmorphism condicional).
-  Pesquisa aplicada (docs/02-design-system.md):
-  - Vidro com LASTRO semi-opaco: nunca confiar só no blur para contraste.
-  - WCAG 2.2 AA: texto 4.5:1, componentes 3:1, foco visível.
-  - Blur moderado (12–18px), superfícies de vidro apenas onde há hierarquia.
-  - Motion tokens: 120/200/280/360ms, ease-out para entradas, ease-in para saídas.
-  - Apenas transform/opacity animados; prefers-reduced-motion respeitado.
-  - Progressive disclosure: essencial primeiro, detalhes sob demanda.
-  Identidade real: grafite #18181B + amarelo #FFC400 (marca) + âmbar #B45309 (ação).
+  Base: UI UX Pro Max (Minimalism & Swiss).
+  - Cartões sólidos com borda de 1 px. Desfoque (backdrop-filter) apenas em
+    barras fixas que têm conteúdo passando por baixo (`glass-bar`): em superfície
+    92% opaca o blur não é visível e só custa GPU.
+  - WCAG 2.2 AA: texto 4.5:1, componentes 3:1, foco visível; corpo mínimo 12 px.
+  - Motion tokens: 120/200/280/360ms; apenas transform/opacity; prefers-reduced-motion.
+  - Tipografia: IBM Plex Sans (texto), Barlow Semi Condensed (títulos e marca),
+    JetBrains Mono (IDs operacionais).
+  Identidade: grafite #18181B + amarelo-segurança #FFC400 (marca) + âmbar escuro (ação).
 */
 
 @theme {
-  --font-sans: "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: "IBM Plex Sans Variable", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: "Barlow Semi Condensed", "Arial Narrow", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, "SF Mono", monospace;
 
   --color-primary: #18181b;
   --color-primary-foreground: #fafafa;
   --color-secondary: #3f3f46;
-  --color-accent: #b45309;
-  --color-accent-hover: #92400e;
+  --color-accent: #a34a08;
+  --color-accent-hover: #7f3a06;
   --color-accent-foreground: #ffffff;
   --color-accent-soft: #fef3c7;
   --color-brand: #ffc400;
   --color-brand-soft: #fff7db;
-  --color-brand-ink: #a86a00;
+  --color-brand-ink: #8a5500;
   --color-info: #1d4ed8;
   --color-info-soft: #e8f0fd;
   --color-background: #eeede9;
@@ -41,7 +47,7 @@
   --color-muted-foreground: #52525b;
   --color-subtle: #52525b;
   --color-border: #e4e4e7;
-  --color-destructive: #dc2626;
+  --color-destructive: #c81e1e;
   --color-destructive-soft: #fee2e2;
   --color-success: #15803d;
   --color-success-soft: #dcfce7;
@@ -59,12 +65,12 @@
 :root {
   /* Glass tokens — lastro garante contraste mesmo sobre fundo variado */
   --glass-bg: rgb(255 255 255 / 0.92);
-  --glass-bg-strong: rgb(255 255 255 / 0.97);
+  --glass-bg-strong: var(--color-surface);
   --glass-bg-soft: rgb(255 255 255 / 0.7);
   --glass-border: rgb(24 24 27 / 0.09);
   --glass-border-ink: rgb(24 24 27 / 0.09);
   /* Sidebar/headers escuros: praticamente opacos no claro, senão viram cinza turvo */
-  --glass-dark-bg: rgb(24 24 27 / 0.98);
+  --glass-dark-bg: #18181b;
   --glass-dark-border: rgb(255 255 255 / 0.10);
   --blur-glass: 16px;
   --blur-overlay: 6px;
@@ -128,11 +134,11 @@
   --shadow-lift: 0 16px 48px -16px rgb(0 0 0 / 0.6), 0 4px 12px -6px rgb(0 0 0 / 0.4);
 
   --glass-bg: rgb(21 24 29 / 0.72);
-  --glass-bg-strong: rgb(21 24 29 / 0.88);
+  --glass-bg-strong: var(--color-surface);
   --glass-bg-soft: rgb(21 24 29 / 0.55);
   --glass-border: rgb(255 255 255 / 0.08);
   --glass-border-ink: rgb(255 255 255 / 0.06);
-  --glass-dark-bg: rgb(13 15 19 / 0.86);
+  --glass-dark-bg: #0d0f13;
   --glass-dark-border: rgb(255 255 255 / 0.08);
 
   --input-bg: rgb(21 24 29 / 0.78);
@@ -154,44 +160,15 @@ html {
   text-rendering: optimizeLegibility;
 }
 
-/* Plus Jakarta Sans tem espaço entre palavras estreito: em títulos com
-   tracking negativo as palavras pareciam coladas ("Prazosependências"). */
-body { word-spacing: 0.03em; }
-h1, h2, h3, h4 { word-spacing: 0.06em; }
-
 body {
   color: var(--color-foreground);
   font-size: 15px;
   line-height: 1.55;
   background-color: var(--color-background);
-  /* Fundo ambiente estático: dá material ao vidro sem animação decorativa */
-  background-image:
-    radial-gradient(900px 520px at 8% -10%, rgb(255 196 0 / 0.05), transparent 62%),
-    radial-gradient(760px 480px at 100% 0%, rgb(120 113 108 / 0.04), transparent 58%),
-    radial-gradient(900px 600px at 50% 120%, rgb(63 63 70 / 0.05), transparent 62%);
-  background-attachment: fixed;
 }
 
-/* Textura sutil para o blur ter o que difundir (sem peso visual) */
-.dark body {
-  background-image:
-    radial-gradient(900px 520px at 8% -10%, rgb(255 196 0 / 0.035), transparent 62%),
-    radial-gradient(760px 480px at 100% 0%, rgb(161 161 170 / 0.03), transparent 58%),
-    radial-gradient(900px 600px at 50% 120%, rgb(255 255 255 / 0.03), transparent 60%);
-}
+h1, h2 { font-family: var(--font-display); }
 
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background-image: radial-gradient(circle at 1px 1px, var(--ambient-dot) 1px, transparent 0);
-  background-size: 26px 26px;
-  mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.7), transparent 70%);
-}
-
-#root { position: relative; z-index: 1; }
 
 :focus-visible {
   /* Anel de foco neutro: foco é affordance, não significado. Contraste >= 3:1
@@ -212,39 +189,36 @@ body::before {
   }
 }
 
-/* ── Superfícies de vidro (utilities para poderem ser @apply) ── */
+/* ── Superfícies ── */
 @utility glass {
-  background: var(--glass-bg-strong);
-  border: 1px solid var(--glass-border-ink);
-  box-shadow: var(--shadow-glass);
-  @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    background: var(--glass-bg);
-    -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(1.35);
-    backdrop-filter: blur(var(--blur-glass)) saturate(1.35);
-    border-color: var(--glass-border);
-  }
+  background: var(--color-surface);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-card);
 }
 @utility glass-strong {
-  background: var(--glass-bg-strong);
-  border: 1px solid var(--glass-border-ink);
+  background: var(--color-surface);
+  border: 1px solid var(--glass-border);
   box-shadow: var(--shadow-pop);
+}
+/* Única superfície com desfoque: barras fixas sobre conteúdo que rola. */
+@utility glass-bar {
+  background: color-mix(in srgb, var(--color-surface) 94%, transparent);
   @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    background: var(--glass-bg-strong);
-    -webkit-backdrop-filter: blur(20px) saturate(1.4);
-    backdrop-filter: blur(20px) saturate(1.4);
-    border-color: var(--glass-border);
+    background: color-mix(in srgb, var(--color-surface) 82%, transparent);
+    -webkit-backdrop-filter: blur(14px) saturate(1.3);
+    backdrop-filter: blur(14px) saturate(1.3);
   }
 }
 @utility glass-dark {
-  background: rgb(24 24 27 / 0.94);
+  background: var(--glass-dark-bg);
   border: 1px solid var(--glass-dark-border);
   color: #fafafa;
-  @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    background: var(--glass-dark-bg);
-    -webkit-backdrop-filter: blur(20px) saturate(1.2);
-    backdrop-filter: blur(20px) saturate(1.2);
-  }
 }
+/* Áreas seguras (iPhone com entalhe/barra home): o app usa viewport-fit=cover. */
+@utility pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+@utility pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+@utility pb-nav-app { padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px)); @media (min-width: 64rem) { padding-bottom: 2.5rem; } }
+@utility pb-nav-driver { padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px)); }
 
 @layer components {
   .card {
@@ -274,15 +248,22 @@ body::before {
     background: var(--input-bg-focus);
     box-shadow: 0 0 0 3px var(--input-ring);
   }
+  .select {
+    appearance: none;
+    padding-right: 2.25rem;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+  }
   .input-error { border-color: var(--color-destructive) !important; }
   .input-error:focus { box-shadow: 0 0 0 3px rgb(220 38 38 / 0.16) !important; }
 
-  .th { @apply px-4 py-3 text-left text-[11px] font-bold uppercase tracking-[0.08em] text-subtle whitespace-nowrap; }
+  .th { @apply px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.06em] text-subtle whitespace-nowrap; }
   .td { @apply px-4 py-3.5 text-[13.5px] text-foreground align-middle; }
   .link { @apply text-accent font-semibold hover:text-accent-hover hover:underline underline-offset-2 cursor-pointer; }
   .mono { font-family: var(--font-mono); @apply text-[12.5px] tracking-tight; }
-  .section-title { @apply text-[14px] font-bold text-primary; word-spacing: 0.08em; }
-  .eyebrow { @apply text-[10.5px] font-bold uppercase tracking-[0.14em] text-subtle; }
+  .section-title { @apply text-[16px] font-semibold text-primary tracking-[0.005em]; font-family: var(--font-display); }
+  .eyebrow { @apply text-xs font-semibold uppercase tracking-[0.1em] text-subtle; }
 
   .chip {
     @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] font-semibold whitespace-nowrap;
@@ -321,6 +302,11 @@ body::before {
   from { opacity: 0; transform: translateX(16px); }
   to { opacity: 1; transform: translateX(0); }
 }
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes draw-route { from { stroke-dashoffset: var(--len, 1000); } to { stroke-dashoffset: 0; } }
 @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
 @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
 
@@ -328,6 +314,8 @@ body::before {
 .animate-fade-in { animation: fade-in var(--dur-base) var(--ease-out) both; }
 .animate-scale-in { animation: scale-in var(--dur-slow) var(--ease-spring) both; }
 .animate-slide-in-right { animation: slide-in-right var(--dur-slow) var(--ease-out) both; }
+.animate-slide-in-left { animation: slide-in-left var(--dur-slow) var(--ease-out) both; }
+.animate-draw-route { stroke-dasharray: var(--len, 1000); animation: draw-route 1.6s var(--ease-out) 0.25s both; }
 .animate-pulse-dot { animation: pulse-dot 1.6s ease-in-out infinite; }
 
 /* Stagger: aplique style={{ '--i': index }} nos filhos */

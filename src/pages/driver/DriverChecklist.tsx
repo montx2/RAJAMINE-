@@ -101,7 +101,7 @@ export default function DriverChecklist() {
       {editable && (
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" icon={<Check size={15} />} onClick={() => setConfirmAllOk(true)}>Marcar tudo OK</Button>
-          <span className="inline-flex items-center gap-1.5 text-[11.5px] text-subtle px-2"><Save size={13} aria-hidden /> Rascunho salvo automaticamente neste aparelho</span>
+          <span className="inline-flex items-center gap-1.5 text-xs text-subtle px-2"><Save size={13} aria-hidden /> Rascunho salvo automaticamente neste aparelho</span>
         </div>
       )}
 
@@ -120,7 +120,7 @@ export default function DriverChecklist() {
             if (!items.length) return null;
             return (
               <section key={cat} aria-labelledby={`ck-${cat}`}>
-                <h2 id={`ck-${cat}`} className="text-[11px] font-bold uppercase tracking-wider text-subtle mb-2">
+                <h2 id={`ck-${cat}`} className="text-xs font-bold uppercase tracking-wider text-subtle mb-2">
                   {cat === 'veiculo' ? 'Veículo' : 'Equipamentos embarcados'}
                 </h2>
                 <div className="space-y-2">
@@ -131,7 +131,7 @@ export default function DriverChecklist() {
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                           <div>
                             <div className="text-[13.5px] font-bold text-primary">{i.label}</div>
-                            {eq && <div className="text-[11.5px] text-subtle mono">{eq.codigo}{eq.serial !== '—' ? ` · SN ${eq.serial}` : ''}</div>}
+                            {eq && <div className="text-xs text-subtle mono">{eq.codigo}{eq.serial !== '—' ? ` · SN ${eq.serial}` : ''}</div>}
                           </div>
                           <div className="flex gap-1.5" role="group" aria-label={`Status de ${i.label}`}>
                             {STATUS_OPTIONS.map((opt) => (

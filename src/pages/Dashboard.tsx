@@ -206,7 +206,7 @@ export default function Dashboard() {
                     <span className="text-[13px] font-semibold text-foreground">{a.acao}</span>
                     <span className="text-[12px] text-subtle whitespace-nowrap"> · {a.codigo}</span>
                   </div>
-                  <span className="text-[11px] text-subtle whitespace-nowrap">{timeAgo(a.em)}</span>
+                  <span className="text-xs text-subtle whitespace-nowrap">{timeAgo(a.em)}</span>
                 </Link>
               ))}
             </div>

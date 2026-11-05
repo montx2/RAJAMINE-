@@ -34,3 +34,4 @@ __pycache__/
 
 # Capturas brutas do TCC (regeneráveis por .audit/capturas_tcc.mjs)
 tcc/figuras/
+tcc/figuras_tcc_jpg/

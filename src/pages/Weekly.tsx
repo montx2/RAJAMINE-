@@ -122,7 +122,7 @@ export default function Weekly() {
       {preview && (
         <Modal open onClose={() => { URL.revokeObjectURL(preview); setPreview(null); }} title="Consolidado semanal" wide
           footer={<Button variant="ghost" onClick={() => { URL.revokeObjectURL(preview); setPreview(null); }}>Fechar</Button>}>
-          <iframe src={preview} title="Pré-visualização do consolidado semanal" className="w-full h-[65vh] rounded-lg border border-border bg-muted" />
+          <iframe src={preview} title="Pré-visualização do consolidado semanal" className="w-full h-[65dvh] rounded-lg border border-border bg-muted" />
         </Modal>
       )}
     </div>

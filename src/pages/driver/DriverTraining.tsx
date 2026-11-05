@@ -59,7 +59,7 @@ export default function DriverTraining() {
                     {d ? <Badge tone="green">ciência registrada</Badge> : <Badge tone="amber">pendente</Badge>}
                   </div>
                   <p className="text-[12.5px] text-subtle mt-1 leading-relaxed">{t.descricao}</p>
-                  {d && <p className="text-[11.5px] text-subtle mt-1">Confirmado por {d.nomeConfirmado} em {fmtDateTime(d.confirmadoEm)}</p>}
+                  {d && <p className="text-xs text-subtle mt-1">Confirmado por {d.nomeConfirmado} em {fmtDateTime(d.confirmadoEm)}</p>}
                 </div>
               </div>
               {!d && (

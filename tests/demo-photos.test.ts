@@ -35,3 +35,15 @@ describe('Galeria de fotos demonstrativas', () => {
     expect(galileo.textoBruto).toContain('simulação');
   });
 });
+
+describe('Miniaturas das fotos demonstrativas', () => {
+  it('toda foto da galeria tem miniatura WebP leve em /demo/thumb', async () => {
+    const { existsSync, statSync } = await import('node:fs');
+    const { demoThumb } = await import('../src/lib/demoThumb');
+    for (const d of DEMO_PHOTOS) {
+      const file = `public${demoThumb(d.src)}`;
+      expect(existsSync(file), file).toBe(true);
+      expect(statSync(file).size, file).toBeLessThan(40 * 1024);
+    }
+  });
+});

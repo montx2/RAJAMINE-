@@ -4,7 +4,7 @@ import { test, expect } from '@playwright/test';
 
 test('login demonstrativo e dashboard carregam KPIs', async ({ page }) => {
   await page.goto('/login');
-  await expect(page.getByText('Acessar demonstração')).toBeVisible();
+  await expect(page.getByText('Acesso de demonstração')).toBeVisible();
   await page.getByRole('button', { name: /Helena Duarte/ }).click();
   await expect(page.getByText('Relatórios registrados')).toBeVisible();
   await expect(page.getByText('Aguardando revisão').first()).toBeVisible();

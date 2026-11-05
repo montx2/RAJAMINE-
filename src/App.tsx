@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useStore } from './store/useStore';
 import type { Role } from './data/types';
@@ -5,25 +6,29 @@ import AppShell from './components/AppShell';
 import DriverShell from './components/DriverShell';
 import { Toaster } from './components/ui';
 import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import Reports from './pages/Reports';
-import NewReport from './pages/NewReport';
-import ReportDetail from './pages/ReportDetail';
-import ReviewCenter from './pages/ReviewCenter';
-import Equipment from './pages/Equipment';
-import Trucks from './pages/Trucks';
-import Registry from './pages/Registry';
-import Documents from './pages/Documents';
-import Weekly from './pages/Weekly';
-import Operations from './pages/Operations';
-import DriverOps from './pages/DriverOps';
-import FillReport from './pages/FillReport';
-import DriverHome from './pages/driver/DriverHome';
-import DriverChecklist from './pages/driver/DriverChecklist';
-import DriverOccurrences from './pages/driver/DriverOccurrences';
-import DriverOccurrenceNew from './pages/driver/DriverOccurrenceNew';
-import DriverHistory from './pages/driver/DriverHistory';
-import DriverTraining from './pages/driver/DriverTraining';
+import PageFallback from './components/PageFallback';
+
+/* Cada página vira um arquivo próprio, baixado quando a rota abre. O login e os
+   shells ficam no pacote inicial: são o que todo mundo vê primeiro. */
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Reports = lazy(() => import('./pages/Reports'));
+const NewReport = lazy(() => import('./pages/NewReport'));
+const ReportDetail = lazy(() => import('./pages/ReportDetail'));
+const ReviewCenter = lazy(() => import('./pages/ReviewCenter'));
+const Equipment = lazy(() => import('./pages/Equipment'));
+const Trucks = lazy(() => import('./pages/Trucks'));
+const Registry = lazy(() => import('./pages/Registry'));
+const Documents = lazy(() => import('./pages/Documents'));
+const Weekly = lazy(() => import('./pages/Weekly'));
+const Operations = lazy(() => import('./pages/Operations'));
+const DriverOps = lazy(() => import('./pages/DriverOps'));
+const FillReport = lazy(() => import('./pages/FillReport'));
+const DriverHome = lazy(() => import('./pages/driver/DriverHome'));
+const DriverChecklist = lazy(() => import('./pages/driver/DriverChecklist'));
+const DriverOccurrences = lazy(() => import('./pages/driver/DriverOccurrences'));
+const DriverOccurrenceNew = lazy(() => import('./pages/driver/DriverOccurrenceNew'));
+const DriverHistory = lazy(() => import('./pages/driver/DriverHistory'));
+const DriverTraining = lazy(() => import('./pages/driver/DriverTraining'));
 
 function homeFor(role?: Role) {
   if (role === 'motorista') return '/motorista';
@@ -43,6 +48,7 @@ function RequireAuth({ children, roles }: { children: React.ReactNode; roles?: R
 export function AppRoutes() {
   const session = useStore((s) => s.session);
   return (
+    <Suspense fallback={<div className="min-h-dvh p-6"><PageFallback /></div>}>
     <Routes>
       <Route path="/login" element={session ? <Navigate to={homeFor(session.role)} replace /> : <Login />} />
       <Route path="/preencher/:token" element={<FillReport />} />
@@ -75,6 +81,7 @@ export function AppRoutes() {
 
       <Route path="*" element={<Navigate to={session ? homeFor(session.role) : '/login'} replace />} />
     </Routes>
+    </Suspense>
   );
 }
 

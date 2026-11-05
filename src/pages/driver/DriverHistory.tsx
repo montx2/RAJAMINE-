@@ -51,7 +51,7 @@ export default function DriverHistory() {
                   {!c.syncedAt && <Badge tone="amber">pendente sync</Badge>}
                 </div>
                 <div className="text-[12px] text-subtle mt-1">{fmtDate(c.data + 'T12:00:00')} · turno {c.turno} · {checklistProgress(c.items)}% verificado · {fails} falha(s)</div>
-                {c.enviadoEm && <div className="text-[11.5px] text-subtle mt-0.5">Enviado em {fmtDateTime(c.enviadoEm)}</div>}
+                {c.enviadoEm && <div className="text-xs text-subtle mt-0.5">Enviado em {fmtDateTime(c.enviadoEm)}</div>}
               </div>
             );
           })}
@@ -85,7 +85,7 @@ export default function DriverHistory() {
               <div>
                 <div className="text-[13.5px] font-bold text-primary">{t.titulo}</div>
                 <div className="text-[12px] text-subtle">Confirmado por {t.nomeConfirmado} em {fmtDateTime(t.confirmadoEm)}</div>
-                <div className="text-[11.5px] text-subtle mt-0.5">Confirmação digitada — sem biometria.</div>
+                <div className="text-xs text-subtle mt-0.5">Confirmação digitada — sem biometria.</div>
               </div>
             </div>
           ))}

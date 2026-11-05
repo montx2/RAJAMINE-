@@ -86,7 +86,7 @@ export default function Reports() {
           </div>
           <Button variant={showFilters || activeFilters ? 'primary' : 'outline'} icon={<SlidersHorizontal size={15} />}
             onClick={() => setShowFilters((v) => !v)} aria-expanded={showFilters}>
-            Filtros{activeFilters > 0 && <span className="ml-1 rounded-full bg-brand text-[#18181b] text-[10px] font-bold px-1.5">{activeFilters}</span>}
+            Filtros{activeFilters > 0 && <span className="ml-1 rounded-full bg-brand text-[#18181b] text-xs font-bold px-1.5">{activeFilters}</span>}
           </Button>
         </div>
 
@@ -173,11 +173,11 @@ export default function Reports() {
           <table className="w-full min-w-[760px]">
             <thead className="border-b border-primary/8">
               <tr>
-                <th className="th">Relatório</th>
-                <th className="th">Responsável</th>
-                <th className="th">Status</th>
-                <th className="th">Prazo</th>
-                <th className="th"><span className="sr-only">Ações</span></th>
+                <th scope="col" className="th">Relatório</th>
+                <th scope="col" className="th">Responsável</th>
+                <th scope="col" className="th">Status</th>
+                <th scope="col" className="th">Prazo</th>
+                <th scope="col" className="th"><span className="sr-only">Ações</span></th>
               </tr>
             </thead>
             <tbody className="divide-soft">

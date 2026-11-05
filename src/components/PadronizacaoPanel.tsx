@@ -108,7 +108,7 @@ export default function PadronizacaoPanel({ report, actorName, canEdit }: { repo
                 <DiffView original={baseText.replace(/\s+/g, ' ').trim()} sugerido={result.sugerido} />
               )}
               {mode === 'view' && changed && (
-                <p className="mt-3 text-[11.5px] text-subtle flex items-center gap-2">
+                <p className="mt-3 text-xs text-subtle flex items-center gap-2">
                   <span className="inline-block w-3 h-3 rounded-sm bg-destructive-soft border border-destructive/30" aria-hidden /> removido
                   <span className="inline-block w-3 h-3 rounded-sm bg-success-soft border border-success/30 ml-2" aria-hidden /> adicionado
                 </p>

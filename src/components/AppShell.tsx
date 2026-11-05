@@ -1,18 +1,20 @@
-import { useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, FileText, ClipboardCheck, Cpu, Truck, Users, Archive,
-  Bell, LogOut, Menu, X, ChevronRight, PenLine, Table2, CalendarRange, AlertTriangle, CircleHelp,
+  LogOut, Menu, X, ChevronRight, PenLine, Table2, CalendarRange, AlertTriangle, CircleHelp,
 } from 'lucide-react';
 import { useStore, useCurrentUser } from '../store/useStore';
 import { ROLE_LABEL } from '../data/types';
 import type { Role } from '../data/types';
 import { cn } from '../lib/cn';
-import { timeAgo } from '../lib/format';
+import { useDialogBehavior } from '../lib/useDialog';
 import { Avatar } from './ui';
 import { Logo } from './Logo';
 import ThemeToggle from './ThemeToggle';
+import NotificationsPopover from './NotificationsPopover';
 import OnboardingTour from './OnboardingTour';
+import PageFallback from './PageFallback';
 
 interface NavItem { to: string; label: string; short: string; icon: typeof LayoutDashboard; roles: Role[]; group: string }
 
@@ -39,7 +41,18 @@ export default function AppShell() {
   const markRead = useStore((s) => s.markNotificationRead);
   const markAllRead = useStore((s) => s.markAllRead);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [notifOpen, setNotifOpen] = useState(false);
+  const mainRef = useRef<HTMLElement>(null);
+  const drawerRef = useRef<HTMLElement>(null);
+  const firstRender = useRef(true);
+
+  useDialogBehavior(drawerRef, mobileOpen, () => setMobileOpen(false));
+
+  // Leitor de tela: avisar a troca de página levando o foco para o conteúdo.
+  // (Na primeira renderização não: o foco já está no início do documento.)
+  useEffect(() => {
+    if (firstRender.current) { firstRender.current = false; return; }
+    mainRef.current?.focus({ preventScroll: true });
+  }, [location.pathname]);
 
   const myNotifs = useMemo(() => {
     if (!user) return [];
@@ -65,7 +78,7 @@ export default function AppShell() {
       <nav className="flex-1 px-3 space-y-5 overflow-y-auto" aria-label="Navegação principal">
         {groups.map((g) => (
           <div key={g.name}>
-            <div className="px-3 mb-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-400">{g.name}</div>
+            <div className="px-3 mb-1.5 text-xs font-semibold tracking-[0.03em] text-zinc-400">{g.name}</div>
             <div className="space-y-0.5">
               {g.items.map((item) => (
                 <NavLink
@@ -100,15 +113,16 @@ export default function AppShell() {
           <Avatar nome={user.nome} />
           <div className="min-w-0 flex-1">
             <div className="text-[13px] font-bold text-white truncate">{user.nome}</div>
-            <div className="text-[11px] text-zinc-400">{ROLE_LABEL[user.role]}</div>
+            <div className="text-xs text-zinc-400">{ROLE_LABEL[user.role]}</div>
           </div>
           <button
+            type="button"
             onClick={() => { logout(); navigate('/login'); }}
             className="press p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 cursor-pointer"
             aria-label="Sair"
             title="Sair"
           >
-            <LogOut size={16} />
+            <LogOut size={16} aria-hidden />
           </button>
         </div>
       </div>
@@ -116,19 +130,30 @@ export default function AppShell() {
   );
 
   return (
-    <div className="min-h-screen flex">
-      {/* Sidebar desktop — vidro escuro */}
+    <div className="min-h-dvh flex">
+      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[70] focus:rounded-xl focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-primary-foreground">
+        Pular para o conteúdo
+      </a>
+
+      {/* Sidebar desktop — superfície grafite sólida */}
       <aside className="hidden lg:flex w-[248px] shrink-0 glass-dark flex-col fixed inset-y-0 z-30 border-r border-white/10">
         {sidebar}
       </aside>
 
-      {/* Sidebar mobile */}
+      {/* Menu lateral no celular: diálogo modal (Esc, foco preso, foco volta ao botão) */}
       {mobileOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
-          <div className="absolute inset-0 bg-black/40 animate-fade-in" style={{ backdropFilter: 'blur(4px)' }} onClick={() => setMobileOpen(false)} aria-hidden />
-          <aside className="absolute inset-y-0 left-0 w-[272px] glass-dark animate-slide-in-right border-r border-white/10">
-            <button onClick={() => setMobileOpen(false)} className="absolute top-4 right-3 p-2 text-zinc-400 hover:text-white cursor-pointer z-10" aria-label="Fechar menu">
-              <X size={18} />
+          <div className="absolute inset-0 bg-black/50 animate-fade-in" onClick={() => setMobileOpen(false)} aria-hidden />
+          <aside
+            ref={drawerRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menu"
+            tabIndex={-1}
+            className="absolute inset-y-0 left-0 w-[272px] glass-dark animate-slide-in-left border-r border-white/10 outline-none pt-safe pb-safe"
+          >
+            <button type="button" onClick={() => setMobileOpen(false)} className="absolute top-[max(1rem,env(safe-area-inset-top))] right-3 p-2 text-zinc-400 hover:text-white cursor-pointer z-10" aria-label="Fechar menu">
+              <X size={18} aria-hidden />
             </button>
             {sidebar}
           </aside>
@@ -138,64 +163,24 @@ export default function AppShell() {
       <OnboardingTour />
       <div className="flex-1 lg:ml-[248px] flex flex-col min-w-0">
         {/* Topbar — vidro claro, mínima */}
-        <header className="sticky top-0 z-20 glass border-b border-primary/8">
+        <header className="sticky top-0 z-20 glass-bar border-b border-primary/8 pt-safe">
           <div className="flex items-center gap-3 px-4 sm:px-6 h-[58px]">
-            <button className="lg:hidden press p-2 -ml-2 rounded-xl text-secondary hover:bg-primary/5 cursor-pointer" onClick={() => setMobileOpen(true)} aria-label="Abrir menu">
-              <Menu size={20} />
+            <button type="button" className="lg:hidden press p-2 -ml-2 rounded-xl text-secondary hover:bg-primary/5 cursor-pointer" onClick={() => setMobileOpen(true)} aria-label="Abrir menu" aria-haspopup="dialog" aria-expanded={mobileOpen}>
+              <Menu size={20} aria-hidden />
             </button>
-            <div className="lg:hidden"><Logo compact /></div>
+            <div className="lg:hidden"><Logo compact light={false} size={32} /></div>
 
             <div className="flex-1" />
-            <div className="relative">
-              <button
-                onClick={() => setNotifOpen((v) => !v)}
-                data-tour="notifications"
-                className="press relative p-2.5 rounded-xl text-secondary hover:bg-primary/5 cursor-pointer"
-                aria-label={`Notificações${unread ? ` (${unread} não lidas)` : ''}`}
-              >
-                <Bell size={18} />
-                {unread > 0 && (
-                  <span className="absolute top-1 right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-destructive text-white dark:text-[#18181b] text-[10px] font-bold flex items-center justify-center">
-                    {unread}
-                  </span>
-                )}
-              </button>
-              {notifOpen && (
-                <>
-                  <div className="fixed inset-0 z-30" onClick={() => setNotifOpen(false)} aria-hidden />
-                  <div className="absolute right-0 mt-2 w-[min(380px,calc(100vw-2rem))] glass-strong rounded-2xl z-40 overflow-hidden animate-scale-in">
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-primary/8">
-                      <span className="text-[13px] font-bold text-primary">Notificações</span>
-                      <button onClick={markAllRead} className="text-[12px] link">Marcar todas como lidas</button>
-                    </div>
-                    <div className="max-h-[380px] overflow-y-auto">
-                      {myNotifs.slice(0, 12).map((n) => (
-                        <button
-                          key={n.id}
-                          className={cn('w-full text-left px-4 py-3 border-b border-primary/5 hover:bg-primary/[0.03] cursor-pointer transition-colors', !n.lida && 'bg-accent-soft/30')}
-                          onClick={() => {
-                            markRead(n.id);
-                            setNotifOpen(false);
-                            if (n.occurrenceId) navigate('/ocorrencias');
-                            else if (n.reportId) navigate(`/relatorios/${n.reportId}`);
-                          }}
-                        >
-                          <div className="flex items-start gap-2.5">
-                            {!n.lida && <span className="w-2 h-2 rounded-full bg-accent mt-1.5 shrink-0 animate-pulse-dot" aria-hidden />}
-                            <div className={cn('min-w-0', n.lida && 'pl-[18px]')}>
-                              <div className="text-[13px] font-semibold text-foreground">{n.titulo}</div>
-                              <div className="text-[12px] text-subtle line-clamp-2 mt-0.5">{n.mensagem}</div>
-                              <div className="text-[11px] text-subtle/80 mt-1">{timeAgo(n.criadaEm)}</div>
-                            </div>
-                          </div>
-                        </button>
-                      ))}
-                      {myNotifs.length === 0 && <p className="px-4 py-8 text-center text-[13px] text-subtle">Nenhuma notificação.</p>}
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
+            <NotificationsPopover
+              notifications={myNotifs}
+              tourId="notifications"
+              onMarkAllRead={markAllRead}
+              onSelect={(n) => {
+                markRead(n.id);
+                if (n.occurrenceId) navigate('/ocorrencias');
+                else if (n.reportId) navigate(`/relatorios/${n.reportId}`);
+              }}
+            />
             <button
               type="button"
               onClick={() => window.dispatchEvent(new CustomEvent('safip-start-tour'))}
@@ -203,31 +188,33 @@ export default function AppShell() {
               aria-label="Abrir tutorial"
               title="Tutorial — como usar o sistema"
             >
-              <CircleHelp size={18} />
+              <CircleHelp size={18} aria-hidden />
             </button>
             <ThemeToggle />
           </div>
         </header>
 
-        <main key={location.pathname} className="page-enter flex-1 px-4 sm:px-6 py-6 max-w-[1520px] w-full mx-auto pb-24 lg:pb-10">
-          <Outlet />
+        <main id="main" ref={mainRef} tabIndex={-1} key={location.pathname} className="page-enter flex-1 px-4 sm:px-6 py-6 max-w-[1520px] w-full mx-auto pb-nav-app outline-none">
+          <Suspense fallback={<PageFallback />}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
 
       {/* Navegação inferior mobile — vidro */}
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-30 glass border-t border-primary/8 flex" aria-label="Navegação rápida">
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-30 glass-bar border-t border-primary/8 flex pb-safe" aria-label="Navegação rápida">
         {items.slice(0, 4).map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
             end={item.to === '/'}
-            className={({ isActive }) => cn('flex-1 flex flex-col items-center gap-1 py-2.5 text-[10px] font-semibold transition-colors', isActive ? 'text-accent' : 'text-subtle')}
+            className={({ isActive }) => cn('flex-1 flex flex-col items-center gap-1 py-2.5 text-xs font-semibold transition-colors', isActive ? 'text-accent' : 'text-subtle')}
           >
             <item.icon size={19} aria-hidden />
             {item.short}
           </NavLink>
         ))}
-        <button onClick={() => setMobileOpen(true)} className="flex-1 flex flex-col items-center gap-1 py-2.5 text-[10px] font-semibold text-subtle cursor-pointer">
+        <button type="button" onClick={() => setMobileOpen(true)} className="flex-1 flex flex-col items-center gap-1 py-2.5 text-xs font-semibold text-subtle cursor-pointer" aria-haspopup="dialog">
           <ChevronRight size={19} aria-hidden />
           Mais
         </button>
@@ -241,7 +228,7 @@ export function PageHeader({ title, subtitle, actions, eyebrow }: { title: strin
     <div className="flex flex-wrap items-end justify-between gap-3 mb-6" data-tour="page-header">
       <div className="min-w-0">
         {eyebrow && <div className="eyebrow mb-1">{eyebrow}</div>}
-        <h1 className="text-[24px] font-semibold tracking-tight text-primary text-balance">{title}</h1>
+        <h1 className="font-display text-[30px] font-semibold leading-tight tracking-tight text-primary text-balance">{title}</h1>
         {subtitle && <p className="text-[13px] text-subtle mt-1 max-w-2xl">{subtitle}</p>}
       </div>
       {actions && <div className="flex items-center gap-2 shrink-0">{actions}</div>}

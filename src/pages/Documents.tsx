@@ -112,13 +112,13 @@ export default function Documents() {
             <table className="w-full min-w-[880px]">
               <thead className="bg-muted/50 border-b border-border">
                 <tr>
-                  <th className="th">Relatório</th>
-                  <th className="th">Documento</th>
-                  <th className="th">Cliente</th>
-                  <th className="th">Versão</th>
-                  <th className="th">Gerado em</th>
-                  <th className="th">Envio ao cliente</th>
-                  <th className="th">Ações</th>
+                  <th scope="col" className="th">Relatório</th>
+                  <th scope="col" className="th">Documento</th>
+                  <th scope="col" className="th">Cliente</th>
+                  <th scope="col" className="th">Versão</th>
+                  <th scope="col" className="th">Gerado em</th>
+                  <th scope="col" className="th">Envio ao cliente</th>
+                  <th scope="col" className="th">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/70">
@@ -138,12 +138,12 @@ export default function Documents() {
           {photos.map(({ photo, report }) => (
             <Link key={photo.id} to={`/relatorios/${report.id}?tab=fotos`} className="card overflow-hidden group hover:border-accent/40 transition-colors">
               <div className="relative">
-                <PhotoImg photo={photo} className="w-full h-36 group-hover:opacity-95 transition-opacity" />
+                <PhotoImg thumb photo={photo} className="w-full h-36 group-hover:opacity-95 transition-opacity" />
                 <Badge tone={photo.categoria === 'equipamento' ? 'blue' : 'slate'} className="absolute top-2 left-2">{photo.categoria}</Badge>
               </div>
               <div className="p-3">
                 <div className="mono text-[12.5px] font-semibold text-primary whitespace-nowrap">{report.codigo}</div>
-                <div className="text-[11.5px] text-subtle line-clamp-2 mt-0.5">{photo.legenda}</div>
+                <div className="text-xs text-subtle line-clamp-2 mt-0.5">{photo.legenda}</div>
               </div>
             </Link>
           ))}
@@ -154,7 +154,7 @@ export default function Documents() {
       {preview && (
         <Modal open onClose={() => { URL.revokeObjectURL(preview.url); setPreview(null); }} title={preview.title} wide
           footer={<Button variant="ghost" onClick={() => { URL.revokeObjectURL(preview.url); setPreview(null); }}>Fechar</Button>}>
-          <iframe src={preview.url} title="Pré-visualização do PDF" className="w-full h-[65vh] rounded-lg border border-border bg-muted" />
+          <iframe src={preview.url} title="Pré-visualização do PDF" className="w-full h-[65dvh] rounded-lg border border-border bg-muted" />
         </Modal>
       )}
     </div>
@@ -197,7 +197,7 @@ function DocRow({ row, onPreview, canSend }: { row: Row; onPreview: (p: { url: s
       <td className="td"><Badge tone={doc.tipo === 'cliente' ? 'blue' : 'slate'}>{doc.tipo === 'cliente' ? 'Cliente · sem fotos' : 'Interno · completo'}</Badge></td>
       <td className="td text-secondary">{client?.nome}</td>
       <td className="td mono">v{doc.versao}</td>
-      <td className="td whitespace-nowrap">{fmtDateTime(doc.geradoEm)}<div className="text-[11.5px] text-subtle">por {doc.geradoPor}</div></td>
+      <td className="td whitespace-nowrap">{fmtDateTime(doc.geradoEm)}<div className="text-xs text-subtle">por {doc.geradoPor}</div></td>
       <td className="td">
         {doc.tipo === 'cliente'
           ? doc.enviadoEm
